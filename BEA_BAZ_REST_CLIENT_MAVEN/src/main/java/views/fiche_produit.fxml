@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.Pane?>
+
+<BorderPane prefHeight="722.0" prefWidth="1275.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Fiche_produit_controller">
+   <center>
+      <VBox alignment="TOP_CENTER" prefHeight="437.0" prefWidth="869.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </BorderPane.margin>
+         <children>
+            <Pane prefHeight="50.0" prefWidth="889.0">
+               <children>
+                  <Label fx:id="fiche_traitement_label" layoutX="35.0" layoutY="6.0" text="FICHE PRODUIT :">
+                     <font>
+                        <Font size="31.0" />
+                     </font>
+                  </Label>
+                  <Line endX="700.0" endY="50.0" startY="50.0" />
+                  <Label fx:id="nom_traitement_label" layoutX="372.0" layoutY="20.0" text="Label">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <HBox alignment="CENTER_LEFT" prefHeight="73.0" prefWidth="1019.0">
+               <VBox.margin>
+                  <Insets left="10.0" top="40.0" />
+               </VBox.margin>
+               <children>
+                  <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#on_select_file_button" text="Selectionner un fichier" />
+                  <TextField fx:id="file_path_textField" prefHeight="25.0" prefWidth="749.0">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </TextField>
+                  <Button fx:id="importerButton" mnemonicParsing="false" onAction="#on_import_file_button" text="Importer">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+            <GridPane prefHeight="400.0" prefWidth="869.0" VBox.vgrow="NEVER">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="429.0" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="764.0" minWidth="10.0" prefWidth="589.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
+                  <RowConstraints maxHeight="179.0" minHeight="7.0" prefHeight="42.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="359.0" minHeight="30.0" prefHeight="295.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <VBox.margin>
+                  <Insets left="10.0" right="10.0" top="50.0" />
+               </VBox.margin>
+               <children>
+                  <Label text="Nom affiché : " GridPane.valignment="CENTER" GridPane.vgrow="NEVER" />
+                  <Label text="Remarques : " GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="TOP">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" right="10.0" top="10.0" />
+                     </GridPane.margin>
+                  </Label>
+                  <TextArea fx:id="remarques_produit_textArea" prefHeight="145.0" prefWidth="559.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets top="10.0" />
+                     </GridPane.margin></TextArea>
+                  <TextField fx:id="nom_produit_textField" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.valignment="CENTER" GridPane.vgrow="NEVER" />
+                  <Label text="Nom complet : " GridPane.rowIndex="1" />
+                  <TextField fx:id="nom_complet_produit_textField" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+               </children>
+            </GridPane>
+            <HBox fx:id="hbox" alignment="TOP_CENTER" prefHeight="50.0" prefWidth="200.0">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="100.0" />
+               </VBox.margin>
+               <children>
+                  <Button fx:id="mise_a_jour_traitement" mnemonicParsing="false" onAction="#onMiseAJourTraitementButton" text="Mise à jour" />
+                  <Button fx:id="editer" mnemonicParsing="false" onAction="#onEditerTraitementButton" text="Editer">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin></Button>
+                  <Button fx:id="annuler" mnemonicParsing="false" onAction="#onAnnulerEditButton" text="Annuler">
+                     <HBox.margin>
+                        <Insets left="50.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </center>
+   <top>
+      <HBox alignment="CENTER" prefHeight="33.0" prefWidth="1255.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </BorderPane.margin>
+         <children>
+            <Button fx:id="versClientButton" mnemonicParsing="false" onAction="#onVersClientButton" text="--&gt; Client">
+               <HBox.margin>
+                  <Insets right="10.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="versCommandeButton" mnemonicParsing="false" onAction="#onVersCommandeButton" text="--&gt; Commande">
+               <HBox.margin>
+                  <Insets right="10.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="versOeuvreButton" mnemonicParsing="false" onAction="#onVersOeuvreButton" text="--&gt; Oeuvre">
+               <HBox.margin>
+                  <Insets right="10.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="versRapportButton" mnemonicParsing="false" text="--&gt; Rapport">
+               <HBox.margin>
+                  <Insets right="10.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="versModelesButton" mnemonicParsing="false" onAction="#onVersModelesButton" text="Modèles">
+               <HBox.margin>
+                  <Insets left="50.0" right="10.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="versFichiersButton" mnemonicParsing="false" onAction="#onVersFichiersButton" text="Fichiers">
+               <HBox.margin>
+                  <Insets right="10.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="versTraitementsButton" mnemonicParsing="false" onAction="#onVersTraitementsButton" text="Traitements" />
+            <Button fx:id="versProduitsButton" mnemonicParsing="false" text="Produits">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="versAuteursButton" mnemonicParsing="false" onAction="#onVersAuteursButton" text="Auteurs">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="matieres_button" mnemonicParsing="false" onAction="#onMatieres_button" text="Matières">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="techniques_button" mnemonicParsing="false" onAction="#onTechniques_button" text="Techniques">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
+   </top>
+   <left>
+      <VBox alignment="TOP_CENTER" prefHeight="669.0" prefWidth="216.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label alignment="CENTER" contentDisplay="CENTER" text="Produits">
+               <padding>
+                  <Insets bottom="10.0" top="10.0" />
+               </padding>
+            </Label>
+            <ListView fx:id="listView_produits" onKeyTyped="#onProduitSelect" onMouseClicked="#onProduitSelect" prefHeight="645.0" prefWidth="138.0">
+               <VBox.margin>
+                  <Insets bottom="10.0" top="10.0" />
+               </VBox.margin>
+            </ListView>
+            <Button fx:id="nouveau_produit" mnemonicParsing="false" onAction="#onNouveauProduitButton" text="Nouveau produit">
+               <VBox.margin>
+                  <Insets bottom="10.0" top="10.0" />
+               </VBox.margin>
+            </Button>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </BorderPane.margin>
+      </VBox>
+   </left>
+</BorderPane>
