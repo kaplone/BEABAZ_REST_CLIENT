@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.xml.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
@@ -29,7 +31,7 @@ public class OeuvreTraitee extends Commun {
 	
 	private String oeuvre_id;
 	
-	private Map<String, String> traitementsAttendus_id;
+	private Set<String> traitementsAttendus_id;
 
 	private EtatFinal etat;
 	private String complement_etat;
@@ -50,7 +52,7 @@ public class OeuvreTraitee extends Commun {
     
     public OeuvreTraitee(){
     	
-    	traitementsAttendus_id = new HashMap<>();
+    	traitementsAttendus_id = new HashSet<>();
     	alterations = new ArrayList<>();
     	fichiers = new ArrayList<>();
     	
@@ -71,10 +73,12 @@ public class OeuvreTraitee extends Commun {
 		
 		ArrayList<Fichier> fichiers = new ArrayList<>();
 		
-		for (String s : fichiers_id.keySet()) {
-			fichiers.add(Fichier.retrouveFichier(fichiers_id.get(s)));
+		if (fichiers_id != null){
+			for (String s : fichiers_id.keySet()) {
+				fichiers.add(Fichier.retrouveFichier(fichiers_id.get(s)));
+			}
 		}
-		
+	
 		return fichiers;
 	}
 	
@@ -82,13 +86,15 @@ public class OeuvreTraitee extends Commun {
 		
 		Fichier fichier = null;
 		
-		for (String s : fichiers_id.keySet()) {
-			
-			if (Normalize.normalizeDenormStringField(s).endsWith(".PR.1.JPG")){
-				fichier = Fichier.retrouveFichier(fichiers_id.get(s));
+		if (fichiers_id != null){
+			for (String s : fichiers_id.keySet()) {
+				
+				if (Normalize.normalizeDenormStringField(s).endsWith(".PR.1.JPG")){
+					fichier = Fichier.retrouveFichier(fichiers_id.get(s));
+				}
 			}
 		}
-		
+
 		return fichier;
 		
 	}
@@ -96,8 +102,14 @@ public class OeuvreTraitee extends Commun {
 	public Map<String, String> getFichiers_id() {
 		return fichiers_id;
 	}
+	@JsonIgnore
 	public Set<String> getFichiers_names() {
-		return fichiers_id.keySet();
+		if (fichiers_id != null){
+			return fichiers_id.keySet();
+		}
+		else {
+			return new HashSet<>();
+		}
 	}
 	public void setFichiers(ArrayList<Fichier> fichiers) {
 		this.fichiers = fichiers;
@@ -111,16 +123,16 @@ public class OeuvreTraitee extends Commun {
 		this.progressionOeuvreTraitee = progressionOeuvreTraitee;
 	}
 	public Set<String> getTraitementsAttendus_names() {
-		return traitementsAttendus_id.keySet();
+		return traitementsAttendus_id;
 	}
 	public Collection<String> getTraitementsAttendus_id() {
-		return traitementsAttendus_id.values();
+		return traitementsAttendus_id;
 	}
 	public void addTraitementAttendu(Traitement traitementAttendu) {
-		this.traitementsAttendus_id.put(traitementAttendu.getNom(), traitementAttendu.get_id().toString());
+		this.traitementsAttendus_id.add(traitementAttendu.get_id().toString());
 	}
 	public void addTraitementAttendu(String nom, ObjectId id) {
-		this.traitementsAttendus_id.put(nom, id.toString());
+		this.traitementsAttendus_id.add(id.toString());
 	}
 
 	public ImageView getIcone_progression() {
@@ -170,7 +182,7 @@ public class OeuvreTraitee extends Commun {
 		this.oeuvre_id = oeuvre_id;
 	}
 
-	public void setTraitementsAttendus_id(Map<String, String> traitementsAttendus_id) {
+	public void setTraitementsAttendus_id(Set<String>traitementsAttendus_id) {
 		this.traitementsAttendus_id = traitementsAttendus_id;
 	}
 

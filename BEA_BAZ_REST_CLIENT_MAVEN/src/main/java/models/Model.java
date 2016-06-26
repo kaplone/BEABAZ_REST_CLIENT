@@ -81,6 +81,9 @@ public class Model extends Commun{
     public static Model[] retrouveModels(){
 		
 		String model_str= RestAccess.request("model");
+		
+		System.out.println("model_str : " + model_str);
+		
         Model[] c = null ;
 		
 		try {

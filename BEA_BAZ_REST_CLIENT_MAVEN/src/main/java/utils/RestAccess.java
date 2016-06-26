@@ -86,15 +86,12 @@ public class RestAccess {
     	
 		try {
 			response = client.execute(request);
-			System.out.println("response : " + response);
 			BufferedReader rd = new BufferedReader (new InputStreamReader(response.getEntity().getContent()));
 		    reponse = rd.readLine();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		System.out.println("reponse : " + reponse);
 
 		return reponse;
 		
@@ -139,6 +136,8 @@ public class RestAccess {
 	}
 
     public static String request(String table, Progression progres, Commande commande) {	
+    	
+    	System.out.println(String.format("%s/%s/%s/%s", adresse, table, progres.toString(), commande.get_id().toString()));
 
     	request = new HttpGet(String.format("%s/%s/%s/%s", adresse, table, progres.toString(), commande.get_id().toString()));
     	return traitementReponse();

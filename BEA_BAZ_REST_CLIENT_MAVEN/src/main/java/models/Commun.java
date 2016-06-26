@@ -5,6 +5,9 @@ import org.bson.types.ObjectId;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Commun {
 	
 	private ObjectId _id;

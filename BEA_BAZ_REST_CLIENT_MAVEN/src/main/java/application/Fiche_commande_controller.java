@@ -120,16 +120,16 @@ public class Fiche_commande_controller  implements Initializable{
 	
 	private ArrayList<ChoiceBox<String>> traitements_selectionnes;
 	private ArrayList<String> traitements_attendus;
-	private Map<String, ObjectId> traitements_attendus_id;
+	private Map<String, String> traitements_attendus_id;
 
 	private ObservableList<String> observableTraitements;
-	private Map<String, ObjectId> traitements_id;
+	private Map<String, String> traitements_id;
 	
 	private ObservableList<String> observableAuteurs;
-	private Map<String, ObjectId> auteurs_id;
+	private Map<String, String> auteurs_id;
 	
 	private ObservableList<String> observableModeles;
-	private Map<String, ObjectId> modeles_id;
+	private Map<String, String> modeles_id;
 
 	private List<OeuvreTraitee> listeOeuvresTraitees;
 	private OeuvreTraitee[] oeuvresTraitees;
@@ -138,7 +138,6 @@ public class Fiche_commande_controller  implements Initializable{
 	private Stage currentStage;
 	
 	private Commande commande;
-	private Commande commandeSelectionne;
 	
 	private Client client;
 	private Model model;
@@ -291,20 +290,20 @@ public class Fiche_commande_controller  implements Initializable{
 			commande = Commande.retrouveCommande(Messages.getCommande().get_id()); 
 		}		
 
-		commande.setDateCommande(dateCommandePicker.getValue());
-		commande.setDateDebutProjet(dateDebutProjetPicker.getValue());
-		commande.setDateFinProjet(dateFinProjetPicker.getValue());
+//		commande.setDateCommande(dateCommandePicker.getValue());
+//		commande.setDateDebutProjet(dateDebutProjetPicker.getValue());
+//		commande.setDateFinProjet(dateFinProjetPicker.getValue());
 		commande.setRemarques(remarques_client.getText());
 		commande.setNom(nomCommandeTextField.getText());
 		model_name = modelChoiceBox.getSelectionModel().getSelectedItem();
 		model = Model.retrouveModel(modeles_id.get(model_name));
-		commande.setModele_id(modeles_id.get(model_name));
+		commande.setModele_id(modeles_id.get(model_name).toString());
 		auteur_name = auteursChoiceBox.getSelectionModel().getSelectedItem();
 		auteur = Auteur.retrouveAuteur(auteurs_id.get(auteur_name));
-		commande.setAuteur_id(auteurs_id.get(auteur_name));
+		commande.setAuteur_id(auteurs_id.get(auteur_name).toString());
 		
         traitements_attendus.clear();
-        commande.setTraitements_attendus_id(new HashMap<String, ObjectId>());
+        commande.setTraitements_attendus_id(new HashMap<String, String>());
 		
 		for (Node cb : traitementGrid.getChildren()){
 			
@@ -409,8 +408,8 @@ public class Fiche_commande_controller  implements Initializable{
 		if (c != null){
 		
 			dateCommandePicker.setValue(c.getDateCommande());;
-			dateDebutProjetPicker.setValue(c.getDateDebutProjet());;
-			dateFinProjetPicker.setValue(c.getDateFinProjet());
+//			dateDebutProjetPicker.setValue(c.getDateDebutProjet());;
+//			dateFinProjetPicker.setValue(c.getDateFinProjet());
 			remarques_client.setText(c.getRemarques());
 			nom_commande_label.setText(c.getNom());
 			nomCommandeTextField.setText(c.getNom());	
@@ -446,9 +445,12 @@ public class Fiche_commande_controller  implements Initializable{
     	obs_oeuvres = FXCollections.observableArrayList();
     	listeOeuvresTraitees = new ArrayList<>();
 
-		oeuvresTraitees = OeuvreTraitee.retrouveOeuvreTraiteesCommande(commandeSelectionne, false);
+		oeuvresTraitees = OeuvreTraitee.retrouveOeuvreTraiteesCommande(commande, false);
+		
+		System.out.println("lise des oeuvres : " + oeuvresTraitees);
 		
 		for (OeuvreTraitee ot : oeuvresTraitees){
+			System.out.println("ajout ot : " + ot);
 			listeOeuvresTraitees.add(ot);
 		}
 		
@@ -571,8 +573,8 @@ public class Fiche_commande_controller  implements Initializable{
         if (Messages.getCommande() != null) {
         	
         	commande = Messages.getCommande();
-        	commandeSelectionne = commande;	
-        	
+        	System.out.println("commande trouvée : " + commande);
+
         	model = Model.retrouveModel(commande.getModele_id());
         	
     		auteur = Auteur.retrouveAuteur(commande.getAuteur_id());
@@ -580,7 +582,9 @@ public class Fiche_commande_controller  implements Initializable{
     		traitements_attendus_id = commande.getTraitements_attendus_id();
     		traitements_attendus.addAll(traitements_attendus_id.keySet());
     		
+    		System.out.println("afficher commande");
     		afficherCommande();
+    		System.out.println("afficher oeuvres");
     		afficherOeuvres();
 		}
 

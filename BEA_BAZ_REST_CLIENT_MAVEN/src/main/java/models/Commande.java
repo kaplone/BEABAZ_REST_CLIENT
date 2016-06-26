@@ -1,12 +1,18 @@
 package models;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,18 +33,20 @@ public class Commande  extends Commun{
 	
 	private String remarques;
 
-	private Date dateCommande;
+	private LocalDateTime dateCommande;
 
-	private Date dateDebutProjet;
+	private LocalDateTime dateDebutProjet;
 
-	private Date dateFinProjet;
+	private LocalDateTime dateFinProjet;
 	
-	private ObjectId modele_id;
+	private String modele_id;
 	
-	private ObjectId auteur_id;
+	private String auteur_id;
 	
-	private Map<String, ObjectId> oeuvresTraitees_id;
-	private Map<String, ObjectId> traitements_attendus_id;
+	private Map<String, String> oeuvresTraitees_id;
+	private Map<String, String> traitements_attendus_id;
+	
+	final DateFormat inputFormat = new SimpleDateFormat("E MMM d H:m:s z y", Locale.US);
 	
 	public Commande(){
 		oeuvresTraitees_id = new HashMap<>();
@@ -76,41 +84,58 @@ public class Commande  extends Commun{
 	}
 
 	public LocalDate getDateCommande() {
-		Instant instant = Instant.ofEpochMilli(dateCommande.getTime());
+		Instant instant = Instant.ofEpochMilli(dateCommande.toEpochSecond(ZoneOffset.UTC));
 		LocalDate res = LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalDate();
 		return res;
+		//return dateCommande;
 	}
+	public void setDateCommande(String dateCommande) {
 
-	//Conflicting setter definitions for property "dateCommande": models.Commande#setDateCommande(1 params) vs models.Commande#setDateCommande(1 params)
-	
-	public void setDateCommande(LocalDate dateCommande) {
-		Instant instant = dateCommande.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
-		Date res = Date.from(instant);
-		this.dateCommande = res;
+		Date res = null;
+		try {
+			res = inputFormat.parse(dateCommande);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		this.dateCommande = LocalDateTime.ofInstant(res.toInstant(), ZoneId.systemDefault() );
 	}
 
 	public LocalDate getDateDebutProjet() {
-		Instant instant = Instant.ofEpochMilli(dateDebutProjet.getTime());
+		Instant instant = Instant.ofEpochMilli(dateDebutProjet.toEpochSecond(ZoneOffset.UTC));
 		LocalDate res = LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalDate();
 		return res;
+		//return dateDebutProjet;
 	}
 
-	public void setDateDebutProjet(LocalDate dateDebutProjet) {
-		Instant instant = dateDebutProjet.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
-		Date res = Date.from(instant);
-		this.dateDebutProjet = res;
+	public void setDateDebutProjet(String dateDebutProjet) {
+		Date res = null;
+		try {
+			res = inputFormat.parse(dateDebutProjet);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		this.dateDebutProjet = LocalDateTime.ofInstant(res.toInstant(), ZoneId.systemDefault() );
 	}
 
-	public LocalDate getDateFinProjet() {
-		Instant instant = Instant.ofEpochMilli(dateFinProjet.getTime());
+	public LocalDate  getDateFinProjet() {
+		Instant instant = Instant.ofEpochMilli(dateFinProjet.toEpochSecond(ZoneOffset.UTC));
 		LocalDate res = LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalDate();
 		return res;
+		//return dateFinProjet;
 	}
 
-	public void setDateFinProjet(LocalDate dateFinProjet) {
-		Instant instant = dateFinProjet.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
-		Date res = Date.from(instant);
-		this.dateFinProjet = res;
+	
+	public void setDateFinProjet(String dateFinProjet) {
+		Date res = null;
+		try {
+			res = inputFormat.parse(dateFinProjet);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		this.dateFinProjet = LocalDateTime.ofInstant(res.toInstant(), ZoneId.systemDefault() );
 	}
 
 	public Set<String> getOeuvresTraitees_names() {
@@ -118,15 +143,15 @@ public class Commande  extends Commun{
 	}
 
 	public void addOeuvreTraitee(OeuvreTraitee oeuvreTraitee) {
-		this.oeuvresTraitees_id.put(oeuvreTraitee.toString(), oeuvreTraitee.get_id());
+		this.oeuvresTraitees_id.put(oeuvreTraitee.toString(), oeuvreTraitee.get_id().toString());
 	}
 
 	public Set<String> getTraitements_attendus_names() {
 		return traitements_attendus_id.keySet();
 	}
 
-	public void addTraitement_attendu_id(String traitement_attendu, ObjectId id) {
-		this.traitements_attendus_id.put(traitement_attendu, id);
+	public void addTraitement_attendu_id(String traitement_attendu, String id) {
+		this.traitements_attendus_id.put(traitement_attendu, id.toString());
 	}
 
 	public String getNom_affichage() {
@@ -153,31 +178,19 @@ public class Commande  extends Commun{
 		this.complement = complement;
 	}
 
-	public void setDateCommande(Date dateCommande) {
-		this.dateCommande = dateCommande;
-	}
-
-	public void setDateDebutProjet(Date dateDebutProjet) {
-		this.dateDebutProjet = dateDebutProjet;
-	}
-
-	public void setDateFinProjet(Date dateFinProjet) {
-		this.dateFinProjet = dateFinProjet;
-	}
-
-	public ObjectId getModele_id() {
+	public String getModele_id() {
 		return modele_id;
 	}
 
-	public void setModele_id(ObjectId modele) {
+	public void setModele_id(String modele) {
 		this.modele_id = modele;
 	}
 
-	public ObjectId getAuteur_id() {
+	public String getAuteur_id() {
 		return auteur_id;
 	}
 
-	public void setAuteur_id(ObjectId auteur) {
+	public void setAuteur_id(String auteur) {
 		this.auteur_id = auteur;
 	}
 	
@@ -189,19 +202,19 @@ public class Commande  extends Commun{
 		return Auteur.retrouveAuteur(auteur_id);
 	}
 
-	public Map<String, ObjectId> getOeuvresTraitees_id() {
+	public Map<String, String> getOeuvresTraitees_id() {
 		return oeuvresTraitees_id;
 	}
 
-	public void setOeuvresTraitees_id(Map<String, ObjectId> oeuvresTraitees_id) {
+	public void setOeuvresTraitees_id(Map<String, String> oeuvresTraitees_id) {
 		this.oeuvresTraitees_id = oeuvresTraitees_id;
 	}
 
-	public Map<String, ObjectId> getTraitements_attendus_id() {
+	public Map<String, String> getTraitements_attendus_id() {
 		return traitements_attendus_id;
 	}
 
-	public void setTraitements_attendus_id(Map<String, ObjectId> traitements_attendus_id) {
+	public void setTraitements_attendus_id(Map<String, String> traitements_attendus_id) {
 		this.traitements_attendus_id = traitements_attendus_id;
 	}
 	

@@ -177,11 +177,7 @@ public class Fiche_client_controller  implements Initializable{
 		
 		commandeSelectionne = listView_commandes.getSelectionModel().getSelectedItem();
 		
-		System.out.println("c.getCommandes_id().get(commandeSelectionne) : " + c.getCommandes_id().get(commandeSelectionne));
-		
 		Commande co = Commande.retrouveCommande(new ObjectId(c.getCommandes_id().get(commandeSelectionne)));
-		
-		System.out.println("commande : " + co);
 		
 		Messages.setCommande(co);
 		Messages.setOeuvre(null);
