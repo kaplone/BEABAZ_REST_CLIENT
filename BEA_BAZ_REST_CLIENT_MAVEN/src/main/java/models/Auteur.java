@@ -78,5 +78,18 @@ public class Auteur extends Commun{
 		}
 		return c;
 	}
+    
+    public static Auteur fromJson(String auteur_str){
+
+        Auteur a = null;
+		
+		try {
+			  a = Commun.getMapper().readValue(auteur_str, Auteur.class);
+		  }
+		  catch (IOException e) {
+	    }
+		
+		return a;
+	}
 
 }

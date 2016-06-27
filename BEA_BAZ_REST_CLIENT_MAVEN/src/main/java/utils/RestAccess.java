@@ -7,6 +7,7 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.regex.Pattern;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -19,6 +20,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.bson.types.ObjectId;
+import org.jongo.FindOne;
 import org.json.JSONString;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +30,7 @@ import models.Auteur;
 import models.Client;
 import models.Commande;
 import models.Commun;
+import models.Fichier;
 import models.Traitement;
 
 import enums.Progression;
@@ -131,7 +134,7 @@ public class RestAccess {
 
     public static String request(String table, String field1, String value1, String field2, String value2) {	
 		
-    	request = new HttpGet(String.format("%s/%s/%s/%s", adresse, table, field1, value1, field2, value2));
+    	request = new HttpGet(String.format("%s/%s/%s/%s/%s/%s", adresse, table, field1, value1, field2, value2));
     	return traitementReponse();
 	}
 
@@ -140,6 +143,14 @@ public class RestAccess {
     	System.out.println(String.format("%s/%s/%s/%s", adresse, table, progres.toString(), commande.get_id().toString()));
 
     	request = new HttpGet(String.format("%s/%s/%s/%s", adresse, table, progres.toString(), commande.get_id().toString()));
+    	return traitementReponse();
+	}
+    
+    public static String request(String table, String field, String valeur, boolean regex) {	
+		
+    	System.out.println(String.format("%s/%s/%s/%s/%s", adresse, table, field, valeur, regex));
+
+    	request = new HttpGet(String.format("%s/%s/%s/%s/%s", adresse, table, field, valeur, regex));
     	return traitementReponse();
 	}
 	

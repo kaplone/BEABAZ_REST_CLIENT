@@ -8,7 +8,7 @@ import java.util.ResourceBundle;
 
 import org.jongo.MongoCursor;
 
-import utils.MongoAccess;
+import utils.RestAccess;
 import models.Fichier;
 import models.Messages;
 import models.Oeuvre;
@@ -178,8 +178,7 @@ public class Fiche_fichier_controller  implements Initializable{
 	@FXML
 	public void onFichierSelect(){
 		
-		fichierSelectionne = fichiers_listView.getSelectionModel().getSelectedItem();
-		Messages.setFichier(fichierSelectionne);		
+		fichierSelectionne = fichiers_listView.getSelectionModel().getSelectedItem();	
 		affichageInfos();
 		
 	}
@@ -229,18 +228,13 @@ public class Fiche_fichier_controller  implements Initializable{
     }
     
     public void rafraichirAffichage(){
-    	
-    	if(Messages.getObservableFichiers() != null){
-			liste_fichiers = Messages.getObservableFichiers();
-		}
-		else {
-			liste_fichiers = FXCollections.observableArrayList();
-			oeuvreTraitee = Messages.getOeuvreTraitee();
-			oeuvre = Messages.getOeuvre();
-			
-			liste_fichiers.addAll(oeuvreTraitee.getFichiers());
-			Messages.setObservableFichiers(liste_fichiers);
-		}
+	
+		liste_fichiers = FXCollections.observableArrayList();
+		oeuvreTraitee = Messages.getOeuvreTraitee();
+		oeuvre = oeuvreTraitee.getOeuvre();
+		
+		liste_fichiers.addAll(oeuvreTraitee.getFichiers());
+
 	
 		fichiers_listView.setItems(liste_fichiers);
     	
@@ -345,8 +339,6 @@ protected File chooseExport(){
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
-		fichier = Messages.getFichier();
 		
 		if (fichier != null){
 			nom_fichier_textField.setEditable(false);
@@ -373,7 +365,7 @@ protected File chooseExport(){
 			versCommandeButton.setVisible(false);
 		}
 		
-		if (Messages.getOeuvre() != null){
+		if (Messages.getOeuvreTraitee() != null){
 			versOeuvreButton.setVisible(true);
 		}
 		else {
@@ -388,19 +380,11 @@ protected File chooseExport(){
 
 		currentStage = Messages.getStage();
 		
-		if(Messages.getObservableFichiers() != null){
-			liste_fichiers = Messages.getObservableFichiers();
-		}
-		else {
-			liste_fichiers = FXCollections.observableArrayList();
-			oeuvreTraitee = Messages.getOeuvreTraitee();
-			oeuvre = Messages.getOeuvre();
+		liste_fichiers = FXCollections.observableArrayList();
+		oeuvreTraitee = Messages.getOeuvreTraitee();
 			
-			liste_fichiers.addAll(oeuvreTraitee.getFichiers());
-			Messages.setObservableFichiers(liste_fichiers);
-		}
-		
-		
+		liste_fichiers.addAll(oeuvreTraitee.getFichiers());
+
 		fichiers_listView.setItems(liste_fichiers);
 		
 		int index = 0;

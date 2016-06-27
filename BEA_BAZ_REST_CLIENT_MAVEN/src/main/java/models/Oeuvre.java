@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
+
 import utils.RestAccess;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -30,10 +31,11 @@ public class Oeuvre extends Commun{
 	               inscriptions_au_verso,
 	               format_de_conditionnement;
 	
-	private ObjectId auteur;
+	private String auteur;
 	
-	private Map<String, ObjectId> oeuvresUtilisees_id;
-	private Map<String, ObjectId> techniquesUtilisees_id;
+	private Map<String, String> oeuvresUtilisees_id;
+	private Map<String, String> techniquesUtilisees_id;
+	private Map<String, String> matieresUtilisees_id;
 	
 	private String etat_current;
 	
@@ -77,7 +79,7 @@ public class Oeuvre extends Commun{
 		
 	}
     
-    public void addOeuvre(String m, ObjectId oid){
+    public void addOeuvre(String m, String oid){
     	
         if (! oeuvresUtilisees_id.keySet().contains(m)){
     		oeuvresUtilisees_id.put(m, oid);
@@ -95,7 +97,7 @@ public class Oeuvre extends Commun{
     	} 	
     }
     
-    public void addTechnique(String t, ObjectId oid){
+    public void addTechnique(String t, String oid){
     	
 
     	if (! techniquesUtilisees_id.keySet().contains(t)){
@@ -202,11 +204,11 @@ public class Oeuvre extends Commun{
 		this.format_de_conditionnement = format_de_conditionnement;
 	}
 
-	public ObjectId getAuteur() {
+	public String getAuteur() {
 		return auteur;
 	}
 
-	public void setAuteur(ObjectId auteur) {
+	public void setAuteur(String auteur) {
 		this.auteur = auteur;
 	}
 
@@ -223,30 +225,34 @@ public class Oeuvre extends Commun{
 	}
 
 	public void AddOeuvreUtilisee(Oeuvre oeuvreUtilisee) {
-		this.oeuvresUtilisees_id.put(oeuvreUtilisee.getNom(), oeuvreUtilisee.get_id());
+		this.oeuvresUtilisees_id.put(oeuvreUtilisee.getNom(), oeuvreUtilisee.get_id().toString());
 	}
 
 	public Set<String> getTechniquesUtilisees_names() {
 		return techniquesUtilisees_id.keySet();
 	}
-
-	public void addTechniqueUtilisee(Technique techniqueUtilisee) {
-		this.techniquesUtilisees_id.put(techniqueUtilisee.getNom(), techniqueUtilisee.get_id());
+	
+	public Set<String> getMatieresUtilisees_names() {
+		return matieresUtilisees_id.keySet();
 	}
 
-	public Map<String, ObjectId> getOeuvresUtilisees_id() {
+	public void addTechniqueUtilisee(Technique techniqueUtilisee) {
+		this.techniquesUtilisees_id.put(techniqueUtilisee.getNom(), techniqueUtilisee.get_id().toString());
+	}
+
+	public Map<String, String> getOeuvresUtilisees_id() {
 		return oeuvresUtilisees_id;
 	}
 
-	public void setOeuvresUtilisees_id(Map<String, ObjectId> oeuvresUtilisees_id) {
+	public void setOeuvresUtilisees_id(Map<String, String> oeuvresUtilisees_id) {
 		this.oeuvresUtilisees_id = oeuvresUtilisees_id;
 	}
 
-	public Map<String, ObjectId> getTechniquesUtilisees_id() {
+	public Map<String, String> getTechniquesUtilisees_id() {
 		return techniquesUtilisees_id;
 	}
 
-	public void setTechniquesUtilisees_id(Map<String, ObjectId> techniquesUtilisees_id) {
+	public void setTechniquesUtilisees_id(Map<String, String> techniquesUtilisees_id) {
 		this.techniquesUtilisees_id = techniquesUtilisees_id;
 	}
 	

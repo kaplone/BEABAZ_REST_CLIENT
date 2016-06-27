@@ -165,7 +165,6 @@ public class Fiche_client_controller  implements Initializable{
 
 		Messages.setClient(c);
 		Messages.setCommande(null);
-		Messages.setOeuvre(null);
 		Messages.setOeuvreTraitee(null);
 		
 		affichageInfos();
@@ -180,7 +179,6 @@ public class Fiche_client_controller  implements Initializable{
 		Commande co = Commande.retrouveCommande(new ObjectId(c.getCommandes_id().get(commandeSelectionne)));
 		
 		Messages.setCommande(co);
-		Messages.setOeuvre(null);
 		Messages.setOeuvreTraitee(null);
 		
 		Scene fiche_commande_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_commande.fxml"), 1275, 722);

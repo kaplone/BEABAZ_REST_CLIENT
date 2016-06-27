@@ -72,7 +72,7 @@ public class Fichier extends Commun{
 	
 	public static Fichier retrouveFichier(String FichierSelectionne){
 
-        String fichier_str= RestAccess.request("Fichier", "nom", FichierSelectionne);
+        String fichier_str= RestAccess.request("fichier", "nom", FichierSelectionne);
         Fichier a = null;
 		
 		try {
@@ -86,7 +86,7 @@ public class Fichier extends Commun{
 	
 	public static Fichier retrouveFichier(ObjectId id){
 
-        String fichier_str= RestAccess.request("Fichier", id);
+        String fichier_str= RestAccess.request("fichier", id);
         Fichier a = null;
 		
 		try {
@@ -100,7 +100,7 @@ public class Fichier extends Commun{
 	
     public static Fichier[] retrouveFichiers(){
 		
-		String fichier_str= RestAccess.request("Fichier");
+		String fichier_str= RestAccess.request("fichier");
         Fichier[] c = null ;
 		
 		try {
@@ -112,6 +112,17 @@ public class Fichier extends Commun{
 		return c;
 	}
 
-	
+    public static Fichier fromJson(String fichier_str){
+
+        Fichier a = null;
+		
+		try {
+			  a = Commun.getMapper().readValue(fichier_str, Fichier.class);
+		  }
+		  catch (IOException e) {
+	    }
+		
+		return a;
+	}
 
 }

@@ -533,8 +533,6 @@ public class Fiche_commande_controller  implements Initializable{
     public void onOeuvreSelect(){
     	
     	Messages.setOeuvreTraitee((OeuvreTraitee) tableOeuvre.getSelectionModel().getSelectedItem());
-    	Messages.setOeuvre(Messages.getOeuvreTraitee().getOeuvre());
-
     	
     	Scene fiche_oeuvre_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_oeuvre.fxml"), 1275, 722);
 		fiche_oeuvre_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());

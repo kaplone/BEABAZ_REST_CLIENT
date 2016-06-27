@@ -11,7 +11,6 @@ public class Messages {
 	
     private static Client client;
 	private static Commande commande;
-	private static Oeuvre oeuvre;
 	private static OeuvreTraitee oeuvreTraitee;
 
 	
@@ -51,14 +50,6 @@ public class Messages {
 
 	public static void setOeuvreTraitee(OeuvreTraitee oeuvreTraitee) {
 		Messages.oeuvreTraitee = oeuvreTraitee;
-	}
-
-	public static void setOeuvre(Oeuvre oeuvre) {
-		Messages.oeuvre = oeuvre;
-	}
-
-	public static Oeuvre getOeuvre() {
-		return oeuvre;
 	}
 
 }

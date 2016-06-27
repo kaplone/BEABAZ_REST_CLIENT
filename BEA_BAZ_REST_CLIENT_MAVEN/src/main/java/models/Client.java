@@ -107,25 +107,18 @@ public class Client extends Commun{
 	}
 	
 	public static Client retrouveClient(String clientSelectionne){
-		
-		System.out.println("------------ " + clientSelectionne);
 
         String client_str= RestAccess.request("client", "nom", clientSelectionne);
         Client c = null;
         ObjectMapper mapper = new ObjectMapper();
-        
-        System.out.println("========== " + client_str);
         
         if (client_str != null){
           try {			 
   			  c = mapper.readValue(client_str, Client.class);
   		  }
   		  catch (IOException e) {
-  	    }
+  	      }
         }
-		
-		
-		
 		return c;
 	}
 	
@@ -166,6 +159,21 @@ public class Client extends Commun{
 			liste_str.add(c.getNom());
 		}
 		return liste_str;
+	}
+    
+    public static Client fromJson(String client_str){
+
+        Client c = null;
+        ObjectMapper mapper = new ObjectMapper();
+        
+        if (client_str != null){
+          try {			 
+  			  c = mapper.readValue(client_str, Client.class);
+  		  }
+  		  catch (IOException e) {
+  	      }
+        }
+		return c;
 	}
 	
 }
