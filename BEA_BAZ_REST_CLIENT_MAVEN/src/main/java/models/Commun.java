@@ -3,9 +3,11 @@ package models;
 import java.util.Date;
 import org.bson.types.ObjectId;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Commun {
@@ -71,7 +73,7 @@ public class Commun {
 	}
 	
 	public static ObjectMapper  getMapper(){
-		return new ObjectMapper();
+		return new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
 }

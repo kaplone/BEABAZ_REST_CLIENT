@@ -171,7 +171,8 @@ public class OeuvreTraitee extends Commun {
 	
 	public Oeuvre getOeuvre(){
 		
-		return Oeuvre.retrouveOeuvre(oeuvre_id);
+		System.out.println("oeuvre_id : " + oeuvre_id);
+		return Oeuvre.retrouveOeuvre(new ObjectId(oeuvre_id));
 	}
 
 	public String getOeuvre_id() {
@@ -194,6 +195,10 @@ public class OeuvreTraitee extends Commun {
 		return commande_id;
 	}
 
+	public Commande getCommande() {
+		return Commande.retrouveCommande(new ObjectId(commande_id));
+	}
+	
 	public void setCommande_id(String commande_id) {
 		this.commande_id = commande_id;
 	}

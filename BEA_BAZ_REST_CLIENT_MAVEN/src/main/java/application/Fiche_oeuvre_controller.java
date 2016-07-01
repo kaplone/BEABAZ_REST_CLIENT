@@ -149,10 +149,8 @@ public class Fiche_oeuvre_controller  implements Initializable{
 	private OeuvreTraitee oeuvreTraiteeSelectionne;
 	private List<TacheTraitement> traitementCursor ;
 	private ObservableList<TacheTraitement> traitementsAttendus;
-	private ObservableList<String> observableAuteurs;
-	private ObservableList<String> observableFichiers;
 	private TacheTraitement traitementSelectionne;
-	private String commandeSelectionne;
+	private Commande commandeSelectionne;
 	
 	private Stage currentStage;
 	private Auteur auteur;
@@ -160,11 +158,11 @@ public class Fiche_oeuvre_controller  implements Initializable{
 	boolean directSelect = false;
 	
 	private List<OeuvreTraitee> oeuvresTraiteesCursor;
-	private List<Matiere> matieresCursor;
-	private List<Technique> techniquesCursor;
 	
 	private ObservableList<String> matieres;
 	private ObservableList<String> techniques;
+	private ObservableList<String> fichiers;
+	private ObservableList<String> auteurs;
 	
 	private Set<String> matieresUtilisees;
 	private Set<String> techniquesUtilisees;
@@ -333,11 +331,11 @@ public class Fiche_oeuvre_controller  implements Initializable{
 //			onEditerOeuvreButton();
 //		});
 		
-		String auteur_str = RestAccess.request("auteur", "nom", oeuvreSelectionne.getAuteur());
-
-		auteur = Auteur.fromJson(auteur_str);
-		
-		
+//		String auteur_str = RestAccess.request("auteur", "nom", oeuvreSelectionne.getAuteur());
+//
+//		auteur = Auteur.fromJson(auteur_str);
+//		
+//		
 		afficherAuteurs();
 		auteursChoiceBox.getSelectionModel().select(auteur.getNom());
 		
@@ -368,8 +366,8 @@ public class Fiche_oeuvre_controller  implements Initializable{
 		
 		traitementsAttendus.clear();
 				
-		for (String tt_id : oeuvreTraiteeSelectionne.getTraitementsAttendus_id()){
-			traitementsAttendus.add(TacheTraitement.retrouveTacheTraitement( new ObjectId(tt_id)));	
+		for (String tt : oeuvreTraiteeSelectionne.getTraitementsAttendus_id()){
+			traitementsAttendus.add(TacheTraitement.retrouveTacheTraitement(tt));	
 		}
 
 		traitements_attendus_tableColumn.setCellValueFactory(new PropertyValueFactory<TacheTraitement, String>("nom"));
@@ -382,25 +380,23 @@ public class Fiche_oeuvre_controller  implements Initializable{
     	
     	int index = 0;
     	
-    	observableAuteurs = FXCollections.observableArrayList();
+    	auteurs.clear();
+    	auteurs.add(null);
+        matieres.addAll(Arrays.asList(Auteur.retrouveAuteurs())
+                .stream()
+                .map(a -> a.getNom())
+                .collect(Collectors.toList()));
+         
+ 	   auteursChoiceBox.setItems(auteurs);	
 
-		
-        Auteur[] auteurCursor = Auteur.retrouveAuteurs();
- 
-        observableAuteurs.add(null);
-		
-		for (Auteur auteur  : auteurCursor){
-			observableAuteurs.addAll(auteur.getNom());
-			auteurs_id.put(auteur.getNom(), auteur.get_id());
-			if (auteur != null && auteur.getNom().equals(auteur.getNom())){
-				index ++;
-				break;
-			}
-		}	
-
-
-		auteursChoiceBox.setItems(observableAuteurs);
-		auteursChoiceBox.getSelectionModel().select(index);
+//		for (Auteur auteur  : Auteur.retrouveAuteurs()){
+//			if (auteur != null && auteur.getNom().equals(oeuvreSelectionne.getAuteur())){
+//				index ++;
+//				break;
+//			}
+//		}	
+//
+//		auteursChoiceBox.getSelectionModel().select(index);
 	}
 
     @FXML
@@ -500,103 +496,54 @@ public class Fiche_oeuvre_controller  implements Initializable{
 
 		tableOeuvre.setItems(obs_oeuvres);
 		
-		tableOeuvre.getSelectionModel().clearAndSelect(Messages.getOeuvre_index());
-		tableOeuvre.getSelectionModel().focus(Messages.getOeuvre_index());
-		
 	}
     
    public void afficherTechniques(){
 	   
 	   techniques.clear();
-    	
-       if (Messages.getTechniques_id() == null){
-    	   
-    	   System.out.println("Messages.getTechniques_id() == null");
-    	   techniques_id = new TreeMap<>();
-
-           techniquesCursor = RestAccess.request("technique").as(Technique.class);
-    		
-    		while (techniquesCursor.hasNext()){
-    			
-    			Technique t = techniquesCursor.next();
-    			techniques.add(t.getNom());
-    			techniques_id.put(t.getNom(), t.get_id());
-    		}
-    		Messages.setTechniques_id(techniques_id);
-       }
-       else {
-    	   System.out.println("Messages.getTechniques_id() != null");
-    	   
-    	   techniques_id = Messages.getTechniques_id();
-    	   techniques.addAll(Messages.getTechniques_id().keySet());
-       }
+	   
+       techniques.addAll(Arrays.asList(Technique.retrouveTechniques())
+    		                   .stream()
+                               .map(a -> a.getNom())
+                               .collect(Collectors.toList()));
+       
        techniques_listView.setItems(techniques);		
 	}
     
    public void afficherMatieres(){
    	
        matieres.clear();
-       matieres_id = new TreeMap<>();
-       
-       if (Messages.getMatieres_id() == null){
-    	   
-    	   matieresCursor = RestAccess.request("matiere").as(Matiere.class);
-   		
-   		   while (matieresCursor.hasNext()){
-   			   
-   			   Matiere m = matieresCursor.next();
-   			   matieres.add(m.getNom());
-   			   matieres_id.put(m.getNom(), m.get_id());
-   		   }
-   		   Messages.setMatieres_id(matieres_id);
-       }
-       else {
-    	   matieres_id = Messages.getMatieres_id();
-    	   matieres.addAll(matieres_id.keySet());
-       }
-       
-		matieres_listView.setItems(matieres);	
+       matieres.addAll(Arrays.asList(Matiere.retrouveMatieres())
+               .stream()
+               .map(a -> a.getNom())
+               .collect(Collectors.toList()));
+        
+	   matieres_listView.setItems(matieres);	
 	}
     
     public void afficherFichiers(){
     	
-    	observableFichiers.clear();
-    	fichiers_id = new TreeMap<>();
+    	fichiers.clear();
+    	fichiers.addAll(Arrays.asList(Fichier.retrouveFichiers())
+                .stream()
+                .map(a -> a.getNom())
+                .collect(Collectors.toList()));
     	
-    	if (Messages.getFichiers_id() == null){
-    		
-    		try {
-    	    	
-    	    	for (ObjectId fichier_id : oeuvreTraiteeSelectionne.getFichiers_id().values()){
-    	    		
-    	    		Fichier f = RestAccess.request("fichier", fichier_id).as(Fichier.class).next();
-    	    		
-    	    		observableFichiers.add(f.getNom());	
-    	    		fichiers_id.put(f.getNom(), f.get_id());
-    	    	}
-    	    	
-    	    	observableFichiers.sort(new Comparator<String>() {
+    	fichiers_listView.setItems(fichiers);
+    	
+    	fichiers.sort(new Comparator<String>() {
 
-    				@Override
-    				public int compare(String o1, String o2) {
-    				
-    					return String.format("%s_%02d", o1.split("\\.")[1], Integer.parseInt(o1.split("\\.")[2]))
-    				.compareTo(String.format("%s_%02d", o2.split("\\.")[1], Integer.parseInt(o2.split("\\.")[2])));
-    				}
-    			});
-    	    	Messages.setFichiers_id(fichiers_id);
-    	    	
-        	}
-        	catch (NullPointerException npe ){
-        		
-        	}
-    		
-    	}
-    	else {
-    		observableFichiers.addAll(Messages.getFichiers_id().keySet().stream().map(a -> Normalize.normalizeDenormStringField(a)).collect(Collectors.toList()));
-    	}
+			@Override
+			public int compare(String o1, String o2) {
+			
+				return String.format("%s_%02d", o1.split("\\.")[1], Integer.parseInt(o1.split("\\.")[2]))
+			.compareTo(String.format("%s_%02d", o2.split("\\.")[1], Integer.parseInt(o2.split("\\.")[2])));
+			}
+		});
     	
-    	fichiers_listView.setItems(observableFichiers);
+    	//fichiers.addAll(fichiers.stream().map(a -> Normalize.normalizeDenormStringField(a)).collect(Collectors.toList()));
+
+    	
     	
     }
     
@@ -617,7 +564,7 @@ public class Fiche_oeuvre_controller  implements Initializable{
     public void onFichierSelect(){
     	
     	String f = fichiers_listView.getSelectionModel().getSelectedItem();
-    	Fichier fichier = RestAccess.request("fichier", fichiers_id.get(f)).as(Fichier.class).next();
+    	Fichier fichier = Fichier.retrouveFichier(f);
     	
     	Messages.setFichier(fichier);
     	
@@ -632,8 +579,8 @@ public class Fiche_oeuvre_controller  implements Initializable{
 	public void onMatiereSelect(){
     	
     	String m = matieres_listView.getSelectionModel().getSelectedItem();
-	
-		oeuvreSelectionne.addMatiere(m, matieres_id.get(m));
+    	Matiere matiere = Matiere.retrouveMatiere(m);
+		oeuvreSelectionne.addMatiereUtilisee(matiere);
 
 		RestAccess.update("oeuvre", oeuvreSelectionne);
 
@@ -650,11 +597,8 @@ public class Fiche_oeuvre_controller  implements Initializable{
 	public void onTechniqueSelect(){
 		
         String t = techniques_listView.getSelectionModel().getSelectedItem();
-        
-        System.out.println(t);
-        System.out.println(techniques_id);
 			
-		oeuvreSelectionne.addTechnique(t, techniques_id.get(t));
+		oeuvreSelectionne.addTechniqueUtilisee(Technique.retrouveTechnique(t));
 
 		RestAccess.update("oeuvre", oeuvreSelectionne);
 		
@@ -689,7 +633,7 @@ public class Fiche_oeuvre_controller  implements Initializable{
 		
 		int index = matieres_hbox.getChildren().indexOf(e);
 
-		Matiere matiere = RestAccess.request("matiere", "nom",  ((Button) matieres_hbox.getChildren().get(index -1)).getText()).as(Matiere.class);
+		Matiere matiere = Matiere.retrouveMatiere(((Button) matieres_hbox.getChildren().get(index -1)).getText());
 		
 		matieres_hbox.getChildren().remove(index, index +1);
 		
@@ -733,7 +677,7 @@ public class Fiche_oeuvre_controller  implements Initializable{
 		
 		int index = techniques_hbox.getChildren().indexOf(e);
 
-		Technique technique = RestAccess.request("technique", "nom",  ((Button) techniques_hbox.getChildren().get(index -1)).getText()).as(Technique.class);
+		Technique technique = Technique.retrouveTechnique((((Button) techniques_hbox.getChildren().get(index -1)).getText()));
 		
 		techniques_hbox.getChildren().remove(index -1, index +1);
 		
@@ -752,29 +696,16 @@ public class Fiche_oeuvre_controller  implements Initializable{
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		
-		oeuvreSelectionne = Messages.getOeuvre();
+		
+		
 		oeuvreTraiteeSelectionne = Messages.getOeuvreTraitee();
-
-		if (Messages.getAuteurs_id() != null){
-			auteurs_id = Messages.getAuteurs_id();
-		}
-		else {
-			auteurs_id = new TreeMap<>();
-			RestCursor<Auteur> auteurCursor = RestAccess.request("auteur").as(Auteur.class);
-			
-			while (auteurCursor.hasNext()){
-				Auteur a = auteurCursor.next();
-				auteurs_id.put(a.getNom(), a.get_id());
-			}
-			Messages.setAuteurs_id(auteurs_id);
-		}
-		fichiers_id = new TreeMap<>();
-
-		traitementSelectionne = Messages.getTacheTraitement();
-		oeuvreSelectionne = Messages.getOeuvre();
-		oeuvreTraiteeSelectionne = Messages.getOeuvreTraitee();
-		commandeSelectionne = Messages.getCommande();
-		auteur = Messages.getAuteur();
+		System.out.println("oeuvreTraiteeSelectionne : " + oeuvreTraiteeSelectionne);
+		
+		oeuvreSelectionne = oeuvreTraiteeSelectionne.getOeuvre(); // retourne null : pourquoi ?
+		System.out.println("oeuvreSelectionne :" + oeuvreSelectionne); 
+		
+		commandeSelectionne = oeuvreTraiteeSelectionne.getCommande();
+		auteur = oeuvreSelectionne.getAuteur_obj();
 
 		numero_archive_6s_textField.setEditable(false);
 		titre_textField.setEditable(false);
@@ -801,12 +732,14 @@ public class Fiche_oeuvre_controller  implements Initializable{
 		
 		matieres = FXCollections.observableArrayList();
 		techniques = FXCollections.observableArrayList();
+		auteurs = FXCollections.observableArrayList();
+		traitementsAttendus = FXCollections.observableArrayList();
 	
 		etatsFinaux = FXCollections.observableArrayList(EtatFinal.values());
 		etat_final_choiceBox.setItems(etatsFinaux);
 	
 		traitementsAttendus = FXCollections.observableArrayList();
-		observableFichiers = FXCollections.observableArrayList();
+		fichiers = FXCollections.observableArrayList();
 		
 		oeuvresTraitees = new ArrayList<OeuvreTraitee>();
 
@@ -823,12 +756,7 @@ public class Fiche_oeuvre_controller  implements Initializable{
 			System.out.println(newValue);
 			
 			if(newValue != null && ! newValue.equals(auteur.getNom())){
-				
-				System.out.println(auteurs_id);
-				System.out.println(auteurs_id.get(newValue));
-				
-				auteur = RestAccess.request("auteur", auteurs_id.get(newValue));
-
+				auteur = Auteur.retrouveAuteur(newValue);
 				onEditerOeuvreButton();
 			}	
 		});

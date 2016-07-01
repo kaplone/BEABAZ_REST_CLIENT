@@ -32,15 +32,14 @@ public class Oeuvre extends Commun{
 	               format_de_conditionnement;
 	
 	private String auteur;
-	
-	private Map<String, String> oeuvresUtilisees_id;
+
 	private Map<String, String> techniquesUtilisees_id;
 	private Map<String, String> matieresUtilisees_id;
 	
 	private String etat_current;
 	
 	public Oeuvre(){
-		oeuvresUtilisees_id = new HashMap<>();
+		matieresUtilisees_id = new HashMap<>();
 		techniquesUtilisees_id = new HashMap<>();
 	}
 	
@@ -79,23 +78,23 @@ public class Oeuvre extends Commun{
 		
 	}
     
-    public void addOeuvre(String m, String oid){
-    	
-        if (! oeuvresUtilisees_id.keySet().contains(m)){
-    		oeuvresUtilisees_id.put(m, oid);
-    	}
-    	
-    }
-    
-    public void deleteOeuvre(String m){
-    	
-    	for (String m_ : oeuvresUtilisees_id.keySet()){
-    		if (m.equals(m_)){
-    			oeuvresUtilisees_id.remove(m_);
-    			break;
-    		}
-    	} 	
-    }
+//    public void addMatiere(String m, String oid){
+//    	
+//        if (! matieresUtilisees_id.keySet().contains(m)){
+//    		matieresUtilisees_id.put(m, oid);
+//    	}
+//    	
+//    }
+//    
+//    public void deleteMatiere(String m){
+//    	
+//    	for (String m_ : matieresUtilisees_id.keySet()){
+//    		if (m.equals(m_)){
+//    			matieresUtilisees_id.remove(m_);
+//    			break;
+//    		}
+//    	} 	
+//    }
     
     public void addTechnique(String t, String oid){
     	
@@ -111,6 +110,25 @@ public class Oeuvre extends Commun{
     	for (String t_ : techniquesUtilisees_id.keySet()){
     		if (t.equals(t_)){
     			techniquesUtilisees_id.remove(t_);
+    			break;
+    		}
+    	} 	
+    }
+    
+    public void addMatiere(String m, String oid){
+    	
+
+    	if (! matieresUtilisees_id.keySet().contains(m)){
+    		matieresUtilisees_id.put(m, oid);
+    	}
+    	
+    }
+    
+    public void deleteMatiere(String m){
+
+    	for (String m_ : matieresUtilisees_id.keySet()){
+    		if (m.equals(m_)){
+    			matieresUtilisees_id.remove(m_);
     			break;
     		}
     	} 	
@@ -207,6 +225,10 @@ public class Oeuvre extends Commun{
 	public String getAuteur() {
 		return auteur;
 	}
+	
+	public Auteur getAuteur_obj() {
+		return Auteur.retrouveAuteur(new ObjectId(this.getAuteur()));
+	}
 
 	public void setAuteur(String auteur) {
 		this.auteur = auteur;
@@ -220,12 +242,8 @@ public class Oeuvre extends Commun{
 		this.etat_current = etat_current;
 	}
 
-	public Set<String> getOeuvresUtilisees_names() {
-		return oeuvresUtilisees_id.keySet();
-	}
-
-	public void AddOeuvreUtilisee(Oeuvre oeuvreUtilisee) {
-		this.oeuvresUtilisees_id.put(oeuvreUtilisee.getNom(), oeuvreUtilisee.get_id().toString());
+	public void AddMatiereUtilisee(Matiere matiereUtilisee) {
+		this.matieresUtilisees_id.put(matiereUtilisee.getNom(), matiereUtilisee.get_id().toString());
 	}
 
 	public Set<String> getTechniquesUtilisees_names() {
@@ -239,13 +257,17 @@ public class Oeuvre extends Commun{
 	public void addTechniqueUtilisee(Technique techniqueUtilisee) {
 		this.techniquesUtilisees_id.put(techniqueUtilisee.getNom(), techniqueUtilisee.get_id().toString());
 	}
-
-	public Map<String, String> getOeuvresUtilisees_id() {
-		return oeuvresUtilisees_id;
+	
+	public void addMatiereUtilisee(Matiere matiereUtilisee) {
+		this.matieresUtilisees_id.put(matiereUtilisee.getNom(), matiereUtilisee.get_id().toString());
 	}
 
-	public void setOeuvresUtilisees_id(Map<String, String> oeuvresUtilisees_id) {
-		this.oeuvresUtilisees_id = oeuvresUtilisees_id;
+	public Map<String, String> getMatieresUtilisees_id() {
+		return matieresUtilisees_id;
+	}
+
+	public void setMatieresUtilisees_id(Map<String, String> matieresUtilisees_id) {
+		this.matieresUtilisees_id = matieresUtilisees_id;
 	}
 
 	public Map<String, String> getTechniquesUtilisees_id() {
@@ -257,27 +279,21 @@ public class Oeuvre extends Commun{
 	}
 	
 	public String getTechniquesUtilisees_noms_complets(){
-		return null;
-		
-//		return getTechniquesUtilisees_id().entrySet()
-//                                          .stream()
-//                                          .map(a -> RestAccess.request("technique", a.getValue())
-//                                                               .as(Technique.class)
-//                                                               .next()
-//                                                               .getNom_complet())
-//                                          .collect(Collectors.joining(", "));
+
+		return getTechniquesUtilisees_id().entrySet()
+                                          .stream()
+                                          .map(a -> Technique.retrouveTechnique(a.getKey())
+                                          .getNom_complet())
+                                          .collect(Collectors.joining(", "));
 	}
 	
-    public String getOeuvresUtilisees_noms_complets(){
-    	return null;
-		
-//		return getOeuvresUtilisees_id().entrySet()
-//                                        .stream()
-//                                        .map(a -> RestAccess.request("oeuvre", a.getValue())
-//                                                             .as(Oeuvre.class)
-//                                                             .next()
-//                                                             .getNom_complet())
-//                                        .collect(Collectors.joining(", "));
+    public String getMatieresUtilisees_noms_complets(){
+
+		return getMatieresUtilisees_id().entrySet()
+				                        .stream()
+				                        .map(a -> Matiere.retrouveMatiere(a.getKey())
+                                        .getNom_complet())
+	                                    .collect(Collectors.joining(", "));
 	}
 
 	public String getKey1() {
@@ -310,6 +326,7 @@ public class Oeuvre extends Commun{
 			  c = Commun.getMapper().readValue(oeuvre_str, Oeuvre.class);
 		  }
 		  catch (IOException e) {
+			  e.printStackTrace();
 	    }
 		
 		return c;
@@ -318,13 +335,15 @@ public class Oeuvre extends Commun{
 	public static Oeuvre retrouveOeuvre(ObjectId id){
 
         String oeuvre_str= RestAccess.request("oeuvre", id);
+        System.out.println("oeuvre_str : " + oeuvre_str);
         Oeuvre c = null;
 		
 		try {
 			  c = Commun.getMapper().readValue(oeuvre_str, Oeuvre.class);
 		  }
 		  catch (IOException e) {
-			  
+			  System.out.println("erreur dans retrouveOeuvre(ObjectId id)");
+			  e.printStackTrace();
 	    }
 		
 		return c;
@@ -342,6 +361,14 @@ public class Oeuvre extends Commun{
 			e.printStackTrace();
 		}
 		return c;
+	}
+	
+	public void setMatieresUtilisees_names(String[] s){
+		
+	}
+	
+    public void setTechniquesUtilisees_names(String[] s){
+		
 	}
 	
 }
