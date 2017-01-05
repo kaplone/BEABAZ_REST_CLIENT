@@ -4,12 +4,17 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.jongo.MongoCursor;
 
-import utils.MongoAccess;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import utils.RestAccess;
 import models.Model;
+import models.Technique;
 import models.Client;
 import models.Commande;
 import models.Messages;
@@ -157,7 +162,7 @@ public class Fiche_modele_controller  implements Initializable{
 	public void onModelSelect(){
 		
 		modelSelectionne = listView_model.getSelectionModel().getSelectedItem();
-		Messages.setModel(modelSelectionne);		
+		//Messages.setModel(modelSelectionne);		
 		affichageInfos(modelSelectionne);
 		
 	}
@@ -169,7 +174,7 @@ public class Fiche_modele_controller  implements Initializable{
     	remarques_model_textArea.setText(modelSelectionne.getRemarques());
     	file_path_textField.setText(modelSelectionne.getCheminVersModelSTR());
     	
-    	model = Messages.getModel();    	
+    	//model = Messages.getModel();    	
     	
     }
     
@@ -213,14 +218,15 @@ public class Fiche_modele_controller  implements Initializable{
     	
     	liste_models = FXCollections.observableArrayList();
 		
-		
-		
-		modelCursor = MongoAccess.request("model").as(Model.class);
-		
-		while (modelCursor.hasNext()){
-			liste_models.add(modelCursor.next());
+    	String jsonString = RestAccess.requestAll("model");
+		ObjectMapper om = new ObjectMapper();
+
+		try {
+			List<Model> models = om.readValue(jsonString, new TypeReference<List<Model>>() {});
+			liste_models.addAll(models);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		
 		listView_model.setItems(liste_models);
     	
     }
@@ -364,15 +370,18 @@ protected File chooseExport(){
 		cheminVersModelButton.setVisible(false);
 		
 		liste_models = FXCollections.observableArrayList();
-		
-		currentStage = Messages.getStage();
-		
-		modelCursor = MongoAccess.request("model").as(Model.class);
-		
-		while (modelCursor.hasNext()){
-			liste_models.add(modelCursor.next());
+		String jsonString = RestAccess.requestAll("model");
+		ObjectMapper om = new ObjectMapper();
+
+		try {
+			List<Model> models = om.readValue(jsonString, new TypeReference<List<Model>>() {});
+			liste_models.addAll(models);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		
+		currentStage = Messages.getStage();
+
 		listView_model.setItems(liste_models);
 
 	}

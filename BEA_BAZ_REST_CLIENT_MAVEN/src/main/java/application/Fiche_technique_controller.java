@@ -3,6 +3,7 @@ package application;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
@@ -11,9 +12,13 @@ import java.util.stream.Collectors;
 import org.bson.types.ObjectId;
 import org.jongo.MongoCursor;
 
-import utils.MongoAccess;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import utils.RestAccess;
 import models.Client;
 import models.Commande;
+import models.Matiere;
 import models.Messages;
 import models.Produit;
 import models.TacheTraitement;
@@ -213,12 +218,22 @@ public class Fiche_technique_controller  implements Initializable{
     	
     	if (techniqueSelectionne != null){
     		
-    		techniqueCursor = MongoAccess.request("technique").as(Technique.class);
+    		String jsonString = RestAccess.requestAll("technique");
+    		ObjectMapper om = new ObjectMapper();
+
+    		try {
+    			List<Technique> techniques = om.readValue(jsonString, new TypeReference<List<Technique>>() {});
+    			liste_techniques.addAll(techniques);
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    		}
     		
-    		while (techniqueCursor.hasNext()){
-    			Technique enplus = techniqueCursor.next();
-    			liste_techniques.add(enplus);
-    		}	
+//    		techniqueCursor = RestAccess.request("technique").as(Technique.class);
+//    		
+//    		while (techniqueCursor.hasNext()){
+//    			Technique enplus = techniqueCursor.next();
+//    			liste_techniques.add(enplus);
+//    		}	
     		listView_techniques.setItems(liste_techniques);		
     	}	
     }
@@ -271,14 +286,14 @@ public class Fiche_technique_controller  implements Initializable{
 		liste_techniques  = FXCollections.observableArrayList();
 		techniques_id = new TreeMap<>();
 
-		techniqueCursor = MongoAccess.request("technique").as(Technique.class);
+		//techniqueCursor = RestAccess.request("technique").as(Technique.class);
 		
-		while (techniqueCursor.hasNext()){
-			Technique t = techniqueCursor.next();
-			liste_techniques.add(t);
-			techniques_id.put(t.getNom(), t.get_id());
-		}
-		Messages.setTechniques_id(techniques_id);
+//		while (techniqueCursor.hasNext()){
+//			Technique t = techniqueCursor.next();
+//			liste_techniques.add(t);
+//			techniques_id.put(t.getNom(), t.get_id());
+//		}
+//		Messages.setTechniques_id(techniques_id);
 		
 		listView_techniques.setItems(liste_techniques);
 		
@@ -406,17 +421,30 @@ public class Fiche_technique_controller  implements Initializable{
 		importerButton.setVisible(false);
 
 		liste_techniques  = FXCollections.observableArrayList();
+		String jsonString = RestAccess.requestAll("technique");
+		ObjectMapper om = new ObjectMapper();
+
+		try {
+			List<Technique> techniques = om.readValue(jsonString, new TypeReference<List<Technique>>() {});
+			liste_techniques.addAll(techniques);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		currentStage = Messages.getStage();
 		
-        techniqueCursor = MongoAccess.request("technique").as(Technique.class);
+        //techniqueCursor = RestAccess.request("technique").as(Technique.class);
 		
-        while (techniqueCursor.hasNext()){
-			Technique t = techniqueCursor.next();
-			liste_techniques.add(t);
-			techniques_id.put(t.getNom(), t.get_id());
-		}
-		Messages.setTechniques_id(techniques_id);
+//        while (techniqueCursor.hasNext()){
+//			Technique t = techniqueCursor.next();
+//			liste_techniques.add(t);
+//			techniques_id.put(t.getNom(), t.get_id());
+//		}
+		
+//		for (Technique t : techniques){
+//			techniques_id.put(t.getNom(), t.get_id());
+//		}
+		//Messages.setTechniques_id(techniques_id);
 		
 		listView_techniques.setItems(liste_techniques);
 		

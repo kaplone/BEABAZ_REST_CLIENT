@@ -7,7 +7,6 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
-import java.util.regex.Pattern;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -20,18 +19,11 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.bson.types.ObjectId;
-import org.jongo.FindOne;
-import org.json.JSONString;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import models.Settings;
 import models.Auteur;
-import models.Client;
 import models.Commande;
 import models.Commun;
-import models.Fichier;
-import models.Traitement;
 
 import enums.Progression;
 
@@ -98,6 +90,13 @@ public class RestAccess {
 
 		return reponse;
 		
+	}
+	
+    public static String requestAll(String table) {	
+    	
+    	request = new HttpGet(String.format("%s/%s", adresse, table));
+    	return traitementReponse();
+    	
 	}
 	
     public static String request(String table) {	

@@ -9,12 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
-import org.bson.types.ObjectId;
-import org.jongo.MongoCursor;
-
-import enums.Progression;
 import models.Auteur;
 import models.Client;
 import models.Commande;
@@ -22,7 +17,6 @@ import models.Messages;
 import models.Model;
 import models.Oeuvre;
 import models.OeuvreTraitee;
-import models.TacheTraitement;
 import models.Traitement;
 import utils.FreeMarkerMaker;
 import utils.RestAccess;

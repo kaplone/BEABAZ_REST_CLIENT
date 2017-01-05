@@ -46,7 +46,7 @@ import org.jongo.marshall.MarshallingException;
 import org.jongo.marshall.jackson.JacksonMapper;
 import org.jongo.marshall.jackson.oid.MongoObjectId;
 
-import utils.MongoAccess;
+import utils.RestAccess;
 import utils.Normalize;
 
 import com.fasterxml.jackson.core.JsonGenerator;

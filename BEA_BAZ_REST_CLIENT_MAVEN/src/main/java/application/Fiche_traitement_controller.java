@@ -3,26 +3,21 @@ package application;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Map;
+import java.util.List;
 import java.util.ResourceBundle;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
 
-import org.bson.types.ObjectId;
-import org.jongo.FindOne;
 import org.jongo.MongoCursor;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import enums.Progression;
-import utils.MongoAccess;
-import models.Commande;
+import utils.RestAccess;
 import models.Messages;
 import models.Produit;
 import models.Traitement;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -170,7 +165,7 @@ public class Fiche_traitement_controller  implements Initializable{
 	public void onTraitementSelect(){
 		
 		traitementSelectionne = listView_traitements.getSelectionModel().getSelectedItem();
-		Messages.setTraitement(traitementSelectionne);
+		//Messages.setTraitement(traitementSelectionne);
 		affichageInfos();	
 		affichageProduits();
 		
@@ -207,7 +202,7 @@ public class Fiche_traitement_controller  implements Initializable{
 		
 		if (produitSelectionne != null){
 			
-			traitementSelectionne.addProduit(produitSelectionne, Messages.getProduits_id().get(produitSelectionne));
+//			traitementSelectionne.addProduit(produitSelectionne, Messages.getProduits_id().get(produitSelectionne));
 			Traitement.update(traitementSelectionne);
 			
 			affichageProduitUtilise(produitSelectionne);
@@ -220,11 +215,11 @@ public class Fiche_traitement_controller  implements Initializable{
 		
 		int index = produitsLiesHbox.getChildren().indexOf(e);
 		
-		Produit produit = MongoAccess.request("produit", "nom",  ((Button) produitsLiesHbox.getChildren().get(index -1)).getText()).as(Produit.class);
+//		Produit produit = RestAccess.request("produit", "nom",  ((Button) produitsLiesHbox.getChildren().get(index -1)).getText()).as(Produit.class);
 		
 		produitsLiesHbox.getChildren().remove(index -1, index +1);
 		
-		traitementSelectionne.deleteProduit(produit);
+//		traitementSelectionne.deleteProduit(produit);
 		
 		Traitement.update(traitementSelectionne);
 		
@@ -297,27 +292,27 @@ public class Fiche_traitement_controller  implements Initializable{
     	
     	liste_produits.clear();
     	
-    	if (Messages.getProduits_id() == null){
-        		
-    		MongoCursor<Produit> produitsCursor = MongoAccess.request("produit").as(Produit.class);
-    		
-    		Map<String, ObjectId> p_id = new TreeMap<>();
-    		
-    		while (produitsCursor.hasNext()){
-    			
-    			Produit p_temp = produitsCursor.next();
-    			
-    			liste_produits.add(p_temp);
-    			liste_noms_produits.add(p_temp.getNom());
-    			p_id.put(p_temp.getNom(), p_temp.get_id());
-    		}
-    		
-    		Messages.setProduits_id(p_id);
-
-    	}
-    	else {
-    		liste_noms_produits.addAll(Messages.getProduits_id().keySet());
-    	}
+//    	if (Messages.getProduits_id() == null){
+//        		
+//    		//MongoCursor<Produit> produitsCursor = RestAccess.request("produit").as(Produit.class);
+//    		
+//    		Map<String, ObjectId> p_id = new TreeMap<>();
+//    		
+//    		while (produitsCursor.hasNext()){
+//    			
+//    			Produit p_temp = produitsCursor.next();
+//    			
+//    			liste_produits.add(p_temp);
+//    			liste_noms_produits.add(p_temp.getNom());
+//    			p_id.put(p_temp.getNom(), p_temp.get_id());
+//    		}
+//    		
+//    		Messages.setProduits_id(p_id);
+//
+//    	}
+//    	else {
+//    		liste_noms_produits.addAll(Messages.getProduits_id().keySet());
+//    	}
     	
     	listView_produits.setItems(liste_noms_produits);
     	
@@ -372,10 +367,20 @@ public class Fiche_traitement_controller  implements Initializable{
 		
 		
 		
-		traitementCursor = MongoAccess.request("traitement").as(Traitement.class);
+//		traitementCursor = RestAccess.request("traitement").as(Traitement.class);
+//		
+//		while (traitementCursor.hasNext()){
+//			liste_traitements.add(traitementCursor.next());
+//		}
 		
-		while (traitementCursor.hasNext()){
-			liste_traitements.add(traitementCursor.next());
+		String jsonString = RestAccess.requestAll("traitement");
+		ObjectMapper om = new ObjectMapper();
+
+		try {
+			List<Traitement> traitements = om.readValue(jsonString, new TypeReference<List<Traitement>>() {});
+			liste_traitements.addAll(traitements);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		
 		listView_traitements.setItems(liste_traitements);
@@ -464,13 +469,22 @@ public class Fiche_traitement_controller  implements Initializable{
 		remarques_traitement_textArea.setDisable(true);
 		
         liste_traitements.clear();
+        String jsonString = RestAccess.requestAll("traitement");
+		ObjectMapper om = new ObjectMapper();
+
+		try {
+			List<Traitement> traitements = om.readValue(jsonString, new TypeReference<List<Traitement>>() {});
+			liste_traitements.addAll(traitements);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     	
-        traitementCursor = MongoAccess.request("traitement").as(Traitement.class);
+        //traitementCursor = RestAccess.request("traitement").as(Traitement.class);
 		
-		while (traitementCursor.hasNext()){
-			Traitement enplus = traitementCursor.next();
-			liste_traitements.add(enplus);
-		}	
+//		while (traitementCursor.hasNext()){
+//			Traitement enplus = traitementCursor.next();
+//			liste_traitements.add(enplus);
+//		}	
 		listView_traitements.setItems(liste_traitements);	
 		
 		rafraichirAffichage();
@@ -492,7 +506,7 @@ public class Fiche_traitement_controller  implements Initializable{
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		traitementSelectionne = Messages.getTraitement();
+		//traitementSelectionne = Messages.getTraitement();
 		
 		liste_noms_produits = FXCollections.observableArrayList();
 
@@ -524,15 +538,25 @@ public class Fiche_traitement_controller  implements Initializable{
 		
 		
 		liste_traitements = FXCollections.observableArrayList();
+		String jsonString = RestAccess.requestAll("traitement");
+		ObjectMapper om = new ObjectMapper();
+
+		try {
+			List<Traitement> traitements = om.readValue(jsonString, new TypeReference<List<Traitement>>() {});
+			liste_traitements.addAll(traitements);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		liste_produits  = FXCollections.observableArrayList();
 		
 		currentStage = Messages.getStage();
 		
-		traitementCursor = MongoAccess.request("traitement").as(Traitement.class);
+		//traitementCursor = RestAccess.request("traitement").as(Traitement.class);
 		
-		while (traitementCursor.hasNext()){
-			liste_traitements.add(traitementCursor.next());
-		}
+//		while (traitementCursor.hasNext()){
+//			liste_traitements.add(traitementCursor.next());
+//		}
 		
 		listView_traitements.setItems(liste_traitements);
 		

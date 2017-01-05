@@ -14,7 +14,7 @@ import org.jongo.MongoCursor;
 
 import enums.Progression;
 import fr.opensagres.xdocreport.template.velocity.internal.Foreach;
-import utils.MongoAccess;
+import utils.RestAccess;
 import models.Commande;
 import models.Messages;
 import models.OeuvreTraitee;
@@ -203,31 +203,31 @@ public class Fiche_tache_traitement_controller  implements Initializable{
 		
         produitSelectionne = listView_produits.getSelectionModel().getSelectedItem();
 		
-		if (produitSelectionne != null && ! tacheTraitementSelectionne.getProduitsLies_names().contains(produitSelectionne)){
-			
-			Messages.setNom_produit(produitSelectionne);
-			
-			if (Messages.getProduits_id() == null){
-				
-				Map<String, ObjectId> produits = new TreeMap<>();
-				MongoCursor<Produit> produit_cursor = MongoAccess.request("produit").as(Produit.class);
-				
-				while (produit_cursor.hasNext()){
-					Produit p = produit_cursor.next();
-					produits.put(p.getNom(), p.get_id());
-				}
-				
-				Messages.setProduits_id(produits);
-			}
-			
-			tacheTraitementSelectionne.addProduit(Messages.getProduits_id().get(produitSelectionne));
-			
-			MongoAccess.update("tacheTraitement", tacheTraitementSelectionne);
-			
-			affichageProduitsUtilises();
-			afficherTraitementsAssocies();
-            
-		}
+//		if (produitSelectionne != null && ! tacheTraitementSelectionne.getProduitsLies_names().contains(produitSelectionne)){
+//			
+//			Messages.setNom_produit(produitSelectionne);
+//			
+//			if (Messages.getProduits_id() == null){
+//				
+//				Map<String, ObjectId> produits = new TreeMap<>();
+//				MongoCursor<Produit> produit_cursor = MongoAccess.request("produit").as(Produit.class);
+//				
+//				while (produit_cursor.hasNext()){
+//					Produit p = produit_cursor.next();
+//					produits.put(p.getNom(), p.get_id());
+//				}
+//				
+//				Messages.setProduits_id(produits);
+//			}
+//			
+//			tacheTraitementSelectionne.addProduit(Messages.getProduits_id().get(produitSelectionne));
+//			
+//			MongoAccess.update("tacheTraitement", tacheTraitementSelectionne);
+//			
+//			affichageProduitsUtilises();
+//			afficherTraitementsAssocies();
+//            
+//		}
 		
 	}
 	
@@ -385,21 +385,21 @@ public class Fiche_tache_traitement_controller  implements Initializable{
     public void onFait_radio(){
     	
     	tacheTraitementSelectionne.setFait_(Progression.FAIT_);
-    	MongoAccess.update("tacheTraitement", tacheTraitementSelectionne);
+    	//MongoAccess.update("tacheTraitement", tacheTraitementSelectionne);
     	afficherTraitementsAssocies();
     	checkIfCompleted();
     }
     public void onTodo_radio(){
     	
     	tacheTraitementSelectionne.setFait_(Progression.TODO_);
-    	MongoAccess.update("tacheTraitement", tacheTraitementSelectionne);
+    	//MongoAccess.update("tacheTraitement", tacheTraitementSelectionne);
     	afficherTraitementsAssocies();
     	checkIfCompleted();
     }
     public void onSo_radio(){
     	
     	tacheTraitementSelectionne.setFait_(Progression.NULL_);
-    	MongoAccess.update("tacheTraitement", tacheTraitementSelectionne);
+    	//MongoAccess.update("tacheTraitement", tacheTraitementSelectionne);
     	afficherTraitementsAssocies();
     	checkIfCompleted();
     }
@@ -417,18 +417,18 @@ public class Fiche_tache_traitement_controller  implements Initializable{
     		
     	}
     	ot.setProgressionOeuvreTraitee(progres);
-    	MongoAccess.update("oeuvreTraitee", ot);
+    	//MongoAccess.update("oeuvreTraitee", ot);
     }
 
     public void afficherTraitementsAssocies(){
     	
     	observable_liste_tachestraitements_lies.clear();
 
-		for (ObjectId tt_id : Messages.getOeuvreTraitee().getTraitementsAttendus_id()){
-			
-			observable_liste_tachestraitements_lies.add(MongoAccess.request("tacheTraitement", tt_id).as(TacheTraitement.class).next());
-		}
-		Messages.setObservableTacheTraitementsLiees(observable_liste_tachestraitements_lies);
+//		for (ObjectId tt_id : Messages.getOeuvreTraitee().getTraitementsAttendus_id()){
+//			
+//			observable_liste_tachestraitements_lies.add(MongoAccess.request("tacheTraitement", tt_id).as(TacheTraitement.class).next());
+//		}
+//		Messages.setObservableTacheTraitementsLiees(observable_liste_tachestraitements_lies);
 
 
 		traitements_associes_tableColumn.setCellValueFactory(new PropertyValueFactory<TacheTraitement, String>("nom"));
@@ -506,13 +506,13 @@ public class Fiche_tache_traitement_controller  implements Initializable{
     	tt.setTraitement_id(tousLesTraitements_id.get(traitement));
     	tt.setNom(traitement);
     	
-    	MongoAccess.save("tacheTraitement", tt);
+    	//MongoAccess.save("tacheTraitement", tt);
     	
     	observable_liste_tachestraitements_lies.add(tt);
     	
     	ot.addTraitementAttendu(tt.getNom(), tt.get_id());
     	
-    	MongoAccess.update("oeuvreTraitee", ot);
+    	//MongoAccess.update("oeuvreTraitee", ot);
     	
     	afficherTraitementsAssocies();
     }
@@ -555,7 +555,7 @@ public class Fiche_tache_traitement_controller  implements Initializable{
 		});
 		
 		ot = Messages.getOeuvreTraitee();
-		commande = Messages.getCommande();
+		//commande = Messages.getCommande();
 		traitementSource = tacheTraitementSelectionne.getTraitement();
 		
 		ot_label.setText(ot.getNom());
@@ -568,27 +568,27 @@ public class Fiche_tache_traitement_controller  implements Initializable{
 	
 		currentStage = Messages.getStage();
 
-		if (Messages.getTraitements_id() == null){
-			
-			traitementCursor = MongoAccess.request("tacheTraitement").as(TacheTraitement.class);
-			tousLesTraitementsCursor = MongoAccess.request("traitement").as(Traitement.class);
-			
-			tousLesTraitements_id = new TreeMap<>();
-			
-			while (tousLesTraitementsCursor.hasNext()){
-				
-				Traitement t = tousLesTraitementsCursor.next();
-				
-				liste_traitements.add(t.getNom());
-				tousLesTraitements_id.put(t.getNom(), t.get_id());
-			}
-			
-			Messages.setTraitements_id(tousLesTraitements_id);
-		}
-		else {
-			tousLesTraitements_id = Messages.getTraitements_id();
-			liste_traitements.addAll(tousLesTraitements_id.keySet());
-		}
+//		if (Messages.getTraitements_id() == null){
+//			
+//			traitementCursor = MongoAccess.request("tacheTraitement").as(TacheTraitement.class);
+//			tousLesTraitementsCursor = MongoAccess.request("traitement").as(Traitement.class);
+//			
+//			tousLesTraitements_id = new TreeMap<>();
+//			
+//			while (tousLesTraitementsCursor.hasNext()){
+//				
+//				Traitement t = tousLesTraitementsCursor.next();
+//				
+//				liste_traitements.add(t.getNom());
+//				tousLesTraitements_id.put(t.getNom(), t.get_id());
+//			}
+//			
+//			Messages.setTraitements_id(tousLesTraitements_id);
+//		}
+//		else {
+//			tousLesTraitements_id = Messages.getTraitements_id();
+//			liste_traitements.addAll(tousLesTraitements_id.keySet());
+//		}
         
 		
 		tous_les_traitements_listView.setItems(liste_traitements);

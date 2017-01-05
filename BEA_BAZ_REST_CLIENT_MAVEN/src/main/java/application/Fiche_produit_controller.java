@@ -3,17 +3,22 @@ package application;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import org.jongo.MongoCursor;
 
-import utils.MongoAccess;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import utils.RestAccess;
 import models.Client;
 import models.Commande;
 import models.Messages;
 import models.Produit;
 import models.TacheTraitement;
+import models.Technique;
 import models.Traitement;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -197,11 +202,14 @@ public class Fiche_produit_controller  implements Initializable{
     	
     	if (produitSelectionne != null){
     		
-    		produitCursor = MongoAccess.request("produit").as(Produit.class);
-    		
-    		while (produitCursor.hasNext()){
-    			Produit enplus = produitCursor.next();
-    			liste_produits.add(enplus);
+    		String jsonString = RestAccess.requestAll("produit");
+    		ObjectMapper om = new ObjectMapper();
+
+    		try {
+    			List<Produit> produits = om.readValue(jsonString, new TypeReference<List<Produit>>() {});
+    			liste_produits.addAll(produits);
+    		} catch (IOException e) {
+    			e.printStackTrace();
     		}	
     		listView_produits.setItems(liste_produits);		
     	}	
@@ -252,13 +260,15 @@ public class Fiche_produit_controller  implements Initializable{
     public void rafraichirAffichage(){
 
 		liste_produits  = FXCollections.observableArrayList();
-		
-		
-		
-		produitCursor = MongoAccess.request("produit").as(Produit.class);
-		
-		while (produitCursor.hasNext()){
-			liste_produits.add(produitCursor.next());
+
+		String jsonString = RestAccess.requestAll("produit");
+		ObjectMapper om = new ObjectMapper();
+
+		try {
+			List<Produit> produits = om.readValue(jsonString, new TypeReference<List<Produit>>() {});
+			liste_produits.addAll(produits);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		
 		listView_produits.setItems(liste_produits);
@@ -394,17 +404,19 @@ public class Fiche_produit_controller  implements Initializable{
 		importerButton.setVisible(false);
 
 		liste_produits  = FXCollections.observableArrayList();
-		
-		currentStage = Messages.getStage();
-		
-        produitCursor = MongoAccess.request("produit").as(Produit.class);
-		
-		while (produitCursor.hasNext()){
-			liste_produits.add(produitCursor.next());
+		String jsonString = RestAccess.requestAll("produit");
+		ObjectMapper om = new ObjectMapper();
+
+		try {
+			List<Produit> produits = om.readValue(jsonString, new TypeReference<List<Produit>>() {});
+			liste_produits.addAll(produits);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		
 		listView_produits.setItems(liste_produits);
-
+		
+		currentStage = Messages.getStage();
 	}
 
 }

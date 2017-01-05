@@ -140,9 +140,9 @@ public class Walk {
 			
 			fichier.setLegende(legende);
 			
-			MongoAccess.save("fichier", fichier);
+			RestAccess.save("fichier", fichier);
 
-			OeuvreTraitee oeuvreConcernee = MongoAccess.request("oeuvreTraitee", "cote", cote).as(OeuvreTraitee.class);
+			OeuvreTraitee oeuvreConcernee = RestAccess.request("oeuvreTraitee", "cote", cote).as(OeuvreTraitee.class);
 
 			
 			//Fiche_commande_import_controller.getBindLabel().set("Images en cours : " + path.getFileName().toString());

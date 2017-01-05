@@ -3,16 +3,10 @@ package application;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import utils.RestAccess;
 import models.Auteur;
-import models.Client;
-import models.Commande;
 import models.Messages;
-import models.Traitement;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
@@ -21,7 +15,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 public class Fiche_auteur_controller  implements Initializable{

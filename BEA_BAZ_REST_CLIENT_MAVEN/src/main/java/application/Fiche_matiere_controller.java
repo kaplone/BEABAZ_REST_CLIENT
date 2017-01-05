@@ -2,24 +2,36 @@ package application;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import org.jongo.MongoCursor;
 
-import utils.MongoAccess;
-import models.Client;
-import models.Commande;
+import com.mongodb.util.JSON;
+import com.fasterxml.jackson.core.Base64Variant;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonLocation;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonStreamContext;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.ObjectCodec;
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.core.JsonParser.NumberType;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+
+import utils.RestAccess;
 import models.Matiere;
 import models.Messages;
 import models.Produit;
-import models.TacheTraitement;
-import models.Traitement;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
@@ -29,7 +41,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -208,7 +219,7 @@ public class Fiche_matiere_controller  implements Initializable{
     	
     	if (matiereSelectionne != null){
     		
-    		matiereCursor = MongoAccess.request("matiere").as(Matiere.class);
+    		//matiereCursor = RestAccess.request("matiere").as(Matiere.class);
     		
     		while (matiereCursor.hasNext()){
     			Matiere enplus = matiereCursor.next();
@@ -267,7 +278,7 @@ public class Fiche_matiere_controller  implements Initializable{
 		
 		
 		
-		matiereCursor = MongoAccess.request("matiere").as(Matiere.class);
+		//matiereCursor = RestAccess.request("matiere").as(Matiere.class);
 		
 		while (matiereCursor.hasNext()){
 			liste_matieres.add(matiereCursor.next());
@@ -398,14 +409,29 @@ public class Fiche_matiere_controller  implements Initializable{
 
 
 		liste_matieres  = FXCollections.observableArrayList();
+		String jsonString = RestAccess.requestAll("matiere");
+		ObjectMapper om = new ObjectMapper();
+//		JsonFactory factory = new JsonFactory();
+//		JsonParser parser;
+//		try {
+//			parser = factory.createParser(jsonString);
+//			while(!parser.isClosed()){
+//			    JsonToken jsonToken = parser.nextToken();
+//
+//			    System.out.println("jsonToken = " + jsonToken);
+//			}
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 		
-		currentStage = Messages.getStage();
-		
-        matiereCursor = MongoAccess.request("matiere").as(Matiere.class);
-		
-		while (matiereCursor.hasNext()){
-			liste_matieres.add(matiereCursor.next());
+		try {
+			List<Matiere> matieres = om.readValue(jsonString, new TypeReference<List<Matiere>>() {});
+			liste_matieres.addAll(matieres);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+	
+		currentStage = Messages.getStage();	
 		
 		listView_matieres.setItems(liste_matieres);
 		

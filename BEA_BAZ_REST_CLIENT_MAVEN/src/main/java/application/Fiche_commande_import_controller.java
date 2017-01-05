@@ -3,51 +3,35 @@ package application;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
-import org.jongo.Find;
 import org.jongo.MongoCursor;
 
-import utils.MongoAccess;
 import utils.Walk;
 import models.Client;
 import models.Commande;
 import models.Messages;
 import models.Oeuvre;
 import models.OeuvreTraitee;
-import models.TacheTraitement;
 import models.Traitement;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableStringValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -159,17 +143,15 @@ public class Fiche_commande_import_controller  implements Initializable{
 	
 	private Stage currentStage;
 	
-	private String commande;
-	private String commandeSelectionne;
+	private Commande commande;
+	private Commande commandeSelectionne;
 	
-	private String client;
+	private Client client;
 	
 	private File file;
 	private File dir;
 	
 	private static StringProperty bindLabel;
-	
-	private boolean edit = false;
 	
 	@FXML
 	public void onVersClientButton(){
@@ -276,7 +258,6 @@ public class Fiche_commande_import_controller  implements Initializable{
 			Documents.read(file);
 			onVersCommandeButton();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
