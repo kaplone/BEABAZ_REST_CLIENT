@@ -2,35 +2,18 @@ package application;
 
 import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.jongo.MongoCursor;
-
-import com.mongodb.util.JSON;
-import com.fasterxml.jackson.core.Base64Variant;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonLocation;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonStreamContext;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.core.JsonParser.NumberType;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import utils.JsonUtils;
 import utils.RestAccess;
 import models.Matiere;
 import models.Messages;
 import models.Produit;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -97,7 +80,6 @@ public class Fiche_matiere_controller  implements Initializable{
 	
 	private File file;
 
-	MongoCursor<Matiere> matiereCursor ;
 	Matiere matiereSelectionne;
 	
 	Stage currentStage;
@@ -205,7 +187,6 @@ public class Fiche_matiere_controller  implements Initializable{
 			importerButton.setVisible(false);
 			rafraichirAffichage();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

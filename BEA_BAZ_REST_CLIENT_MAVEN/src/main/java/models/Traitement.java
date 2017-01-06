@@ -1,9 +1,11 @@
 package models;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 
@@ -19,10 +21,11 @@ public class Traitement extends Commun{
 
 	private String nom_complet;
 	
+	private List<Produit> liste_produits;
 	private Map<String, String> produits;
 	
 	public Traitement(){
-		this.produits = new HashMap<>();
+		this.liste_produits = new ArrayList<Produit>();
 	}
 	
 	public static void update(Traitement t){
@@ -44,25 +47,17 @@ public class Traitement extends Commun{
     
     public void addProduit(Produit p){
     	
-    	if (! produits.keySet().contains(p.getNom())){
-    		produits.put(p.getNom(), p.get_id().toString());
-    	}
-    	
-    }
-    
-    public void addProduit(String p, ObjectId id){
-    	
-    	if (! produits.keySet().contains(p)){
-    		produits.put(p, id.toString());
+    	if (! liste_produits.contains(p)){
+    		liste_produits.add(p);
     	}
     	
     }
     
     public void deleteProduit(Produit p){
     	
-    	for (String p_ : produits.keySet()){
-    		if (p.getNom().equals(p_)){
-    			produits.remove(p_);
+    	for (Produit p_ : liste_produits){
+    		if (p.equals(p_)){
+    			liste_produits.remove(p_);
     			break;
     		}
     	} 	
@@ -77,9 +72,19 @@ public class Traitement extends Commun{
 	}
 
 	public Set<String> getProduits_names() {
-		return produits.keySet();
+		return liste_produits.stream()
+				       .map(a -> a.getNom())
+				       .collect(Collectors.toSet());
 	}
 
+	public List<Produit> getListe_produits() {
+		return liste_produits;
+	}
+
+	public void setListe_produits(List<Produit> produits) {
+		this.liste_produits = produits;
+	}
+	
 	public Map<String, String> getProduits() {
 		return produits;
 	}

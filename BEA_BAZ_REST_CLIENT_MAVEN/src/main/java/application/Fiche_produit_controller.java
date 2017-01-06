@@ -5,25 +5,18 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
-
-import org.jongo.MongoCursor;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
+import utils.JsonUtils;
 import utils.RestAccess;
-import models.Client;
-import models.Commande;
 import models.Messages;
 import models.Produit;
 import models.TacheTraitement;
-import models.Technique;
 import models.Traitement;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
@@ -33,7 +26,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -87,8 +79,7 @@ public class Fiche_produit_controller  implements Initializable{
 	private boolean edit = false;
 	
 	private File file;
-
-	MongoCursor<Produit> produitCursor ;
+	
 	Produit produitSelectionne;
 	TacheTraitement traitementSelectionne;
 	
@@ -187,7 +178,6 @@ public class Fiche_produit_controller  implements Initializable{
 			importerButton.setVisible(false);
 			rafraichirAffichage();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -199,18 +189,9 @@ public class Fiche_produit_controller  implements Initializable{
     	remarques_produit_textArea.setText(produitSelectionne.getRemarques());
     	
     	liste_produits.clear();
+    	JsonUtils.JsonToListObj(RestAccess.requestAll("produit"), liste_produits, new TypeReference<List<Produit>>() {});
     	
     	if (produitSelectionne != null){
-    		
-    		String jsonString = RestAccess.requestAll("produit");
-    		ObjectMapper om = new ObjectMapper();
-
-    		try {
-    			List<Produit> produits = om.readValue(jsonString, new TypeReference<List<Produit>>() {});
-    			liste_produits.addAll(produits);
-    		} catch (IOException e) {
-    			e.printStackTrace();
-    		}	
     		listView_produits.setItems(liste_produits);		
     	}	
     }
@@ -260,16 +241,7 @@ public class Fiche_produit_controller  implements Initializable{
     public void rafraichirAffichage(){
 
 		liste_produits  = FXCollections.observableArrayList();
-
-		String jsonString = RestAccess.requestAll("produit");
-		ObjectMapper om = new ObjectMapper();
-
-		try {
-			List<Produit> produits = om.readValue(jsonString, new TypeReference<List<Produit>>() {});
-			liste_produits.addAll(produits);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		JsonUtils.JsonToListObj(RestAccess.requestAll("produit"), liste_produits, new TypeReference<List<Produit>>() {});
 		
 		listView_produits.setItems(liste_produits);
     	
@@ -404,15 +376,7 @@ public class Fiche_produit_controller  implements Initializable{
 		importerButton.setVisible(false);
 
 		liste_produits  = FXCollections.observableArrayList();
-		String jsonString = RestAccess.requestAll("produit");
-		ObjectMapper om = new ObjectMapper();
-
-		try {
-			List<Produit> produits = om.readValue(jsonString, new TypeReference<List<Produit>>() {});
-			liste_produits.addAll(produits);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		JsonUtils.JsonToListObj(RestAccess.requestAll("produit"), liste_produits, new TypeReference<List<Produit>>() {});
 		
 		listView_produits.setItems(liste_produits);
 		

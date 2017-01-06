@@ -7,27 +7,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
-import org.jongo.MongoCursor;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
+import utils.JsonUtils;
 import utils.RestAccess;
-import models.Client;
-import models.Commande;
-import models.Matiere;
 import models.Messages;
-import models.Produit;
-import models.TacheTraitement;
 import models.Technique;
-import models.Traitement;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
@@ -37,7 +28,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -97,7 +87,6 @@ public class Fiche_technique_controller  implements Initializable{
 	
 	private Map<String, ObjectId> techniques_id;
 
-	MongoCursor<Technique> techniqueCursor ;
 	Technique techniqueSelectionne;
 	
 	Stage currentStage;
@@ -215,25 +204,9 @@ public class Fiche_technique_controller  implements Initializable{
     	remarques_technique_textArea.setText(techniqueSelectionne.getRemarques());
     	
     	liste_techniques.clear();
+    	JsonUtils.JsonToListObj(RestAccess.requestAll("technique"), liste_techniques, new TypeReference<List<Technique>>() {});
     	
     	if (techniqueSelectionne != null){
-    		
-    		String jsonString = RestAccess.requestAll("technique");
-    		ObjectMapper om = new ObjectMapper();
-
-    		try {
-    			List<Technique> techniques = om.readValue(jsonString, new TypeReference<List<Technique>>() {});
-    			liste_techniques.addAll(techniques);
-    		} catch (IOException e) {
-    			e.printStackTrace();
-    		}
-    		
-//    		techniqueCursor = RestAccess.request("technique").as(Technique.class);
-//    		
-//    		while (techniqueCursor.hasNext()){
-//    			Technique enplus = techniqueCursor.next();
-//    			liste_techniques.add(enplus);
-//    		}	
     		listView_techniques.setItems(liste_techniques);		
     	}	
     }
@@ -284,7 +257,9 @@ public class Fiche_technique_controller  implements Initializable{
     public void rafraichirAffichage(){
 
 		liste_techniques  = FXCollections.observableArrayList();
-		techniques_id = new TreeMap<>();
+		JsonUtils.JsonToListObj(RestAccess.requestAll("technique"), liste_techniques, new TypeReference<List<Technique>>() {});
+		
+//		techniques_id = new TreeMap<>();
 
 		//techniqueCursor = RestAccess.request("technique").as(Technique.class);
 		
@@ -421,15 +396,7 @@ public class Fiche_technique_controller  implements Initializable{
 		importerButton.setVisible(false);
 
 		liste_techniques  = FXCollections.observableArrayList();
-		String jsonString = RestAccess.requestAll("technique");
-		ObjectMapper om = new ObjectMapper();
-
-		try {
-			List<Technique> techniques = om.readValue(jsonString, new TypeReference<List<Technique>>() {});
-			liste_techniques.addAll(techniques);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		JsonUtils.JsonToListObj(RestAccess.requestAll("technique"), liste_techniques, new TypeReference<List<Technique>>() {});
 		
 		currentStage = Messages.getStage();
 		

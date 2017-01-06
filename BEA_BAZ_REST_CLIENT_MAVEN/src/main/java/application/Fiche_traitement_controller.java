@@ -12,9 +12,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import enums.Progression;
+import utils.JsonUtils;
 import utils.RestAccess;
+import models.Matiere;
 import models.Messages;
 import models.Produit;
+import models.Technique;
 import models.Traitement;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -45,7 +48,7 @@ public class Fiche_traitement_controller  implements Initializable{
 	@FXML
 	private ListView<Traitement> listView_traitements;
 	@FXML
-	private ListView<String> listView_produits;
+	private ListView<Produit> listView_produits;
 	@FXML
 	private Button nouveau_traitement;
 	@FXML
@@ -84,11 +87,9 @@ public class Fiche_traitement_controller  implements Initializable{
 	private boolean edit = false;
 	
 	ObservableList<String> liste_noms_produits;
-	
-	MongoCursor<Traitement> traitementCursor;
-	MongoCursor<Produit> detailCursor ;
+
 	Traitement traitementSelectionne;
-	String produitSelectionne;
+	Produit produitSelectionne;
 	
 	Stage currentStage;
 
@@ -171,12 +172,12 @@ public class Fiche_traitement_controller  implements Initializable{
 		
 		
 		produitsLiesHbox.getChildren().clear();
-		for (String p : traitementSelectionne.getProduits_names()){
+		for (Produit p : traitementSelectionne.getListe_produits()){
 			affichageProduitUtilise(p);
 		}
 	}
 	
-	public void affichageProduitUtilise(String p){
+	public void affichageProduitUtilise(Produit produitSelectionne2){
 		
 		ImageView iv = new ImageView(new Image(Progression.NULL_.getUsedImage()));
 		iv.setPreserveRatio(true);
@@ -185,7 +186,7 @@ public class Fiche_traitement_controller  implements Initializable{
         iv.setFitWidth(15);
 		
 		
-		Button b = new Button(p);
+		Button b = new Button(produitSelectionne2.getNom());
 		Button b2 = new Button("", iv);
 		
 		b2.setOnAction((event) -> deleteProduitLie((Button)event.getSource()));
@@ -224,7 +225,7 @@ public class Fiche_traitement_controller  implements Initializable{
 		Traitement.update(traitementSelectionne);
 		
 		produitsLiesHbox.getChildren().clear();
-		for (String p : traitementSelectionne.getProduits_names()){
+		for (Produit p : traitementSelectionne.getListe_produits()){
 			produitSelectionne = p;
 			affichageProduitUtilise(p);
 		}
@@ -292,29 +293,9 @@ public class Fiche_traitement_controller  implements Initializable{
     	
     	liste_produits.clear();
     	
-//    	if (Messages.getProduits_id() == null){
-//        		
-//    		//MongoCursor<Produit> produitsCursor = RestAccess.request("produit").as(Produit.class);
-//    		
-//    		Map<String, ObjectId> p_id = new TreeMap<>();
-//    		
-//    		while (produitsCursor.hasNext()){
-//    			
-//    			Produit p_temp = produitsCursor.next();
-//    			
-//    			liste_produits.add(p_temp);
-//    			liste_noms_produits.add(p_temp.getNom());
-//    			p_id.put(p_temp.getNom(), p_temp.get_id());
-//    		}
-//    		
-//    		Messages.setProduits_id(p_id);
-//
-//    	}
-//    	else {
-//    		liste_noms_produits.addAll(Messages.getProduits_id().keySet());
-//    	}
+    	JsonUtils.JsonToListObj(RestAccess.requestAll("produit"), liste_produits, new TypeReference<List<Produit>>() {});
     	
-    	listView_produits.setItems(liste_noms_produits);
+    	listView_produits.setItems(liste_produits);
     	
     	
     }
@@ -365,25 +346,11 @@ public class Fiche_traitement_controller  implements Initializable{
     	liste_traitements = FXCollections.observableArrayList();
 		liste_produits  = FXCollections.observableArrayList();
 		
-		
-		
-//		traitementCursor = RestAccess.request("traitement").as(Traitement.class);
-//		
-//		while (traitementCursor.hasNext()){
-//			liste_traitements.add(traitementCursor.next());
-//		}
-		
-		String jsonString = RestAccess.requestAll("traitement");
-		ObjectMapper om = new ObjectMapper();
+		JsonUtils.JsonToListObj(RestAccess.requestAll("traitement"), liste_traitements, new TypeReference<List<Traitement>>() {});
+		JsonUtils.JsonToListObj(RestAccess.requestAll("produit"), liste_produits, new TypeReference<List<Produit>>() {});
 
-		try {
-			List<Traitement> traitements = om.readValue(jsonString, new TypeReference<List<Traitement>>() {});
-			liste_traitements.addAll(traitements);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
 		listView_traitements.setItems(liste_traitements);
+		listView_produits.setItems(liste_produits);
     	
     }
     
@@ -538,27 +505,14 @@ public class Fiche_traitement_controller  implements Initializable{
 		
 		
 		liste_traitements = FXCollections.observableArrayList();
-		String jsonString = RestAccess.requestAll("traitement");
-		ObjectMapper om = new ObjectMapper();
-
-		try {
-			List<Traitement> traitements = om.readValue(jsonString, new TypeReference<List<Traitement>>() {});
-			liste_traitements.addAll(traitements);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		JsonUtils.JsonToListObj(RestAccess.requestAll("traitement"), liste_traitements, new TypeReference<List<Traitement>>() {});
 		
 		liste_produits  = FXCollections.observableArrayList();
+		JsonUtils.JsonToListObj(RestAccess.requestAll("produit"), liste_produits, new TypeReference<List<Produit>>() {});
+		listView_produits.setItems(liste_produits);
+		listView_traitements.setItems(liste_traitements);
 		
 		currentStage = Messages.getStage();
-		
-		//traitementCursor = RestAccess.request("traitement").as(Traitement.class);
-		
-//		while (traitementCursor.hasNext()){
-//			liste_traitements.add(traitementCursor.next());
-//		}
-		
-		listView_traitements.setItems(liste_traitements);
 		
 		affichageProduits();
 
