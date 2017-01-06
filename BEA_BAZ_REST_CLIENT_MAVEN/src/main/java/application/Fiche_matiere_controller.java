@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
+import utils.JsonUtils;
 import utils.RestAccess;
 import models.Matiere;
 import models.Messages;
@@ -216,15 +217,9 @@ public class Fiche_matiere_controller  implements Initializable{
     	remarques_matiere_textArea.setText(matiereSelectionne.getRemarques());
     	
     	liste_matieres.clear();
+    	JsonUtils.JsonToListObj(RestAccess.requestAll("matiere"), liste_matieres, new TypeReference<List<Matiere>>() {});
     	
     	if (matiereSelectionne != null){
-    		
-    		//matiereCursor = RestAccess.request("matiere").as(Matiere.class);
-    		
-    		while (matiereCursor.hasNext()){
-    			Matiere enplus = matiereCursor.next();
-    			liste_matieres.add(enplus);
-    		}	
     		listView_matieres.setItems(liste_matieres);		
     	}	
     }
@@ -275,14 +270,7 @@ public class Fiche_matiere_controller  implements Initializable{
     public void rafraichirAffichage(){
 
 		liste_matieres  = FXCollections.observableArrayList();
-		
-		
-		
-		//matiereCursor = RestAccess.request("matiere").as(Matiere.class);
-		
-		while (matiereCursor.hasNext()){
-			liste_matieres.add(matiereCursor.next());
-		}
+		JsonUtils.JsonToListObj(RestAccess.requestAll("matiere"), liste_matieres, new TypeReference<List<Matiere>>() {});
 		
 		listView_matieres.setItems(liste_matieres);
     	
@@ -406,31 +394,10 @@ public class Fiche_matiere_controller  implements Initializable{
 		
 		file_path_textField.setVisible(false);
 		importerButton.setVisible(false);
-
-
-		liste_matieres  = FXCollections.observableArrayList();
-		String jsonString = RestAccess.requestAll("matiere");
-		ObjectMapper om = new ObjectMapper();
-//		JsonFactory factory = new JsonFactory();
-//		JsonParser parser;
-//		try {
-//			parser = factory.createParser(jsonString);
-//			while(!parser.isClosed()){
-//			    JsonToken jsonToken = parser.nextToken();
-//
-//			    System.out.println("jsonToken = " + jsonToken);
-//			}
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
 		
-		try {
-			List<Matiere> matieres = om.readValue(jsonString, new TypeReference<List<Matiere>>() {});
-			liste_matieres.addAll(matieres);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	
+		liste_matieres  = FXCollections.observableArrayList();
+		JsonUtils.JsonToListObj(RestAccess.requestAll("matiere"), liste_matieres, new TypeReference<List<Matiere>>() {});
+
 		currentStage = Messages.getStage();	
 		
 		listView_matieres.setItems(liste_matieres);
