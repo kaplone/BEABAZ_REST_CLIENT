@@ -12,9 +12,12 @@ import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import enums.EtatFinal;
 import enums.Progression;
 import utils.FreeMarkerMaker;
+import utils.JsonUtils;
 import utils.RestAccess;
 import models.Auteur;
 import models.Commande;
@@ -25,6 +28,7 @@ import models.Oeuvre;
 import models.OeuvreTraitee;
 import models.TacheTraitement;
 import models.Technique;
+import models.Traitement;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -468,27 +472,38 @@ public class Fiche_oeuvre_controller  implements Initializable{
     	FreeMarkerMaker.odt2pdf(oeuvreSelectionne, oeuvreTraiteeSelectionne);
     };
     
+    public Comparator<OeuvreTraitee> otTrieeParNom = 
+    		(OeuvreTraitee o1, OeuvreTraitee o2)-> o1.getNom().compareTo(o2.getNom());
     
     public void afficherOeuvres(){
-    	
-    	ObservableList<OeuvreTraitee> obs_oeuvres;
-
-		oeuvresTraitees = new ArrayList<>();
 		
-//		oeuvresTraitees = Messages.getOeuvresTraitees_id()
-//                                  .values()
-//                                  .stream()
-//                                  .map(a -> RestAccess.request("oeuvreTraitee", a).as(OeuvreTraitee.class).next())
-//                                  .collect(Collectors.toList());
+		ObservableList<OeuvreTraitee> liste_oeuvres = FXCollections.observableArrayList();
+		//JsonUtils.JsonToListObj(RestAccess.requestAll("oeuvreTraitee"), liste_oeuvres, new TypeReference<List<OeuvreTraitee>>() {});
 		
-		obs_oeuvres = FXCollections.observableArrayList(oeuvresTraitees);
+		List<OeuvreTraitee> listeOeuvresTraitees = new ArrayList<>();
 
-
-		oeuvres_nom_colonne.setCellValueFactory(new PropertyValueFactory<OeuvreTraitee, String>("nom"));
+		listeOeuvresTraitees = Arrays.asList(OeuvreTraitee.retrouveOeuvreTraiteesCommande(commandeSelectionne, false));
+		
+		System.out.println("lise des oeuvres : " + oeuvresTraitees);
+		
+		for (OeuvreTraitee ot : oeuvresTraitees){
+			System.out.println("ajout ot : " + ot);
+			listeOeuvresTraitees.add(ot);
+		}
+		
+		listeOeuvresTraitees.sort(otTrieeParNom);
+		
+		liste_oeuvres = FXCollections.observableArrayList(listeOeuvresTraitees);
+	
+    	oeuvres_nom_colonne.setCellValueFactory(new PropertyValueFactory<OeuvreTraitee, String>("nom"));
 		oeuvres_fait_colonne.setCellValueFactory(new PropertyValueFactory<OeuvreTraitee, ImageView>("icone_progression"));
-		//oeuvres_fait_colonne.setCellValueFactory(new PropertyValueFactory<OeuvreTraitee, String>("fait"));
+    	
+		tableOeuvre.setItems(liste_oeuvres);
 
-		tableOeuvre.setItems(obs_oeuvres);
+//		oeuvres_nom_colonne.setCellValueFactory(new PropertyValueFactory<OeuvreTraitee, String>("nom"));
+//		oeuvres_fait_colonne.setCellValueFactory(new PropertyValueFactory<OeuvreTraitee, ImageView>("icone_progression"));
+//
+//		tableOeuvre.setItems(liste_oeuvres);
 		
 	}
     

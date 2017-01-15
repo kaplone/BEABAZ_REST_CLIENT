@@ -6,18 +6,14 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.jongo.MongoCursor;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import enums.Progression;
 import utils.JsonUtils;
 import utils.RestAccess;
-import models.Matiere;
 import models.Messages;
 import models.Produit;
-import models.Technique;
 import models.Traitement;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -271,16 +267,12 @@ public class Fiche_traitement_controller  implements Initializable{
 			importerButton.setVisible(false);
 			afficherTraitements();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-	
-	
-    private void affichageInfos(){
 
-    	
+    private void affichageInfos(){
+	
     	nom_traitement_textField.setText(traitementSelectionne.getNom());
     	nom_traitement_label.setText(traitementSelectionne.getNom());
     	nom_complet_traitement_textField.setText(traitementSelectionne.getNom_complet());
@@ -422,6 +414,7 @@ public class Fiche_traitement_controller  implements Initializable{
 		annuler.setVisible(false);
 		fiche_traitement_label.setText("FICHE TRAITEMENT :");
 		nom_traitement_label.setText(traitementSelectionne.getNom());
+		
 		rafraichirAffichage();
     }
     
@@ -435,28 +428,11 @@ public class Fiche_traitement_controller  implements Initializable{
 		nom_traitement_textField.setDisable(true);
 		remarques_traitement_textArea.setDisable(true);
 		
-        liste_traitements.clear();
-        String jsonString = RestAccess.requestAll("traitement");
-		ObjectMapper om = new ObjectMapper();
-
-		try {
-			List<Traitement> traitements = om.readValue(jsonString, new TypeReference<List<Traitement>>() {});
-			liste_traitements.addAll(traitements);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    	
-        //traitementCursor = RestAccess.request("traitement").as(Traitement.class);
-		
-//		while (traitementCursor.hasNext()){
-//			Traitement enplus = traitementCursor.next();
-//			liste_traitements.add(enplus);
-//		}	
-		listView_traitements.setItems(liste_traitements);	
-		
-		rafraichirAffichage();
-		
-		
+//        liste_traitements.clear();
+//        JsonUtils.JsonToListObj(RestAccess.requestAll("traitement"), liste_traitements, new TypeReference<List<Traitement>>() {});	
+//		listView_traitements.setItems(liste_traitements);	
+//		
+		rafraichirAffichage();		
     }
     
     @FXML

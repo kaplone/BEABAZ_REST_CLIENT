@@ -328,7 +328,7 @@ public class Fiche_matiere_controller  implements Initializable{
         mise_a_jour_matiere.setVisible(false);
 		annuler.setVisible(false);
 		
-		fiche_matiere_label.setText("FICHE PRODUIT :");
+		fiche_matiere_label.setText("FICHE MATIERE :");
 		nom_matiere_label.setText(matiereSelectionne.getNom());
 		nom_matiere_textField.setText(matiereSelectionne.getNom());
 		nom_complet_matiere_textField.setText(matiereSelectionne.getNom_complet());

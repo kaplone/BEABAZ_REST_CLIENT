@@ -346,7 +346,7 @@ public class Fiche_technique_controller  implements Initializable{
         mise_a_jour_technique.setVisible(false);
 		annuler.setVisible(false);
 		
-		fiche_technique_label.setText("FICHE PRODUIT :");
+		fiche_technique_label.setText("FICHE TECHNIQUE :");
 		
 		nom_technique_label.setText(techniqueSelectionne.getNom());
 		nom_technique_textField.setText(techniqueSelectionne.getNom());

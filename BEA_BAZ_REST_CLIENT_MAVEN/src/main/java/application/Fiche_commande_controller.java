@@ -2,14 +2,20 @@ package application;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.Vector;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
+import enums.Progression;
 import models.Auteur;
 import models.Client;
 import models.Commande;
@@ -19,7 +25,11 @@ import models.Oeuvre;
 import models.OeuvreTraitee;
 import models.Traitement;
 import utils.FreeMarkerMaker;
+import utils.JsonUtils;
 import utils.RestAccess;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableStringValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -33,10 +43,12 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -44,8 +56,8 @@ import javafx.stage.Stage;
 
 public class Fiche_commande_controller  implements Initializable{
 	
-	@FXML
-	private ObservableList<Oeuvre> liste_oeuvres;
+//	@FXML
+//	private ObservableList<Oeuvre> liste_oeuvres;
 	@FXML
 	private Label nomClientLabel;
 	@FXML
@@ -103,21 +115,22 @@ public class Fiche_commande_controller  implements Initializable{
 	@FXML
 	private VBox commandeExportVbox;
 	@FXML
-	private TableView<OeuvreTraitee> tableOeuvre;
+	private TableView<Map<String, Object>> tableOeuvre;
 	@FXML
-	private TableColumn<OeuvreTraitee, String> oeuvres_nom_colonne;
+	private TableColumn<Map<String, Object>, String> oeuvres_nom_colonne;
 	@FXML
-	private TableColumn<OeuvreTraitee, ImageView> oeuvres_fait_colonne;
+	private TableColumn<Map<String, Object>, ImageView> oeuvres_fait_colonne;
 	
 	@FXML
 	private GridPane traitementGrid;
 	
-	private ArrayList<ChoiceBox<String>> traitements_selectionnes;
-	private ArrayList<String> traitements_attendus;
+	private ArrayList<ChoiceBox<Traitement>> traitements_selectionnes;
+	private ArrayList<Traitement> traitements_attendus;
 	private Map<String, String> traitements_attendus_id;
-
-	private ObservableList<String> observableTraitements;
-	private Map<String, String> traitements_id;
+    
+	private ObservableList<Traitement> liste_traitements;
+//	private ObservableList<String> observableTraitements;
+//	private Map<String, String> traitements_id;
 	
 	private ObservableList<String> observableAuteurs;
 	private Map<String, String> auteurs_id;
@@ -125,9 +138,9 @@ public class Fiche_commande_controller  implements Initializable{
 	private ObservableList<String> observableModeles;
 	private Map<String, String> modeles_id;
 
-	private List<OeuvreTraitee> listeOeuvresTraitees;
-	private OeuvreTraitee[] oeuvresTraitees;
-	private ObservableList<OeuvreTraitee> obs_oeuvres;
+	private List<Map<String, Object>> listeOeuvresTraitees;
+//	private OeuvreTraitee[] oeuvresTraitees;
+	private ObservableList<Map<String, Object>> obs_oeuvres;
 	
 	private Stage currentStage;
 	
@@ -289,15 +302,15 @@ public class Fiche_commande_controller  implements Initializable{
 //		commande.setDateFinProjet(dateFinProjetPicker.getValue());
 		commande.setRemarques(remarques_client.getText());
 		commande.setNom(nomCommandeTextField.getText());
-		model_name = modelChoiceBox.getSelectionModel().getSelectedItem();
-		model = Model.retrouveModel(modeles_id.get(model_name));
-		commande.setModele_id(modeles_id.get(model_name).toString());
-		auteur_name = auteursChoiceBox.getSelectionModel().getSelectedItem();
-		auteur = Auteur.retrouveAuteur(auteurs_id.get(auteur_name));
-		commande.setAuteur_id(auteurs_id.get(auteur_name).toString());
+		//model_name = modelChoiceBox.getSelectionModel().getSelectedItem();
+		//model = Model.retrouveModel(modeles_id.get(model_name));
+		
+		//auteur_name = auteursChoiceBox.getSelectionModel().getSelectedItem();
+		//auteur = Auteur.retrouveAuteur(auteurs_id.get(auteur_name));
+		//commande.setAuteur_id(auteurs_id.get(auteur_name).toString());
 		
         traitements_attendus.clear();
-        commande.setTraitements_attendus_id(new HashMap<String, String>());
+        commande.setTraitements_attendus_map(new HashMap<String, String>());
 		
 		for (Node cb : traitementGrid.getChildren()){
 			
@@ -307,17 +320,18 @@ public class Fiche_commande_controller  implements Initializable{
 			if (t != null && 
 				!traitements_attendus.contains(t)){
 				
-				String traitement_attendu = ((ChoiceBox<String>) cb).getValue();
+				Traitement traitement_attendu = ((ChoiceBox<Traitement>) cb).getValue();
 				
 				traitements_attendus.add(traitement_attendu);
-				commande.addTraitement_attendu_id(traitement_attendu, traitements_id.get(traitement_attendu));
+				commande.addTraitement_attendu_map(traitement_attendu.getNom(), traitement_attendu.get_id().toString());
 				
 			}
 			
 		}
 		
-		traitements_attendus_id = commande.getTraitements_attendus_id();
-		System.out.println("mise a jour : " + traitements_attendus_id.keySet());
+		//traitements_attendus = commande.getTraitements_attendus();
+		//traitements_attendus_id = commande.getTraitements_attendus_id();
+//		System.out.println("mise a jour : " + traitements_attendus_id.keySet());
 	
 		if (edit) {
 			Commande.update(commande);
@@ -356,17 +370,16 @@ public class Fiche_commande_controller  implements Initializable{
 		nomCommandeTextField.setDisable(true);
 		nomClientLabel.setText(client.getNom());
 
-		for (ChoiceBox<String> cbt : traitements_selectionnes){
+		for (ChoiceBox<Traitement> cbt : traitements_selectionnes){
 			cbt.getSelectionModel().clearSelection();
 		}
         
         int i = 0;
-        System.out.println("afficher : " + traitements_attendus_id.keySet());
         
-        ObservableList<String> menuList = FXCollections.observableArrayList(traitements_attendus_id.keySet());        
+        ObservableList<Traitement> menuList = FXCollections.observableArrayList(traitements_attendus);        
         menuList.add(null);
 
-		for (String t : traitements_attendus_id.keySet()){
+		for (Traitement t : traitements_attendus){
 
 			traitements_selectionnes.get(i).setItems(menuList);
 			traitements_selectionnes.get(i).getSelectionModel().select(i);
@@ -414,50 +427,50 @@ public class Fiche_commande_controller  implements Initializable{
     
     public void afficherTraitements(){
     	
-    	observableTraitements.clear();
-    	
-    	Traitement[] traitements = Traitement.retrouveTraitements();
-    	
-    	for (Traitement t : traitements){
-    		observableTraitements.add(t.getNom());
+    	if (liste_traitements == null){
+    		
+    		liste_traitements = FXCollections.observableArrayList();
+    		JsonUtils.JsonToListObj(RestAccess.requestAll("traitement"), liste_traitements, new TypeReference<List<Traitement>>() {});
+    		
+    		for (Node cb : traitementGrid.getChildren()){			
+    			((ChoiceBox<Traitement>) cb).setItems(liste_traitements);
+    		}
     	}
     	
-    	
-
-		for (Node cb : traitementGrid.getChildren()){
-			
-			((ChoiceBox<String>) cb).setItems(observableTraitements);
-			traitements_selectionnes.add(((ChoiceBox<String>) cb));
-		}
+		for (int i = 0; i < commande.getTraitements_attendus_names().size(); i++){
+			((ChoiceBox<String>)traitementGrid.getChildren().get(i)).getSelectionModel().select(i);
+    	}
     }
     
-    public Comparator<OeuvreTraitee> otTrieeParNom = 
-    		(OeuvreTraitee o1, OeuvreTraitee o2)-> o1.getNom().compareTo(o2.getNom());
+    public Comparator<? super Map<String, Object>> otTrieeParNom = 
+    		(Map<String, Object> o1, Map<String, Object> o2)-> o1.get("oeuvresTraitee_string").toString().compareTo(o2.get("oeuvresTraitee_string").toString());
     
     public void afficherOeuvres(){
-    	
-    	obs_oeuvres = FXCollections.observableArrayList();
-    	listeOeuvresTraitees = new ArrayList<>();
 
-		oeuvresTraitees = OeuvreTraitee.retrouveOeuvreTraiteesCommande(commande, false);
-		
-		System.out.println("lise des oeuvres : " + oeuvresTraitees);
-		
-		for (OeuvreTraitee ot : oeuvresTraitees){
-			System.out.println("ajout ot : " + ot);
-			listeOeuvresTraitees.add(ot);
-		}
-		
-		listeOeuvresTraitees.sort(otTrieeParNom);
-		
-		obs_oeuvres = FXCollections.observableArrayList(listeOeuvresTraitees);
-	
-    	oeuvres_nom_colonne.setCellValueFactory(new PropertyValueFactory<OeuvreTraitee, String>("nom"));
-		oeuvres_fait_colonne.setCellValueFactory(new PropertyValueFactory<OeuvreTraitee, ImageView>("icone_progression"));
+		obs_oeuvres = FXCollections.observableArrayList(commande.getOeuvresTraitees());
+
+    	oeuvres_nom_colonne.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get("oeuvresTraitee_string").toString()));
+		oeuvres_fait_colonne.setCellValueFactory(data -> new SimpleObjectProperty<ImageView>(getImageView(data)));
     	
 		tableOeuvre.setItems(obs_oeuvres);
-
 	}
+    
+    public ImageView getImageView(CellDataFeatures<Map<String, Object>, ImageView> data){
+    	
+    	ImageView imv = new ImageView();
+    	imv.setFitWidth(20);
+    	imv.setFitHeight(20);
+    	imv.setImage(new Image(Progression.valueOf(data.getValue().get("oeuvresTraitee_etat").toString()).getUsedImage()));
+    	
+    	return imv; 	
+    }
+    
+    public void afficherAuteur(){
+    	
+    	observableAuteurs = FXCollections.observableArrayList();
+    	observableAuteurs.add(commande.getAuteur_name());
+    	auteursChoiceBox.setItems(observableAuteurs);
+    }
     
     public void afficherAuteurs(){
 	
@@ -491,6 +504,13 @@ public class Fiche_commande_controller  implements Initializable{
 		auteursChoiceBox.setItems(observableAuteurs);
 		auteursChoiceBox.getSelectionModel().select(index);
 	}
+    
+    public void afficherModele(){
+    	
+    	observableModeles = FXCollections.observableArrayList();
+    	observableModeles.add(commande.getModele_name());
+    	modelChoiceBox.setItems(observableModeles);
+    }
     
     public void afficherModeles(){
     	
@@ -527,6 +547,7 @@ public class Fiche_commande_controller  implements Initializable{
     public void onOeuvreSelect(){
     	
     	Messages.setOeuvreTraitee((OeuvreTraitee) tableOeuvre.getSelectionModel().getSelectedItem());
+    	//TODO java.lang.ClassCastException: java.util.LinkedHashMap cannot be cast to models.OeuvreTraitee
     	
     	Scene fiche_oeuvre_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_oeuvre.fxml"), 1275, 722);
 		fiche_oeuvre_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
@@ -553,26 +574,31 @@ public class Fiche_commande_controller  implements Initializable{
 		
 		currentStage = Messages.getStage();
 		
-		observableTraitements = FXCollections.observableArrayList();
-		traitements_id = new TreeMap<>();
+//		observableTraitements = FXCollections.observableArrayList();
+//		traitements_id = new TreeMap<>();
 		traitements_selectionnes = new ArrayList<>();
 		observableAuteurs = FXCollections.observableArrayList();
 		traitements_attendus = new ArrayList<>();
-		traitements_attendus_id = new TreeMap<>();
-		
-		afficherTraitements();
-		
+//		traitements_attendus_id = new TreeMap<>();
+	
         if (Messages.getCommande() != null) {
         	
         	commande = Messages.getCommande();
         	System.out.println("commande trouvée : " + commande);
-
-        	model = Model.retrouveModel(commande.getModele_id());
         	
-    		auteur = Auteur.retrouveAuteur(commande.getAuteur_id());
+        	System.out.println(commande.getAuteur_id());
+        	System.out.println(commande.getAuteur_name());
+        	//System.out.println(commande.getAuteur());
+        	
+        	commande.setModele_map(new AbstractMap.SimpleEntry<>(commande.getModele_name(), commande.getModele_id()));
+    		commande.setAuteur_map(new AbstractMap.SimpleEntry<>(commande.getAuteur_name(), commande.getAuteur_id()));
+
+        	model_name = commande.getModele_name();
+        	
+    		auteur_name = commande.getAuteur_name();
     		
-    		traitements_attendus_id = commande.getTraitements_attendus_id();
-    		traitements_attendus.addAll(traitements_attendus_id.keySet());
+    		//traitements_attendus_id = commande.getTraitements_attendus_id();
+    		traitements_attendus.addAll(traitements_attendus);
     		
     		System.out.println("afficher commande");
     		afficherCommande();
@@ -583,7 +609,7 @@ public class Fiche_commande_controller  implements Initializable{
 		else { 
 			
 			commande = new Commande();
-			liste_oeuvres = FXCollections.observableArrayList();
+			//liste_oeuvres = FXCollections.observableArrayList();
 			
 			dateCommandePicker.setValue(LocalDate.now());
 			dateDebutProjetPicker.setValue(LocalDate.now());
@@ -613,8 +639,12 @@ public class Fiche_commande_controller  implements Initializable{
 			}
 		}
 		
-		afficherAuteurs();
-		afficherModeles();
+//		afficherAuteurs();
+//		afficherModeles();
+        
+        afficherTraitements();
 		
+		afficherAuteur();
+		afficherModele();
 	}
 }

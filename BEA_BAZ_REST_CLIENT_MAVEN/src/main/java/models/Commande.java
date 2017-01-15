@@ -9,12 +9,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 
@@ -39,18 +42,29 @@ public class Commande  extends Commun{
 
 	private LocalDateTime dateFinProjet;
 	
+	private Map<String, Object> modele;
+	private String modele_string;
 	private String modele_id;
+	private Entry<String,String> modele_map;
 	
+	private Map<String, Object> auteur;
+	private String auteur_string;
 	private String auteur_id;
+	private Entry<String,String> auteur_map;
 	
-	private Map<String, String> oeuvresTraitees_id;
-	private Map<String, String> traitements_attendus_id;
+	private Map<String, String> oeuvresTraitees_map;
+	private Map<String, String> traitements_attendus_map;
+	
+	private List<Map<String, Object>> oeuvresTraitees;
+	private List<Map<String, Object>> oeuvresTraitees_id;
+	private List<Map<String, Object>> traitements_attendus_id;
 	
 	final DateFormat inputFormat = new SimpleDateFormat("E MMM d H:m:s z y", Locale.US);
 	
 	public Commande(){
-		oeuvresTraitees_id = new HashMap<>();
-		traitements_attendus_id = new HashMap<>();
+		oeuvresTraitees_map = new HashMap<>();
+		traitements_attendus_map = new HashMap<>();
+		
 	}
 	
 	public static void update(Commande c){
@@ -139,19 +153,29 @@ public class Commande  extends Commun{
 	}
 
 	public Set<String> getOeuvresTraitees_names() {
-		return oeuvresTraitees_id.keySet();
+		return oeuvresTraitees_map.keySet();
 	}
 
 	public void addOeuvreTraitee(OeuvreTraitee oeuvreTraitee) {
-		this.oeuvresTraitees_id.put(oeuvreTraitee.toString(), oeuvreTraitee.get_id().toString());
+		this.oeuvresTraitees_map.put(oeuvreTraitee.toString(), oeuvreTraitee.get_id().toString());
 	}
 
 	public Set<String> getTraitements_attendus_names() {
-		return traitements_attendus_id.keySet();
+		
+		Set<String> a = new HashSet<>();
+		
+		for (Map<String, Object> m : this.getTraitements_attendus_id()){
+			for (Entry<String, Object> e : m.entrySet()){
+				if (e.getKey().equals("traitement_attendu_string")){
+					a.add(e.getValue().toString());
+				}
+			}
+		}		
+        return a;
 	}
 
-	public void addTraitement_attendu_id(String traitement_attendu, String id) {
-		this.traitements_attendus_id.put(traitement_attendu, id.toString());
+	public void addTraitement_attendu_map(String traitement_attendu, String id) {
+		this.traitements_attendus_map.put(traitement_attendu, id.toString());
 	}
 
 	public String getNom_affichage() {
@@ -178,46 +202,136 @@ public class Commande  extends Commun{
 		this.complement = complement;
 	}
 
+	public Entry<String,String> getModele_map() {
+		return modele_map;
+	}
+
+	public void setModele_map(Entry<String,String> modele) {
+		this.modele_map = modele;
+	}
+	
 	public String getModele_id() {
 		return modele_id;
 	}
-
-	public void setModele_id(String modele) {
-		this.modele_id = modele;
+	
+	public String getModele_name() {
+		return modele_string;
 	}
 
 	public String getAuteur_id() {
 		return auteur_id;
 	}
-
-	public void setAuteur_id(String auteur) {
-		this.auteur_id = auteur;
-	}
 	
+	public String getAuteur_name() {
+		return auteur_string;
+	}
+
 	public Model getModel(){
-		return Model.retrouveModel(modele_id);
+		return Model.retrouveModel(getModele_id());
 	}
 	
 	public Auteur getAuteur(){
-		return Auteur.retrouveAuteur(auteur_id);
+		return Auteur.retrouveAuteur(getAuteur_id());
 	}
 
-	public Map<String, String> getOeuvresTraitees_id() {
-		return oeuvresTraitees_id;
+	public void setOeuvresTraitees(List<Map<String, Object>> oeuvresTraitees) {
+		this.oeuvresTraitees = oeuvresTraitees;
 	}
 
-	public void setOeuvresTraitees_id(Map<String, String> oeuvresTraitees_id) {
-		this.oeuvresTraitees_id = oeuvresTraitees_id;
-	}
-
-	public Map<String, String> getTraitements_attendus_id() {
+	public List<Map<String, Object>> getTraitements_attendus_id() {
 		return traitements_attendus_id;
 	}
 
-	public void setTraitements_attendus_id(Map<String, String> traitements_attendus_id) {
+	public void setTraitements_attendus_id(List<Map<String, Object>> traitements_attendus_id) {
 		this.traitements_attendus_id = traitements_attendus_id;
 	}
 	
+	
+	public Map<String, String> getOeuvresTraitees_map() {
+		return oeuvresTraitees_map;
+	}
+
+	public void setOeuvresTraitees_map(Map<String, String> oeuvresTraitees_map) {
+		this.oeuvresTraitees_map = oeuvresTraitees_map;
+	}
+
+	public Map<String, String> getTraitements_attendus_map() {
+		return traitements_attendus_map;
+	}
+
+	public void setTraitements_attendus_map(Map<String, String> traitements_attendus_map) {
+		this.traitements_attendus_map = traitements_attendus_map;
+	}
+
+//	public void setDateCommande(LocalDateTime dateCommande) {
+//		this.dateCommande = dateCommande;
+//	}
+//
+//	public void setDateDebutProjet(LocalDateTime dateDebutProjet) {
+//		this.dateDebutProjet = dateDebutProjet;
+//	}
+//
+//	public void setDateFinProjet(LocalDateTime dateFinProjet) {
+//		this.dateFinProjet = dateFinProjet;
+//	}
+
+	public Map<String, Object> getModele() {
+		return modele;
+	}
+
+	public void setModele(Map<String, Object> modele) {
+		this.modele = modele;
+	}
+
+	public String getModele_string() {
+		return modele_string;
+	}
+
+	public void setModele_string(String modele_string) {
+		this.modele_string = modele_string;
+	}
+
+	public String getAuteur_string() {
+		return auteur_string;
+	}
+
+	public void setAuteur_string(String auteur_string) {
+		this.auteur_string = auteur_string;
+	}
+
+	public Entry<String, String> getAuteur_map() {
+		return auteur_map;
+	}
+
+	public void setAuteur_map(Entry<String, String> auteur_map) {
+		this.auteur_map = auteur_map;
+	}
+
+	public void setModele_id(String modele_id) {
+		this.modele_id = modele_id;
+	}
+
+	public void setAuteur(Map<String, Object> auteur) {
+		this.auteur = auteur;
+	}
+
+	public void setAuteur_id(String auteur_id) {
+		this.auteur_id = auteur_id;
+	}
+	
+	public void setOeuvresTraitees_id(List<Map<String, Object>> oeuvresTraitees_id) {
+		this.oeuvresTraitees_id = oeuvresTraitees_id;
+	}
+	
+
+	public List<Map<String, Object>> getOeuvresTraitees() {
+		return oeuvresTraitees;
+	}
+
+	public List<Map<String, Object>> getOeuvresTraitees_id() {
+		return oeuvresTraitees_id;
+	}
+
 	public static ObjectId retrouveId(String commandeSelectionne){
 
 		return retrouveCommande(commandeSelectionne).get_id();
@@ -240,14 +354,10 @@ public class Commande  extends Commun{
 	public static Commande retrouveCommande(ObjectId id){
 
         String commande_str= RestAccess.request("commande", id);
-        System.out.println("commande_str : " + commande_str);
-        
         Commande c = null;
 		
 		try {
-			  System.out.println("debut try");
 			  c = Commun.getMapper().readValue(commande_str, Commande.class);
-			  System.out.println("c dans retrouveCommande .. : " + c);
 		  }
 		  catch (IOException e) {
 			  e.printStackTrace();
