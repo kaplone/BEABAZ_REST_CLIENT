@@ -171,23 +171,23 @@ public class TacheTraitement extends Commun{
 	
 	public static TacheTraitement retrouveTacheTraitement(String tacheTraitementSelectionne){
 		
-		System.out.println("------------ " + tacheTraitementSelectionne);
-
-        String tacheTraitement_str= RestAccess.request("tacheTraitement", "nom", tacheTraitementSelectionne);
+//		System.out.println("------------ " + tacheTraitementSelectionne);
+//
+//        String tacheTraitement_str= RestAccess.request("tacheTraitement", "nom", tacheTraitementSelectionne);
         TacheTraitement c = null;
-        ObjectMapper mapper = new ObjectMapper();
-        
-        System.out.println("========== " + tacheTraitement_str);
-        
-        if (tacheTraitement_str != null){
-          try {			 
-  			  c = mapper.readValue(tacheTraitement_str, TacheTraitement.class);
-  		  }
-  		  catch (IOException e) {
-  	    }
-        }
-		
-		
+//        ObjectMapper mapper = new ObjectMapper();
+//        
+//        System.out.println("========== " + tacheTraitement_str);
+//        
+//        if (tacheTraitement_str != null){
+//          try {			 
+//  			  c = mapper.readValue(tacheTraitement_str, TacheTraitement.class);
+//  		  }
+//  		  catch (IOException e) {
+//  	    }
+//        }
+//		
+//		
 		
 		return c;
 	}

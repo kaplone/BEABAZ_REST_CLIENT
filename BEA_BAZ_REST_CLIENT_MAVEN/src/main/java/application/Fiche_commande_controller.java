@@ -1,5 +1,6 @@
 package application;
 
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.AbstractMap;
@@ -13,7 +14,10 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import org.bson.types.ObjectId;
+
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import enums.Progression;
 import models.Auteur;
@@ -115,11 +119,11 @@ public class Fiche_commande_controller  implements Initializable{
 	@FXML
 	private VBox commandeExportVbox;
 	@FXML
-	private TableView<Map<String, Object>> tableOeuvre;
+	private TableView<Map<String, String>> tableOeuvre;
 	@FXML
-	private TableColumn<Map<String, Object>, String> oeuvres_nom_colonne;
+	private TableColumn<Map<String, String>, String> oeuvres_nom_colonne;
 	@FXML
-	private TableColumn<Map<String, Object>, ImageView> oeuvres_fait_colonne;
+	private TableColumn<Map<String, String>, ImageView> oeuvres_fait_colonne;
 	
 	@FXML
 	private GridPane traitementGrid;
@@ -140,7 +144,7 @@ public class Fiche_commande_controller  implements Initializable{
 
 	private List<Map<String, Object>> listeOeuvresTraitees;
 //	private OeuvreTraitee[] oeuvresTraitees;
-	private ObservableList<Map<String, Object>> obs_oeuvres;
+	private ObservableList<Map<String, String>> obs_oeuvres;
 	
 	private Stage currentStage;
 	
@@ -455,7 +459,7 @@ public class Fiche_commande_controller  implements Initializable{
 		tableOeuvre.setItems(obs_oeuvres);
 	}
     
-    public ImageView getImageView(CellDataFeatures<Map<String, Object>, ImageView> data){
+    public ImageView getImageView(CellDataFeatures<Map<String, String>, ImageView> data){
     	
     	ImageView imv = new ImageView();
     	imv.setFitWidth(20);
@@ -546,9 +550,20 @@ public class Fiche_commande_controller  implements Initializable{
     
     public void onOeuvreSelect(){
     	
-    	Messages.setOeuvreTraitee((OeuvreTraitee) tableOeuvre.getSelectionModel().getSelectedItem());
-    	//TODO java.lang.ClassCastException: java.util.LinkedHashMap cannot be cast to models.OeuvreTraitee
+    	String ots = RestAccess.request("oeuvreTraitee", new ObjectId(tableOeuvre.getSelectionModel().getSelectedItem().get("oeuvresTraitee_id")));
     	
+    	ObjectMapper mapper = new ObjectMapper();
+    	
+    	OeuvreTraitee ot_;
+		try {
+			ot_ = mapper.readValue(ots, OeuvreTraitee.class);
+			Messages.setOeuvreTraitee(ot_);
+	    	//TODO java.lang.ClassCastException: java.util.LinkedHashMap cannot be cast to models.OeuvreTraitee
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
     	Scene fiche_oeuvre_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_oeuvre.fxml"), 1275, 722);
 		fiche_oeuvre_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		

@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,6 +25,8 @@ import org.bson.types.ObjectId;
 import utils.RestAccess;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import enums.Progression;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Commande  extends Commun{
@@ -55,7 +58,7 @@ public class Commande  extends Commun{
 	private Map<String, String> oeuvresTraitees_map;
 	private Map<String, String> traitements_attendus_map;
 	
-	private List<Map<String, Object>> oeuvresTraitees;
+	private List<Map<String, String>> oeuvresTraitees;
 	private List<Map<String, Object>> oeuvresTraitees_id;
 	private List<Map<String, Object>> traitements_attendus_id;
 	
@@ -234,7 +237,7 @@ public class Commande  extends Commun{
 		return Auteur.retrouveAuteur(getAuteur_id());
 	}
 
-	public void setOeuvresTraitees(List<Map<String, Object>> oeuvresTraitees) {
+	public void setOeuvresTraitees(List<Map<String, String>> oeuvresTraitees) {	
 		this.oeuvresTraitees = oeuvresTraitees;
 	}
 
@@ -324,7 +327,7 @@ public class Commande  extends Commun{
 	}
 	
 
-	public List<Map<String, Object>> getOeuvresTraitees() {
+	public List<Map<String, String>> getOeuvresTraitees() {
 		return oeuvresTraitees;
 	}
 
