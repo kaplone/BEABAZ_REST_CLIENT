@@ -19,6 +19,7 @@ import enums.Progression;
 import utils.FreeMarkerMaker;
 import utils.JsonUtils;
 import utils.RestAccess;
+import utils.RestObjectMapper;
 import models.Auteur;
 import models.Commande;
 import models.Fichier;
@@ -29,6 +30,8 @@ import models.OeuvreTraitee;
 import models.TacheTraitement;
 import models.Technique;
 import models.Traitement;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -44,6 +47,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -133,14 +137,14 @@ public class Fiche_oeuvre_controller  implements Initializable{
 	private TextArea complement_etat_textArea;
 	
 	@FXML
-	private TableView<OeuvreTraitee> tableOeuvre;
+	private TableView<Map<String, String>> tableOeuvre;
 	@FXML
-	private TableColumn<OeuvreTraitee, String> oeuvres_nom_colonne;
+	private TableColumn<Map<String, String>, String> oeuvres_nom_colonne;
 	@FXML
-	private TableColumn<OeuvreTraitee, ImageView> oeuvres_fait_colonne;
+	private TableColumn<Map<String, String>, ImageView> oeuvres_fait_colonne;
 	//private TableColumn<OeuvreTraitee, String> oeuvres_fait_colonne;
 
-	private List<OeuvreTraitee> oeuvresTraitees;
+	private List<Map<String, String>> oeuvresTraitees;
 	
 	private boolean edit = false;
 	private Oeuvre oeuvreSelectionne;
@@ -364,8 +368,12 @@ public class Fiche_oeuvre_controller  implements Initializable{
 		
 		traitementsAttendus.clear();
 				
-		for (String tt : oeuvreTraiteeSelectionne.getTraitementsAttendus_id()){
-			traitementsAttendus.add(TacheTraitement.retrouveTacheTraitement(tt));	
+		for (String tt : oeuvreTraiteeSelectionne.getTraitementsAttendus_names()){
+			
+			System.out.println( "tt = " + tt);
+			//traitementsAttendus.add(TacheTraitement.retrouveTacheTraitement(tt));	
+			
+			traitementsAttendus.add(RestObjectMapper.retrouveObjet("tacheTraitement", new ObjectId(tt), TacheTraitement.class));
 		}
 
 		traitements_attendus_tableColumn.setCellValueFactory(new PropertyValueFactory<TacheTraitement, String>("nom"));
@@ -477,35 +485,27 @@ public class Fiche_oeuvre_controller  implements Initializable{
     
     public void afficherOeuvres(){
 		
-		ObservableList<OeuvreTraitee> liste_oeuvres = FXCollections.observableArrayList();
-		//JsonUtils.JsonToListObj(RestAccess.requestAll("oeuvreTraitee"), liste_oeuvres, new TypeReference<List<OeuvreTraitee>>() {});
-		
-		List<OeuvreTraitee> listeOeuvresTraitees = new ArrayList<>();
+		ObservableList<Map<String, String>> liste_oeuvres = FXCollections.observableArrayList();
 
-		listeOeuvresTraitees = Arrays.asList(OeuvreTraitee.retrouveOeuvreTraiteesCommande(commandeSelectionne, false));
 		
-		System.out.println("lise des oeuvres : " + oeuvresTraitees);
-		
-		for (OeuvreTraitee ot : oeuvresTraitees){
-			System.out.println("ajout ot : " + ot);
-			listeOeuvresTraitees.add(ot);
-		}
-		
-		listeOeuvresTraitees.sort(otTrieeParNom);
-		
-		liste_oeuvres = FXCollections.observableArrayList(listeOeuvresTraitees);
+		liste_oeuvres = FXCollections.observableArrayList(commandeSelectionne.getOeuvresTraitees());
 	
-    	oeuvres_nom_colonne.setCellValueFactory(new PropertyValueFactory<OeuvreTraitee, String>("nom"));
-		oeuvres_fait_colonne.setCellValueFactory(new PropertyValueFactory<OeuvreTraitee, ImageView>("icone_progression"));
+		oeuvres_nom_colonne.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get("oeuvresTraitee_string").toString()));
+		oeuvres_fait_colonne.setCellValueFactory(data -> new SimpleObjectProperty<ImageView>(getImageView(data)));
     	
 		tableOeuvre.setItems(liste_oeuvres);
-
-//		oeuvres_nom_colonne.setCellValueFactory(new PropertyValueFactory<OeuvreTraitee, String>("nom"));
-//		oeuvres_fait_colonne.setCellValueFactory(new PropertyValueFactory<OeuvreTraitee, ImageView>("icone_progression"));
-//
-//		tableOeuvre.setItems(liste_oeuvres);
 		
 	}
+    
+    public ImageView getImageView(CellDataFeatures<Map<String, String>, ImageView> data){
+    	
+    	ImageView imv = new ImageView();
+    	imv.setFitWidth(20);
+    	imv.setFitHeight(20);
+    	imv.setImage(new Image(Progression.valueOf(data.getValue().get("oeuvresTraitee_etat").toString()).getUsedImage()));
+    	
+    	return imv; 	
+    }
     
    public void afficherTechniques(){
 	   
@@ -708,7 +708,7 @@ public class Fiche_oeuvre_controller  implements Initializable{
 		
 		
 		oeuvreTraiteeSelectionne = Messages.getOeuvreTraitee();
-		System.out.println("oeuvreTraiteeSelectionne : " + oeuvreTraiteeSelectionne);
+		System.out.println("oeuvreTraiteeSelectionne : " + oeuvreTraiteeSelectionne); // retourne null : pourquoi ?
 		
 		oeuvreSelectionne = oeuvreTraiteeSelectionne.getOeuvre(); // retourne null : pourquoi ?
 		System.out.println("oeuvreSelectionne :" + oeuvreSelectionne); 
@@ -750,7 +750,7 @@ public class Fiche_oeuvre_controller  implements Initializable{
 		traitementsAttendus = FXCollections.observableArrayList();
 		fichiers = FXCollections.observableArrayList();
 		
-		oeuvresTraitees = new ArrayList<OeuvreTraitee>();
+		oeuvresTraitees = new ArrayList<Map<String, String>>();
 
 		
 		currentStage = Messages.getStage();

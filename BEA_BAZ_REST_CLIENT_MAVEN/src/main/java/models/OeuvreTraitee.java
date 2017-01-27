@@ -2,7 +2,6 @@ package models;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -14,14 +13,11 @@ import org.bson.types.ObjectId;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.xml.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import enums.EtatFinal;
 import enums.Progression;
 import utils.RestAccess;
 import utils.Normalize;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -31,15 +27,14 @@ public class OeuvreTraitee extends Commun {
 	
 	private String oeuvre_id;
 	
-	private Set<String> traitementsAttendus_id;
+	private List<Map<String, String>> traitementsAttendus;
 
 	private EtatFinal etat;
 	private String complement_etat;
 	
-	private ArrayList<String> alterations;
+	private List<String> alterations;
 	
-	private ArrayList<Fichier> fichiers;
-	private Map<String,String> fichiers_id;
+	private List<Map<String, String>> fichiers;
 	
 	private Progression progressionOeuvreTraitee;
 	
@@ -52,7 +47,7 @@ public class OeuvreTraitee extends Commun {
     
     public OeuvreTraitee(){
     	
-    	traitementsAttendus_id = new HashSet<>();
+    	traitementsAttendus = new ArrayList<>();
     	alterations = new ArrayList<>();
     	fichiers = new ArrayList<>();
     	
@@ -69,50 +64,40 @@ public class OeuvreTraitee extends Commun {
 	public void setEtat(EtatFinal etat) {
 		this.etat = etat;
 	}
-	public ArrayList<Fichier> getFichiers() {
-		
-		ArrayList<Fichier> fichiers = new ArrayList<>();
-		
-		if (fichiers_id != null){
-			for (String s : fichiers_id.keySet()) {
-				fichiers.add(Fichier.retrouveFichier(fichiers_id.get(s)));
-			}
-		}
-	
-		return fichiers;
-	}
 	
 	public Fichier getFichierAffiche () {
-		
-		Fichier fichier = null;
-		
-		if (fichiers_id != null){
-			for (String s : fichiers_id.keySet()) {
-				
-				if (Normalize.normalizeDenormStringField(s).endsWith(".PR.1.JPG")){
-					fichier = Fichier.retrouveFichier(fichiers_id.get(s));
-				}
+
+    	String fichier_id = null;
+
+    	for (Map<String, String> file : fichiers){
+    		if (file.get("fichier_string").endsWith("_PR_1_JPG")){
+				fichier_id = file.get("fichier_id");
 			}
 		}
+		
+    	ObjectMapper mapper = new ObjectMapper();
+		Fichier fichier = null;
+		try {
+			fichier = mapper.readValue(RestAccess.request("fichier", new ObjectId(fichier_id)), Fichier.class);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
+		
 		return fichier;
 		
 	}
 	
-	public Map<String, String> getFichiers_id() {
-		return fichiers_id;
+	public List<Map<String, String>> getFichiers() {
+		return fichiers;
 	}
 	@JsonIgnore
 	public Set<String> getFichiers_names() {
-		if (fichiers_id != null){
-			return fichiers_id.keySet();
-		}
-		else {
-			return new HashSet<>();
-		}
-	}
-	public void setFichiers(ArrayList<Fichier> fichiers) {
-		this.fichiers = fichiers;
+		
+		return fichiers.stream()
+                .map(a -> a.get("fichier_string"))
+                .collect(Collectors.toSet());
 	}
 
 	public Progression getProgressionOeuvreTraitee() {
@@ -123,17 +108,25 @@ public class OeuvreTraitee extends Commun {
 		this.progressionOeuvreTraitee = progressionOeuvreTraitee;
 	}
 	public Set<String> getTraitementsAttendus_names() {
-		return traitementsAttendus_id;
+
+    	return traitementsAttendus.stream()
+				                  .map(a -> a.get("traitementAttendu_string"))
+				                  .collect(Collectors.toSet());
 	}
-	public Collection<String> getTraitementsAttendus_id() {
-		return traitementsAttendus_id;
-	}
+
+
 	public void addTraitementAttendu(Traitement traitementAttendu) {
-		this.traitementsAttendus_id.add(traitementAttendu.get_id().toString());
+		this.addTraitementAttendu(traitementAttendu.getNom(), traitementAttendu.get_id().toString());
 	}
-	public void addTraitementAttendu(String nom, ObjectId id) {
-		this.traitementsAttendus_id.add(id.toString());
+	public void addTraitementAttendu(String nom, String id) {
+
+    	Map<String, String> map = new HashMap<>();
+    	map.put("traitementAttendu_id", id);
+    	map.put("traitementAttendu_string", nom);
+
+    	this.traitementsAttendus.add(map);
 	}
+
 
 	public ImageView getIcone_progression() {
 		
@@ -146,7 +139,7 @@ public class OeuvreTraitee extends Commun {
 		
 		return usedImage;
 	}
-	public ArrayList<String> getAlterations() {
+	public List<String> getAlterations() {
 		return alterations;
 	}
 	public void setAlterations(ArrayList<String> alterations) {
@@ -183,12 +176,12 @@ public class OeuvreTraitee extends Commun {
 		this.oeuvre_id = oeuvre_id;
 	}
 
-	public void setTraitementsAttendus_id(Set<String>traitementsAttendus_id) {
-		this.traitementsAttendus_id = traitementsAttendus_id;
+	public void setTraitementsAttendus(List<Map<String, String>> traitementsAttendus) {
+		this.traitementsAttendus = traitementsAttendus;
 	}
 
-	public void setFichiers_id(Map<String, String> fichiers_id) {
-		this.fichiers_id = fichiers_id;
+	public void setFichiers(List<Map<String, String>> fichiers) {
+		this.fichiers = fichiers;
 	}
 
 	public String getCommande_id() {
@@ -225,96 +218,5 @@ public class OeuvreTraitee extends Commun {
 
 	public void setCote(String cote) {
 		this.cote = cote;
-	}
-	
-	public static ObjectId retrouveId(String oeuvreTraiteeSelectionne){
-
-		return retrouveOeuvreTraitee(oeuvreTraiteeSelectionne).get_id();
-	}
-	
-	public static OeuvreTraitee retrouveOeuvreTraitee(String oeuvreTraiteeSelectionne){
-		
-		System.out.println("------------ " + oeuvreTraiteeSelectionne);
-
-        String oeuvreTraitee_str= RestAccess.request("oeuvreTraitee", "nom", oeuvreTraiteeSelectionne);
-        OeuvreTraitee c = null;
-        ObjectMapper mapper = new ObjectMapper();
-        
-        System.out.println("========== " + oeuvreTraitee_str);
-        
-        if (oeuvreTraitee_str != null){
-          try {			 
-  			  c = mapper.readValue(oeuvreTraitee_str, OeuvreTraitee.class);
-  		  }
-  		  catch (IOException e) {
-  	    }
-        }
-		
-		
-		
-		return c;
-	}
-	
-	public static OeuvreTraitee retrouveOeuvreTraitee(ObjectId id){
-
-        String oeuvreTraitee_str= RestAccess.request("oeuvreTraitee", id);
-        OeuvreTraitee c = null;
-		
-		try {
-			  c = Commun.getMapper().readValue(oeuvreTraitee_str, OeuvreTraitee.class);
-		  }
-		  catch (IOException e) {
-			  
-	    }
-		
-		return c;
-	}
-	
-	public static OeuvreTraitee[] retrouveOeuvreTraitees(){
-		
-		String oeuvreTraitee_str= RestAccess.request("oeuvreTraitee");
-        OeuvreTraitee[] c = null ;
-		
-		try {
-			c = Commun.getMapper().readValue(oeuvreTraitee_str, OeuvreTraitee[].class);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return c;
-	}
-	
-    public static ObservableList<String> retrouveOeuvreTraiteesStr(){
-    	
-    	ObservableList<String> liste_str = FXCollections.observableArrayList();
-		
-		for (OeuvreTraitee c : retrouveOeuvreTraitees()){
-			liste_str.add(c.getNom());
-		}
-		return liste_str;
-	}
-    
-    public static OeuvreTraitee[] retrouveOeuvreTraiteesCommande(Commande commande, boolean fait){
-		
-    	OeuvreTraitee[] c = null ;
-    	String oeuvreTraitee_str = null;
-    	
-    	if (fait){
-    		oeuvreTraitee_str = RestAccess.request("oeuvreTraitee", Progression.FAIT_, commande);
-    	}
-    	else {
-    		oeuvreTraitee_str = RestAccess.request("oeuvreTraitee", commande);
-    	}
-		
-        
-		
-		try {
-			c = Commun.getMapper().readValue(oeuvreTraitee_str, OeuvreTraitee[].class);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return c;
-	}
-	
+	}	
 }
