@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
@@ -23,7 +22,7 @@
                 <TableColumn fx:id="oeuvres_fait_colonne" prefWidth="37.0" text="Fait" />
               </columns>
             </TableView>
-            <Button fx:id="nouvelle_oeuvre_button" mnemonicParsing="false" text="Nouvelle oeuvre">
+            <Button fx:id="nouveau" mnemonicParsing="false" text="Nouvelle oeuvre">
                <VBox.margin>
                   <Insets bottom="10.0" top="10.0" />
                </VBox.margin>
@@ -193,7 +192,7 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </VBox.margin>
                <children>
-                  <Button fx:id="mise_a_jour_commande" mnemonicParsing="false" text="Mise à jour" />
+                  <Button fx:id="mise_a_jour" mnemonicParsing="false" text="Mise à jour" />
                   <Button fx:id="editer" mnemonicParsing="false" text="Editer" />
                   <Button fx:id="annuler" mnemonicParsing="false" text="Annuler">
                      <HBox.margin>

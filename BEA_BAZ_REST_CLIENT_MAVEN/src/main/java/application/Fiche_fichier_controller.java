@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 
 import org.jongo.MongoCursor;
 
+import models.Contexte;
 import models.Fichier;
 import models.Messages;
 import models.Oeuvre;
@@ -27,7 +28,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-public class Fiche_fichier_controller  implements Initializable{
+public class Fiche_fichier_controller extends Fiche_controller implements Initializable{
 	
 	private ObservableList<Fichier> liste_fichiers;
 	@FXML
@@ -94,7 +95,7 @@ public class Fiche_fichier_controller  implements Initializable{
 	@FXML
 	public void onVersCommandeButton(){
 		
-		Scene fiche_commande_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_commande.fxml"), 1275, 722);
+		Scene fiche_commande_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_commande.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_commande_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		currentStage.setScene(fiche_commande_scene);	
@@ -102,7 +103,7 @@ public class Fiche_fichier_controller  implements Initializable{
 	@FXML
 	public void onVersOeuvreButton(){
 		
-		Scene fiche_oeuvre_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_oeuvre.fxml"), 1275, 722);
+		Scene fiche_oeuvre_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_oeuvre.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_oeuvre_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		currentStage.setScene(fiche_oeuvre_scene);	
@@ -111,7 +112,7 @@ public class Fiche_fichier_controller  implements Initializable{
 	@FXML
 	public void onVersProduitsButton(){
 		
-		Scene fiche_produit_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_produit.fxml"), 1275, 722);
+		Scene fiche_produit_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_produit.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_produit_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		currentStage.setScene(fiche_produit_scene);	
@@ -121,14 +122,14 @@ public class Fiche_fichier_controller  implements Initializable{
 	
 	@FXML
     public void onVersModelsButton(){
-    	Scene fiche_model_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_model.fxml"), 1275, 722);
+    	Scene fiche_model_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_model.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_model_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		currentStage.setScene(fiche_model_scene);
     }
     @FXML
     public void onVersAuteursButton(){
-    	Scene fiche_auteur_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_auteur.fxml"), 1275, 722);
+    	Scene fiche_auteur_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_auteur.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_auteur_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		currentStage.setScene(fiche_auteur_scene);
@@ -136,21 +137,21 @@ public class Fiche_fichier_controller  implements Initializable{
 	
     @FXML
     public void onVersTraitementsButton(){
-    	Scene fiche_traitement_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_traitement.fxml"), 1275, 722);
+    	Scene fiche_traitement_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_traitement.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_traitement_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		currentStage.setScene(fiche_traitement_scene);
     }
     @FXML
     public void onVersMatieresButton(){
-    	Scene fiche_matiere_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_matiere.fxml"), 1275, 722);
+    	Scene fiche_matiere_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_matiere.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_matiere_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		currentStage.setScene(fiche_matiere_scene);
     }
     @FXML
     public void onVersTechniquesButton(){
-    	Scene fiche_technique_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_technique.fxml"), 1275, 722);
+    	Scene fiche_technique_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_technique.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_technique_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		currentStage.setScene(fiche_technique_scene);
@@ -159,7 +160,7 @@ public class Fiche_fichier_controller  implements Initializable{
 	@FXML
 	public void onVersClientButton(){
 		
-		Scene fiche_client_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_client.fxml"), 1275, 722);
+		Scene fiche_client_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_client.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_client_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		currentStage.setScene(fiche_client_scene);

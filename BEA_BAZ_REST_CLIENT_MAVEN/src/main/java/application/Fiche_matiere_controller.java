@@ -28,7 +28,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-public class Fiche_matiere_controller  implements Initializable{
+public class Fiche_matiere_controller extends Fiche_controller implements Initializable{
 
 	@FXML
 	private ObservableList<Matiere> liste_matieres;
@@ -42,20 +42,20 @@ public class Fiche_matiere_controller  implements Initializable{
 	private Button annuler;
 	@FXML
 	private Button editer;
-	@FXML
-	private Button versCommandeButton;
-	@FXML
-	private Button versTraitementButton;
-	@FXML
-	private Button versModeleButton;
-	@FXML
-	private Button versOeuvreButton;
-	@FXML
-	private Button versRapportButton;
-	@FXML
-	private Button versFichierButton;
-	@FXML
-	private Button versProduitsButton;
+//	@FXML
+//	private Button versCommandeButton;
+//	@FXML
+//	private Button versTraitementButton;
+//	@FXML
+//	private Button versModeleButton;
+//	@FXML
+//	private Button versOeuvreButton;
+//	@FXML
+//	private Button versRapportButton;
+//	@FXML
+//	private Button versFichierButton;
+//	@FXML
+//	private Button versProduitsButton;
 	@FXML
 	private Button matieres_button;
 	@FXML
@@ -86,68 +86,68 @@ public class Fiche_matiere_controller  implements Initializable{
 
 	Produit detail;
 	
-	@FXML
-    public void onVersClientButton(){
-    	Scene fiche_client_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_client.fxml"), 1275, 722);
-		fiche_client_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_client_scene);
-    }
-	@FXML
-	public void onVersCommandeButton(){
-		
-		Scene fiche_commande_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_commande.fxml"), 1275, 722);
-		fiche_commande_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_commande_scene);	
-	}
-	@FXML
-    public void onVersOeuvreButton(){
-    	Scene fiche_oeuvre_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_oeuvre.fxml"), 1275, 722);
-		fiche_oeuvre_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_oeuvre_scene);
-    }
-	@FXML
-	public void onVersProduitsButton(){
-		
-		Scene fiche_produit_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_produit.fxml"), 1275, 722);
-		fiche_produit_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_produit_scene);	
-	}
-	@FXML
-    public void onVersFichiersButton(){}
-
-    @FXML
-    public void onVersModelesButton(){
-    	Scene fiche_model_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_model.fxml"), 1275, 722);
-		fiche_model_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_model_scene);
-    }
-	@FXML
-	public void onVersTraitementsButton(){
-		
-		Scene fiche_traitement_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_traitement.fxml"), 1275, 722);
-		fiche_traitement_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_traitement_scene);	
-	}
-	@FXML
-    public void onVersAuteursButton(){
-    	Scene fiche_auteur_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_auteur.fxml"), 1275, 722);
-		fiche_auteur_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_auteur_scene);
-    }
-    @FXML
-    public void onTechniques_button(){
-    	Scene fiche_technique_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_technique.fxml"), 1275, 722);
-		fiche_technique_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_technique_scene);
-    }
+//	@FXML
+//    public void onVersClientButton(){
+//    	Scene fiche_client_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_client.fxml"), 1275, 722);
+//		fiche_client_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+//		
+//		currentStage.setScene(fiche_client_scene);
+//    }
+//	@FXML
+//	public void onVersCommandeButton(){
+//		
+//		Scene fiche_commande_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_commande.fxml"), 1275, 722);
+//		fiche_commande_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+//		
+//		currentStage.setScene(fiche_commande_scene);	
+//	}
+//	@FXML
+//    public void onVersOeuvreButton(){
+//    	Scene fiche_oeuvre_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_oeuvre.fxml"), 1275, 722);
+//		fiche_oeuvre_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+//		
+//		currentStage.setScene(fiche_oeuvre_scene);
+//    }
+//	@FXML
+//	public void onVersProduitsButton(){
+//		
+//		Scene fiche_produit_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_produit.fxml"), 1275, 722);
+//		fiche_produit_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+//		
+//		currentStage.setScene(fiche_produit_scene);	
+//	}
+//	@FXML
+//    public void onVersFichiersButton(){}
+//
+//    @FXML
+//    public void onVersModelesButton(){
+//    	Scene fiche_model_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_model.fxml"), 1275, 722);
+//		fiche_model_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+//		
+//		currentStage.setScene(fiche_model_scene);
+//    }
+//	@FXML
+//	public void onVersTraitementsButton(){
+//		
+//		Scene fiche_traitement_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_traitement.fxml"), 1275, 722);
+//		fiche_traitement_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+//		
+//		currentStage.setScene(fiche_traitement_scene);	
+//	}
+//	@FXML
+//    public void onVersAuteursButton(){
+//    	Scene fiche_auteur_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_auteur.fxml"), 1275, 722);
+//		fiche_auteur_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+//		
+//		currentStage.setScene(fiche_auteur_scene);
+//    }
+//    @FXML
+//    public void onTechniques_button(){
+//    	Scene fiche_technique_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_technique.fxml"), 1275, 722);
+//		fiche_technique_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+//		
+//		currentStage.setScene(fiche_technique_scene);
+//    }
 	
     protected File chooseExport(){
 		
@@ -349,6 +349,7 @@ public class Fiche_matiere_controller  implements Initializable{
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		super.init();
 
 		nom_matiere_textField.setEditable(false);
 		nom_complet_matiere_textField.setEditable(false);
@@ -357,19 +358,19 @@ public class Fiche_matiere_controller  implements Initializable{
         mise_a_jour_matiere.setVisible(false);
 		annuler.setVisible(false);
 		
-		if(Messages.getCommande() != null){
-			versCommandeButton.setVisible(true);
-		}
-		else {
-			versCommandeButton.setVisible(false);
-		}
-		
-		if(Messages.getOeuvreTraitee() != null){
-			versOeuvreButton.setVisible(true);
-		}
-		else {
-			versOeuvreButton.setVisible(false);
-		}
+//		if(Messages.getCommande() != null){
+//			versCommandeButton.setVisible(true);
+//		}
+//		else {
+//			versCommandeButton.setVisible(false);
+//		}
+//		
+//		if(Messages.getOeuvreTraitee() != null){
+//			versOeuvreButton.setVisible(true);
+//		}
+//		else {
+//			versOeuvreButton.setVisible(false);
+//		}
 		versRapportButton.setVisible(false);
 		matieres_button.setVisible(false);
 		
@@ -379,7 +380,7 @@ public class Fiche_matiere_controller  implements Initializable{
 		liste_matieres  = FXCollections.observableArrayList();
 		JsonUtils.JsonToListObj(RestAccess.requestAll("matiere"), liste_matieres, new TypeReference<List<Matiere>>() {});
 
-		currentStage = Messages.getStage();	
+//		currentStage = Messages.getStage();	
 		
 		listView_matieres.setItems(liste_matieres);
 		

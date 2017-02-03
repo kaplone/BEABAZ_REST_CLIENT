@@ -148,7 +148,7 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="100.0" />
                </VBox.margin>
                <children>
-                  <Button fx:id="mise_a_jour_traitement" mnemonicParsing="false" onAction="#onMiseAJourTraitementButton" text="Mise à jour" />
+                  <Button fx:id="mise_a_jour" mnemonicParsing="false" onAction="#onMiseAJourTraitementButton" text="Mise à jour" />
                   <Button fx:id="editer" mnemonicParsing="false" onAction="#onEditerTraitementButton" text="Editer" />
                   <Button fx:id="annuler" mnemonicParsing="false" onAction="#onAnnulerEditButton" text="Annuler">
                      <HBox.margin>

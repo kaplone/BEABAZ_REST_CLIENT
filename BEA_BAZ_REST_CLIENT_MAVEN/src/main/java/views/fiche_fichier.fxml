@@ -23,7 +23,7 @@
                   <Insets bottom="10.0" top="10.0" />
                </VBox.margin>
             </ListView>
-            <Button fx:id="nouveau_fichier_button" mnemonicParsing="false" onAction="#onNouveauFichierButton" text="Nouveau Fichier">
+            <Button fx:id="nouveau" mnemonicParsing="false" onAction="#onNouveauFichierButton" text="Nouveau Fichier">
                <VBox.margin>
                   <Insets bottom="10.0" top="10.0" />
                </VBox.margin>
@@ -100,7 +100,7 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="100.0" />
                </VBox.margin>
                <children>
-                  <Button fx:id="mise_a_jour_fichier" mnemonicParsing="false" onAction="#onMiseAJourFichierButton" text="Mise à jour" />
+                  <Button fx:id="mise_a_jour" mnemonicParsing="false" onAction="#onMiseAJourFichierButton" text="Mise à jour" />
                   <Button fx:id="editer" mnemonicParsing="false" onAction="#onEditerFichierButton" text="Editer" />
                   <Button fx:id="annuler" mnemonicParsing="false" onAction="#onAnnulerEditButton" text="Annuler">
                      <HBox.margin>

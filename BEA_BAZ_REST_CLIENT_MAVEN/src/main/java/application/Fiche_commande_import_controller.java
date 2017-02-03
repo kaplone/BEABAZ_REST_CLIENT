@@ -12,6 +12,7 @@ import org.jongo.MongoCursor;
 import utils.Walk;
 import models.Client;
 import models.Commande;
+import models.Contexte;
 import models.Messages;
 import models.Oeuvre;
 import models.OeuvreTraitee;
@@ -156,7 +157,7 @@ public class Fiche_commande_import_controller  implements Initializable{
 	@FXML
 	public void onVersClientButton(){
 		
-		Scene fiche_client_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_client.fxml"), 1275, 722);
+		Scene fiche_client_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_client.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_client_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		currentStage.setScene(fiche_client_scene);	
@@ -164,7 +165,7 @@ public class Fiche_commande_import_controller  implements Initializable{
 	@FXML
 	public void onVersCommandeButton(){
 		
-		Scene fiche_commande_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_commande.fxml"), 1275, 722);
+		Scene fiche_commande_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_commande.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_commande_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		currentStage.setScene(fiche_commande_scene);	
@@ -173,42 +174,42 @@ public class Fiche_commande_import_controller  implements Initializable{
 	@FXML
 	public void onVersProduitsButton(){
 		
-		Scene fiche_produit_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_produit.fxml"), 1275, 722);
+		Scene fiche_produit_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_produit.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_produit_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		currentStage.setScene(fiche_produit_scene);	
 	}
 	@FXML
     public void onVersAuteursButton(){
-    	Scene fiche_auteur_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_auteur.fxml"), 1275, 722);
+    	Scene fiche_auteur_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_auteur.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_auteur_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		currentStage.setScene(fiche_auteur_scene);
     }
 	@FXML
     public void onVersTraitementsButton(){
-		Scene fiche_traitement_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_traitement.fxml"), 1275, 722);
+		Scene fiche_traitement_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_traitement.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_traitement_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		currentStage.setScene(fiche_traitement_scene);
     }
     @FXML
     public void onVersModelesButton(){
-    	Scene fiche_model_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_model.fxml"), 1275, 722);
+    	Scene fiche_model_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_model.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_model_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		currentStage.setScene(fiche_model_scene);
     }
     @FXML
     public void onMatieres_button(){
-    	Scene fiche_matiere_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_matiere.fxml"), 1275, 722);
+    	Scene fiche_matiere_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_matiere.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_matiere_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		currentStage.setScene(fiche_matiere_scene);
     }
     @FXML
     public void onTechniques_button(){
-    	Scene fiche_technique_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_technique.fxml"), 1275, 722);
+    	Scene fiche_technique_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_technique.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_technique_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		currentStage.setScene(fiche_technique_scene);

@@ -23,6 +23,7 @@ import enums.Progression;
 import models.Auteur;
 import models.Client;
 import models.Commande;
+import models.Contexte;
 import models.Messages;
 import models.Model;
 import models.Oeuvre;
@@ -58,7 +59,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class Fiche_commande_controller  implements Initializable{
+public class Fiche_commande_controller extends Fiche_controller implements Initializable{
 	
 //	@FXML
 //	private ObservableList<Oeuvre> liste_oeuvres;
@@ -76,31 +77,7 @@ public class Fiche_commande_controller  implements Initializable{
 	@FXML
 	private Button nouvelle_oeuvre;
 	@FXML
-	private Button mise_a_jour_commande;
-	@FXML
-	private Button annuler;
-	@FXML
-	private Button editer;
-	@FXML
 	private Button importCommandeButton;
-	@FXML
-	private Button versClientButton;
-	@FXML
-	private Button versCommandeButton;
-	@FXML
-	private Button versOeuvreButton;
-	@FXML
-	private Button versRapportButton;
-	@FXML
-	private Button versFichiersButton;
-	@FXML
-	private Button versModelesButton;
-	@FXML
-	private Button versTraitementsButton;
-	@FXML
-	private Button versProduitsButton;
-	@FXML
-	private Button versAuteursButton;
 	@FXML
 	private DatePicker dateCommandePicker;
 	@FXML
@@ -162,95 +139,40 @@ public class Fiche_commande_controller  implements Initializable{
     private int i;
 	
 	private boolean edit = false;
-	
-	@FXML
-	public void onVersClientButton(){
-		
-		Scene fiche_client_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_client.fxml"), 1275, 722);
-		fiche_client_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_client_scene);	
-	}
-	
-	@FXML
-	public void onVersProduitsButton(){
-		
-		Scene fiche_produit_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_produit.fxml"), 1275, 722);
-		fiche_produit_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_produit_scene);	
-	}
-	@FXML
-    public void onVersAuteursButton(){
-    	Scene fiche_auteur_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_auteur.fxml"), 1275, 722);
-		fiche_auteur_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_auteur_scene);
-    }
-	@FXML
-    public void onVersTraitementsButton(){
-		Scene fiche_traitement_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_traitement.fxml"), 1275, 722);
-		fiche_traitement_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_traitement_scene);
-    }
-    @FXML
-    public void onVersModelesButton(){
-    	Scene fiche_model_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_model.fxml"), 1275, 722);
-		fiche_model_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_model_scene);
-    }
+
     @FXML
     public void onMatieres_button(){
-    	Scene fiche_matiere_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_matiere.fxml"), 1275, 722);
+    	Scene fiche_matiere_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_matiere.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_matiere_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		currentStage.setScene(fiche_matiere_scene);
     }
     @FXML
     public void onTechniques_button(){
-    	Scene fiche_technique_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_technique.fxml"), 1275, 722);
+    	Scene fiche_technique_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_technique.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_technique_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		currentStage.setScene(fiche_technique_scene);
     }
-    @FXML
-    public void onVersCommandeButton(){}
-    @FXML
-    public void onVersOeuvreButton(){}
     
     @FXML
     public void onImporterButton(){
-    	Scene fiche_commande_import_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_commande_import.fxml"), 1275, 722);
+    	Scene fiche_commande_import_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_commande_import.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_commande_import_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		currentStage.setScene(fiche_commande_import_scene);
     }
-    @FXML
-    public void onVersFichiersButton(){}
-    @FXML
-    public void onVersTraitementButton(){
-		Scene fiche_traitement_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_traitement.fxml"), 1275, 722);
-		fiche_traitement_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_traitement_scene);
-    }
-    @FXML
-    public void onVersModeleButton(){}
 	
 	@FXML
 	public void onEditerButton(){
+		super.onEditerButton();
 		
 		importCommandeButton.setDisable(true);
 		dateCommandePicker.setEditable(true);
 		dateDebutProjetPicker.setEditable(true);
 		dateFinProjetPicker.setEditable(true);
 		remarques_client.setEditable(true);
-        editer.setVisible(false);
-        mise_a_jour_commande.setText("Mise à jour");
-        mise_a_jour_commande.setVisible(true);
-		annuler.setVisible(true);
+        
 		commandeExportVbox.setVisible(false);
 		versRapportButton.setVisible(false);
 		versModelesButton.setVisible(false);
@@ -272,7 +194,7 @@ public class Fiche_commande_controller  implements Initializable{
 		dateFinProjetPicker.setEditable(false);
 		remarques_client.setEditable(false);
         editer.setVisible(true);
-        mise_a_jour_commande.setVisible(false);
+        mise_a_jour.setVisible(false);
 		annuler.setVisible(false);
 		fiche_commande_label.setText("FICHE COMMANDE :");
 		nomCommandeTextField.setDisable(true);
@@ -367,7 +289,7 @@ public class Fiche_commande_controller  implements Initializable{
 		dateFinProjetPicker.setEditable(false);
 		remarques_client.setEditable(false);
         editer.setVisible(true);
-        mise_a_jour_commande.setVisible(false);
+        mise_a_jour.setVisible(false);
 		annuler.setVisible(false);
 		fiche_commande_label.setText("FICHE COMMANDE :");
 		nomClientLabel.setText(client.getNom());
@@ -397,15 +319,15 @@ public class Fiche_commande_controller  implements Initializable{
 	@FXML
     public void onExporterToutButton(){
 		
-		OeuvreTraitee[] oeuvresAExporter = OeuvreTraitee.retrouveOeuvreTraiteesCommande(commande, fait_radioButton.isSelected());
-		
-		for ( OeuvreTraitee ot : oeuvresAExporter){
-			
-			System.out.println("export de la fiche : " + ot.getCote() + " en cours ...");
-			
-			Oeuvre o = ot.getOeuvre();
-			FreeMarkerMaker.odt2pdf(o, ot);
-		}
+//		OeuvreTraitee[] oeuvresAExporter = OeuvreTraitee.retrouveOeuvreTraiteesCommande(commande, fait_radioButton.isSelected());
+//		
+//		for ( OeuvreTraitee ot : oeuvresAExporter){
+//			
+//			System.out.println("export de la fiche : " + ot.getCote() + " en cours ...");
+//			
+//			Oeuvre o = ot.getOeuvre();
+//			FreeMarkerMaker.odt2pdf(o, ot);
+//		}
 		
 		 
 	}
@@ -564,7 +486,7 @@ public class Fiche_commande_controller  implements Initializable{
 			e.printStackTrace();
 		}
 
-    	Scene fiche_oeuvre_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_oeuvre.fxml"), 1275, 722);
+    	Scene fiche_oeuvre_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_oeuvre.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_oeuvre_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		currentStage.setScene(fiche_oeuvre_scene);
@@ -636,8 +558,8 @@ public class Fiche_commande_controller  implements Initializable{
 			dateFinProjetPicker.setEditable(true);
 			remarques_client.setEditable(true);
 	        editer.setVisible(false);
-	        mise_a_jour_commande.setText("Créer");
-	        mise_a_jour_commande.setVisible(true);
+	        mise_a_jour.setText("Créer");
+	        mise_a_jour.setVisible(true);
 			annuler.setVisible(true);
 			commandeExportVbox.setVisible(false);
 			versRapportButton.setVisible(false);

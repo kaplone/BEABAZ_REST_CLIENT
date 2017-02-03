@@ -23,7 +23,7 @@
                 <TableColumn fx:id="oeuvres_fait_colonne" prefWidth="42.0" text="Fait" />
               </columns>
             </TableView>
-            <Button fx:id="nouvelle_oeuvre_button" mnemonicParsing="false" text="Nouvelle oeuvre">
+            <Button fx:id="nouveau" mnemonicParsing="false" text="Nouvelle oeuvre">
                <VBox.margin>
                   <Insets bottom="10.0" top="10.0" />
                </VBox.margin>
@@ -162,7 +162,7 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </VBox.margin>
                <children>
-                  <Button fx:id="mise_a_jour_commande" mnemonicParsing="false" onAction="#onMiseAJourButton" text="Mise à jour" />
+                  <Button fx:id="mise_a_jour" mnemonicParsing="false" onAction="#onMiseAJourButton" text="Mise à jour" />
                   <Button fx:id="editer" mnemonicParsing="false" onAction="#onEditerButton" text="Editer" />
                   <Button fx:id="annuler" mnemonicParsing="false" onAction="#onAnnulerButton" text="Annuler">
                      <HBox.margin>

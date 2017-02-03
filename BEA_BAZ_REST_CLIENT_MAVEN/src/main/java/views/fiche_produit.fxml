@@ -82,7 +82,7 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="100.0" />
                </VBox.margin>
                <children>
-                  <Button fx:id="mise_a_jour_traitement" mnemonicParsing="false" onAction="#onMiseAJourTraitementButton" text="Mise à jour" />
+                  <Button fx:id="mise_a_jour" mnemonicParsing="false" onAction="#onMiseAJourTraitementButton" text="Mise à jour" />
                   <Button fx:id="editer" mnemonicParsing="false" onAction="#onEditerTraitementButton" text="Editer">
                      <HBox.margin>
                         <Insets left="10.0" />
@@ -170,7 +170,7 @@
                   <Insets bottom="10.0" top="10.0" />
                </VBox.margin>
             </ListView>
-            <Button fx:id="nouveau_produit" mnemonicParsing="false" onAction="#onNouveauProduitButton" text="Nouveau produit">
+            <Button fx:id="nouveau" mnemonicParsing="false" onAction="#onNouveauProduitButton" text="Nouveau produit">
                <VBox.margin>
                   <Insets bottom="10.0" top="10.0" />
                </VBox.margin>
