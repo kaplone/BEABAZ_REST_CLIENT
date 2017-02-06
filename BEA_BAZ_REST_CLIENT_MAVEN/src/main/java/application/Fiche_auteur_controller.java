@@ -82,6 +82,7 @@ public class Fiche_auteur_controller extends Fiche_controller implements Initial
     }
     
     public void onAnnulerButton() {	
+    	super.etatInitial();
     	editability(false);
     	raz();
     	
@@ -220,8 +221,7 @@ public class Fiche_auteur_controller extends Fiche_controller implements Initial
     		nom_auteur_textField.setPromptText(null);
         	nom_complet_auteur_textField.setPromptText(null);
         	remarques_auteur_textArea.setPromptText(null);
-    	}
-    	
+    	}	
     }
 
 	@Override

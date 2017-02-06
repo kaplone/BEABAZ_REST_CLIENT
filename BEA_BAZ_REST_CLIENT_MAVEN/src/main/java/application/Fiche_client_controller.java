@@ -137,6 +137,7 @@ public class Fiche_client_controller extends Fiche_controller implements Initial
     }
     
     public void onAnnulerButton() {
+    	super.etatInitial();
     	editability(false);
     	raz();
 
@@ -220,7 +221,6 @@ public class Fiche_client_controller extends Fiche_controller implements Initial
 		remarques_client_textArea.setEditable(bool);
 		
 		prompt(bool);
-
     }
     
     public void raz(){
@@ -250,13 +250,16 @@ public class Fiche_client_controller extends Fiche_controller implements Initial
         	adresse_ville_textField.setPromptText(null);
         	remarques_client_textArea.setPromptText(null);
     	}
-    	
     }	
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
         super.init();
         editability(false);
+        
+        versClientButton.setVisible(false);
+		versCommandeButton.setVisible(false);
+		versOeuvreButton.setVisible(false);
 		
 		Messages.setCommande(null);
 		
@@ -280,11 +283,6 @@ public class Fiche_client_controller extends Fiche_controller implements Initial
 
 			Messages.setClient(Client.retrouveClient(clientSelectionne));
 		}
-
-		versClientButton.setVisible(false);
-		versCommandeButton.setVisible(false);
-		versOeuvreButton.setVisible(false);
-		versRapportButton.setVisible(false);
 
 		rafraichirAffichage();
 		affichageInfos();

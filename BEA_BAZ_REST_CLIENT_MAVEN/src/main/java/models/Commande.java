@@ -1,16 +1,8 @@
 package models;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Date;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -18,15 +10,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 
 import utils.RestAccess;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import enums.Progression;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Commande  extends Commun{
@@ -39,35 +28,29 @@ public class Commande  extends Commun{
 	
 	private String remarques;
 
-	private LocalDateTime dateCommande;
+	private LocalDate dateCommande;
 
-	private LocalDateTime dateDebutProjet;
+	private LocalDate dateDebutProjet;
 
-	private LocalDateTime dateFinProjet;
+	private LocalDate dateFinProjet;
 	
-	private Map<String, Object> modele;
-	private String modele_string;
-	private String modele_id;
-	private Entry<String,String> modele_map;
+	private Map<String,Model> modele;
+
+	private Map<String, Auteur> auteur;
 	
-	private Map<String, Object> auteur;
-	private String auteur_string;
-	private String auteur_id;
-	private Entry<String,String> auteur_map;
+	private Model modeleObj;
+	private Auteur auteurObj;
 	
 	private Map<String, String> oeuvresTraitees_map;
-	private Map<String, String> traitements_attendus_map;
 	
 	private List<Map<String, String>> oeuvresTraitees;
-	private List<Map<String, Object>> oeuvresTraitees_id;
-	private List<Map<String, Object>> traitements_attendus_id;
+	//private List<Map<String, Object>> oeuvresTraitees_id;
+	private List<Map<String, Traitement>> traitements_attendus;
 	
-	final DateFormat inputFormat = new SimpleDateFormat("E MMM d H:m:s z y", Locale.US);
+	final DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern("E MMM d H:m:s z y", Locale.US);
 	
 	public Commande(){
 		oeuvresTraitees_map = new HashMap<>();
-		traitements_attendus_map = new HashMap<>();
-		
 	}
 	
 	public static void update(Commande c){
@@ -101,58 +84,42 @@ public class Commande  extends Commun{
 	}
 
 	public LocalDate getDateCommande() {
-		Instant instant = Instant.ofEpochMilli(dateCommande.toEpochSecond(ZoneOffset.UTC));
-		LocalDate res = LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalDate();
-		return res;
-		//return dateCommande;
+		return dateCommande;
 	}
 	public void setDateCommande(String dateCommande) {
-
-		Date res = null;
-		try {
-			res = inputFormat.parse(dateCommande);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-
-		this.dateCommande = LocalDateTime.ofInstant(res.toInstant(), ZoneId.systemDefault() );
+		this.dateCommande = LocalDate.parse(dateCommande, inputFormat);
+	}
+	public void setLocalDateCommande(LocalDate dateCommande) {   
+		setDateCommande(dateCommande.toString());
 	}
 
 	public LocalDate getDateDebutProjet() {
-		Instant instant = Instant.ofEpochMilli(dateDebutProjet.toEpochSecond(ZoneOffset.UTC));
-		LocalDate res = LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalDate();
-		return res;
-		//return dateDebutProjet;
+		return dateDebutProjet;
 	}
 
 	public void setDateDebutProjet(String dateDebutProjet) {
-		Date res = null;
-		try {
-			res = inputFormat.parse(dateDebutProjet);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+		this.dateDebutProjet = LocalDate.parse(dateDebutProjet, inputFormat);
 
-		this.dateDebutProjet = LocalDateTime.ofInstant(res.toInstant(), ZoneId.systemDefault() );
+	}
+	
+	public void setLocalDateDebutProjet(LocalDate dateDebutProjet) {
+		setDateDebutProjet(dateDebutProjet.toString());
+		
 	}
 
 	public LocalDate  getDateFinProjet() {
-		Instant instant = Instant.ofEpochMilli(dateFinProjet.toEpochSecond(ZoneOffset.UTC));
-		LocalDate res = LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalDate();
-		return res;
-		//return dateFinProjet;
+		return dateFinProjet;
 	}
 
 	
 	public void setDateFinProjet(String dateFinProjet) {
-		Date res = null;
-		try {
-			res = inputFormat.parse(dateFinProjet);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-
-		this.dateFinProjet = LocalDateTime.ofInstant(res.toInstant(), ZoneId.systemDefault() );
+		this.dateFinProjet = LocalDate.parse(dateFinProjet, inputFormat);
+	}
+	
+	public void setLocalDateFinProjet(LocalDate dateFinProjet) {
+        System.out.println("LocaleDate : " + dateFinProjet);
+        
+		setDateFinProjet(dateFinProjet.toString());
 	}
 
 	public Set<String> getOeuvresTraitees_names() {
@@ -167,19 +134,20 @@ public class Commande  extends Commun{
 		
 		Set<String> a = new HashSet<>();
 		
-		for (Map<String, Object> m : this.getTraitements_attendus_id()){
-			for (Entry<String, Object> e : m.entrySet()){
-				if (e.getKey().equals("traitement_attendu_string")){
-					a.add(e.getValue().toString());
+		if (traitements_attendus != null){
+			for (Map<String, Traitement> m : this.getTraitements_attendus()){
+				for (Entry<String, Traitement> e : m.entrySet()){
+					if (e.getKey().equals("traitement_attendu_string")){
+						a.add(e.getValue().toString());
+					}
 				}
 			}
-		}		
+		}
+		
+				
         return a;
 	}
 
-	public void addTraitement_attendu_map(String traitement_attendu, String id) {
-		this.traitements_attendus_map.put(traitement_attendu, id.toString());
-	}
 
 	public String getNom_affichage() {
 		return nom_affichage;
@@ -205,48 +173,43 @@ public class Commande  extends Commun{
 		this.complement = complement;
 	}
 
-	public Entry<String,String> getModele_map() {
-		return modele_map;
-	}
-
-	public void setModele_map(Entry<String,String> modele) {
-		this.modele_map = modele;
+	public Map<String, Model> getModele(){
+		return modele;
 	}
 	
-	public String getModele_id() {
-		return modele_id;
+	public Model getModeleObj(){
+		return modeleObj;
 	}
 	
-	public String getModele_name() {
-		return modele_string;
-	}
-
-	public String getAuteur_id() {
-		return auteur_id;
+	public Map<String, Auteur> getAuteur(){
+		return auteur;
 	}
 	
-	public String getAuteur_name() {
-		return auteur_string;
-	}
-
-	public Model getModel(){
-		return Model.retrouveModel(getModele_id());
+	public Auteur getAuteurObj(){
+		return auteurObj;
 	}
 	
-	public Auteur getAuteur(){
-		return Auteur.retrouveAuteur(getAuteur_id());
+	public void setAuteur(Map<String, Auteur> auteur){
+		this.auteurObj = auteur.values().iterator().next();
+		this.auteur = auteur;
+	}
+	
+	public void setModele(Map<String, Model> modele){
+		
+		this.modeleObj = modele.values().iterator().next();
+		this.modele = modele;
 	}
 
 	public void setOeuvresTraitees(List<Map<String, String>> oeuvresTraitees) {	
 		this.oeuvresTraitees = oeuvresTraitees;
 	}
 
-	public List<Map<String, Object>> getTraitements_attendus_id() {
-		return traitements_attendus_id;
+	public List<Map<String, Traitement>> getTraitements_attendus() {
+		return traitements_attendus;
 	}
 
-	public void setTraitements_attendus_id(List<Map<String, Object>> traitements_attendus_id) {
-		this.traitements_attendus_id = traitements_attendus_id;
+	public void setTraitements_attendus(List<Map<String, Traitement>> traitements_attendus) {
+		this.traitements_attendus = traitements_attendus;
 	}
 	
 	
@@ -258,83 +221,11 @@ public class Commande  extends Commun{
 		this.oeuvresTraitees_map = oeuvresTraitees_map;
 	}
 
-	public Map<String, String> getTraitements_attendus_map() {
-		return traitements_attendus_map;
-	}
-
-	public void setTraitements_attendus_map(Map<String, String> traitements_attendus_map) {
-		this.traitements_attendus_map = traitements_attendus_map;
-	}
-
-//	public void setDateCommande(LocalDateTime dateCommande) {
-//		this.dateCommande = dateCommande;
-//	}
-//
-//	public void setDateDebutProjet(LocalDateTime dateDebutProjet) {
-//		this.dateDebutProjet = dateDebutProjet;
-//	}
-//
-//	public void setDateFinProjet(LocalDateTime dateFinProjet) {
-//		this.dateFinProjet = dateFinProjet;
-//	}
-
-	public Map<String, Object> getModele() {
-		return modele;
-	}
-
-	public void setModele(Map<String, Object> modele) {
-		this.modele = modele;
-	}
-
-	public String getModele_string() {
-		return modele_string;
-	}
-
-	public void setModele_string(String modele_string) {
-		this.modele_string = modele_string;
-	}
-
-	public String getAuteur_string() {
-		return auteur_string;
-	}
-
-	public void setAuteur_string(String auteur_string) {
-		this.auteur_string = auteur_string;
-	}
-
-	public Entry<String, String> getAuteur_map() {
-		return auteur_map;
-	}
-
-	public void setAuteur_map(Entry<String, String> auteur_map) {
-		this.auteur_map = auteur_map;
-	}
-
-	public void setModele_id(String modele_id) {
-		this.modele_id = modele_id;
-	}
-
-	public void setAuteur(Map<String, Object> auteur) {
-		this.auteur = auteur;
-	}
-
-	public void setAuteur_id(String auteur_id) {
-		this.auteur_id = auteur_id;
-	}
-	
-	public void setOeuvresTraitees_id(List<Map<String, Object>> oeuvresTraitees_id) {
-		this.oeuvresTraitees_id = oeuvresTraitees_id;
-	}
-	
 
 	public List<Map<String, String>> getOeuvresTraitees() {
 		return oeuvresTraitees;
 	}
-
-	public List<Map<String, Object>> getOeuvresTraitees_id() {
-		return oeuvresTraitees_id;
-	}
-
+	
 	public static ObjectId retrouveId(String commandeSelectionne){
 
 		return retrouveCommande(commandeSelectionne).get_id();
@@ -343,6 +234,8 @@ public class Commande  extends Commun{
 	public static Commande retrouveCommande(String commandeSelectionne){
 
         String commande_str= RestAccess.request("commande", "nom", commandeSelectionne);
+        System.out.println("commande from String : " + commande_str);
+        
         Commande c = null;
 		
 		try {
@@ -357,6 +250,8 @@ public class Commande  extends Commun{
 	public static Commande retrouveCommande(ObjectId id){
 
         String commande_str= RestAccess.request("commande", id);
+        System.out.println("commande from Id : " + commande_str);
+        
         Commande c = null;
 		
 		try {

@@ -219,4 +219,35 @@ public class OeuvreTraitee extends Commun {
 	public void setCote(String cote) {
 		this.cote = cote;
 	}	
+	
+	public static OeuvreTraitee retrouveOeuvreTraitee(String oeuvreSelectionne){
+
+        String oeuvre_str= RestAccess.request("oeuvreTraitee", "nom", oeuvreSelectionne);
+        OeuvreTraitee c = null;
+		
+		try {
+			  c = Commun.getMapper().readValue(oeuvre_str, OeuvreTraitee.class);
+		  }
+		  catch (IOException e) {
+			  e.printStackTrace();
+	    }
+		
+		return c;
+	}
+	
+	public static OeuvreTraitee retrouveOeuvreTraitee(ObjectId id){
+
+        String oeuvre_str= RestAccess.request("oeuvreTraitee", id);
+        OeuvreTraitee c = null;
+		
+		try {
+			  c = Commun.getMapper().readValue(oeuvre_str, OeuvreTraitee.class);
+		  }
+		  catch (IOException e) {
+			  System.out.println("erreur dans retrouveOeuvre(ObjectId id)");
+			  e.printStackTrace();
+	    }
+		
+		return c;
+	}
 }

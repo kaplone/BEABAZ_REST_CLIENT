@@ -57,7 +57,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 
-public class Fiche_oeuvre_controller  implements Initializable{
+public class Fiche_oeuvre_controller extends Fiche_controller implements Initializable{
 
 	@FXML
 	private TableView<TacheTraitement> traitements_attendus_tableView;
@@ -68,27 +68,6 @@ public class Fiche_oeuvre_controller  implements Initializable{
 	
 	@FXML
 	private ListView<String> fichiers_listView;
-
-	@FXML
-	private Button annuler;
-	@FXML
-	private Button editer;
-	@FXML
-	private Button versOeuvreButton;
-	@FXML
-	private Button versTraitementsButton;
-	@FXML
-	private Button versModelesButton;
-	@FXML
-	private Button versRapportButton;
-	@FXML
-	private Button versFichiersButton;
-	@FXML
-	private Button versProduitsButton;
-	@FXML
-	private Button versAuteursButton;
-	@FXML
-	private Button mise_a_jour_oeuvre;
 	
 	@FXML
 	private Polygon precedent_fleche;
@@ -146,16 +125,15 @@ public class Fiche_oeuvre_controller  implements Initializable{
 	//private TableColumn<OeuvreTraitee, String> oeuvres_fait_colonne;
 
 	private List<Map<String, String>> oeuvresTraitees;
-	
-	private boolean edit = false;
-	private Oeuvre oeuvreSelectionne;
-	private OeuvreTraitee oeuvreTraiteeSelectionne;
+
+	private Oeuvre oeuvreSelectionneObj;
+	private OeuvreTraitee oeuvreTraiteeSelectionneObj;
+	private Map<String, String> oeuvreTraiteeSelectionne;
 	private List<TacheTraitement> traitementCursor ;
 	private ObservableList<TacheTraitement> traitementsAttendus;
 	private TacheTraitement traitementSelectionne;
 	private Commande commandeSelectionne;
-	
-	private Stage currentStage;
+
 	private Auteur auteur;
 	
 	boolean directSelect = false;
@@ -165,7 +143,6 @@ public class Fiche_oeuvre_controller  implements Initializable{
 	private ObservableList<String> matieres;
 	private ObservableList<String> techniques;
 	private ObservableList<String> fichiers;
-	private ObservableList<String> auteurs;
 	
 	private Set<String> matieresUtilisees;
 	private Set<String> techniquesUtilisees;
@@ -178,8 +155,6 @@ public class Fiche_oeuvre_controller  implements Initializable{
 	
 	private ObjectId techniqueSelectionne_id;
 	private Map<String, ObjectId> techniques_id;
-	
-	private Map<String, ObjectId> auteurs_id;
 	
 	private Map<String, ObjectId> fichiers_id;
 	
@@ -248,7 +223,7 @@ public class Fiche_oeuvre_controller  implements Initializable{
 	@FXML
 	public void onOeuvreSelect(){
 	    
-		oeuvreTraiteeSelectionne = (OeuvreTraitee) tableOeuvre.getSelectionModel().getSelectedItem();
+		oeuvreTraiteeSelectionne = tableOeuvre.getSelectionModel().getSelectedItem();
 		Messages.setOeuvreTraitee(oeuvreTraiteeSelectionne);
 		
 		directSelect = true;
@@ -269,11 +244,11 @@ public class Fiche_oeuvre_controller  implements Initializable{
 //			onEditerOeuvreButton();
 //		});
         
-		oeuvreTraiteeSelectionne = Messages.getOeuvreTraitee();
-		oeuvreSelectionne = oeuvreTraiteeSelectionne.getOeuvre();
+		//oeuvreTraiteeSelectionneObj = OeuvreTraitee.retrouveOeuvreTraitee(oeuvreTraiteeSelectionne.values().iterator().next().toString());
+		//oeuvreSelectionneObj = oeuvreTraiteeSelectionneObj.getOeuvre();
 		
-		matieresUtilisees = oeuvreSelectionne.getMatieresUtilisees_names();
-		techniquesUtilisees = oeuvreSelectionne.getTechniquesUtilisees_names();
+		matieresUtilisees = oeuvreSelectionneObj.getMatieresUtilisees_names();
+		techniquesUtilisees = oeuvreSelectionneObj.getTechniquesUtilisees_names();
  
 		if (directSelect){
 		   tableOeuvre.scrollTo(tableOeuvre.getSelectionModel().getSelectedIndex() -9);
@@ -284,34 +259,34 @@ public class Fiche_oeuvre_controller  implements Initializable{
 			tableOeuvre.scrollTo(tableOeuvre.getSelectionModel().getSelectedIndex());
 		}
 		
-		numero_archive_6s_textField.setText(oeuvreSelectionne.getCote_archives_6s());
-		titre_textField.setText(oeuvreSelectionne.getTitre_de_l_oeuvre());
+		numero_archive_6s_textField.setText(oeuvreSelectionneObj.getCote_archives_6s());
+		titre_textField.setText(oeuvreSelectionneObj.getTitre_de_l_oeuvre());
 
-		date_oeuvre_textField.setText(oeuvreSelectionne.getDate());
-		dimensions_textField.setText(oeuvreSelectionne.getDimensions());
-		inscriptions_textArea.setText(oeuvreSelectionne.getInscriptions_au_verso());
-		degradations_textArea.setText(oeuvreTraiteeSelectionne.getAlterations().stream()
+		date_oeuvre_textField.setText(oeuvreSelectionneObj.getDate());
+		dimensions_textField.setText(oeuvreSelectionneObj.getDimensions());
+		inscriptions_textArea.setText(oeuvreSelectionneObj.getInscriptions_au_verso());
+		degradations_textArea.setText(oeuvreTraiteeSelectionneObj.getAlterations().stream()
 				                                                               .map(o -> o.replace("oui/non", ""))
 				                                                               .collect(Collectors.joining("\n")));
-		observations_textArea.setText(oeuvreTraiteeSelectionne.getObservations());
-		remarques_textArea.setText(oeuvreTraiteeSelectionne.getRemarques());
+		observations_textArea.setText(oeuvreTraiteeSelectionneObj.getObservations());
+		remarques_textArea.setText(oeuvreTraiteeSelectionneObj.getRemarques());
 		
 		matieres_hbox.getChildren().clear();
 		techniques_hbox.getChildren().clear();
 		
-		if (oeuvreSelectionne.getMatieresUtilisees_names() != null){
-			for (String m : oeuvreSelectionne.getMatieresUtilisees_names()){
+		if (oeuvreSelectionneObj.getMatieresUtilisees_names() != null){
+			for (String m : oeuvreSelectionneObj.getMatieresUtilisees_names()){
 				affichageMatieresUtilises(m);
 			}
 		}
 		
-		if (oeuvreSelectionne.getTechniquesUtilisees_names() != null){
-			for (String t : oeuvreSelectionne.getTechniquesUtilisees_names()){
+		if (oeuvreSelectionneObj.getTechniquesUtilisees_names() != null){
+			for (String t : oeuvreSelectionneObj.getTechniquesUtilisees_names()){
 				affichageTechniquesUtilises(t);
 			}
 		}
 		
-		String fichierSelectionne_str = RestAccess.request("fichier", "nom", oeuvreSelectionne.getCote_archives_6s(), true);
+		String fichierSelectionne_str = RestAccess.request("fichier", "nom", oeuvreSelectionneObj.getCote_archives_6s(), true);
 		
 		Fichier fichierSelectionne = Fichier.fromJson(fichierSelectionne_str);
 		
@@ -320,11 +295,11 @@ public class Fiche_oeuvre_controller  implements Initializable{
 		
 		preview_imageView.setImage(new Image(String.format("file:%s" ,fichierSelectionne.getFichierLie().toString())));
 		
-		etat_final_choiceBox.getSelectionModel().select(oeuvreTraiteeSelectionne.getEtat());
-		complement_etat_textArea.setText(oeuvreTraiteeSelectionne.getComplement_etat());
+		etat_final_choiceBox.getSelectionModel().select(oeuvreTraiteeSelectionneObj.getEtat());
+		complement_etat_textArea.setText(oeuvreTraiteeSelectionneObj.getComplement_etat());
 
 		editer.setVisible(true);
-        mise_a_jour_oeuvre.setVisible(false);
+        mise_a_jour.setVisible(false);
 		annuler.setVisible(false);
 	
 		afficherTraitements();
@@ -369,7 +344,7 @@ public class Fiche_oeuvre_controller  implements Initializable{
 		
 		traitementsAttendus.clear();
 				
-		for (String tt : oeuvreTraiteeSelectionne.getTraitementsAttendus_names()){
+		for (String tt : oeuvreTraiteeSelectionneObj.getTraitementsAttendus_names()){
 			
 			System.out.println( "tt = " + tt);
 			//traitementsAttendus.add(TacheTraitement.retrouveTacheTraitement(tt));	
@@ -385,60 +360,19 @@ public class Fiche_oeuvre_controller  implements Initializable{
 	
     public void afficherAuteurs(){
     	
-    	int index = 0;
-    	
-    	auteurs.clear();
-    	auteurs.add(null);
-        matieres.addAll(Arrays.asList(Auteur.retrouveAuteurs())
-                .stream()
-                .map(a -> a.getNom())
-                .collect(Collectors.toList()));
-         
- 	   auteursChoiceBox.setItems(auteurs);	
-
-//		for (Auteur auteur  : Auteur.retrouveAuteurs()){
-//			if (auteur != null && auteur.getNom().equals(oeuvreSelectionne.getAuteur())){
-//				index ++;
-//				break;
-//			}
-//		}	
-//
-//		auteursChoiceBox.getSelectionModel().select(index);
+    	Contexte.getFiche_commande_controller().afficherAuteurs();
 	}
 
     @FXML
     public void onEditerOeuvreButton(){
-    	
-    	annuler.setVisible(true);
-    	editer.setVisible(false);
-    	mise_a_jour_oeuvre.setVisible(true);
-    	
-    	numero_archive_6s_textField.setEditable(true);
-		titre_textField.setEditable(true);
-		date_oeuvre_textField.setEditable(true);
-		dimensions_textField.setEditable(true);
-		inscriptions_textArea.setEditable(true);
-		degradations_textArea.setEditable(true);
-		observations_textArea.setEditable(true);
-		remarques_textArea.setEditable(true);
-
+    	super.onEditerButton();
+    	editability(true);
     }
-//    
+    
     @FXML
     public void onAnnulerEditButton(){
-    	
-    	annuler.setVisible(false);
-    	editer.setVisible(true);
-        mise_a_jour_oeuvre.setVisible(false);
-    	
-    	numero_archive_6s_textField.setEditable(false);
-		titre_textField.setEditable(false);
-		date_oeuvre_textField.setEditable(false);
-		dimensions_textField.setEditable(false);
-		inscriptions_textArea.setEditable(false);
-		degradations_textArea.setEditable(false);
-		observations_textArea.setEditable(false);
-		remarques_textArea.setEditable(false);
+    	super.onAnnulerEditButton();
+    	editability(false);
 		
 		reloadOeuvre();
     	
@@ -446,24 +380,24 @@ public class Fiche_oeuvre_controller  implements Initializable{
     
     @FXML
     public void onMiseAJourOeuvreButton(){
+    	super.onMiseAJourButton();
+    	editability(false);
 
-    	oeuvreSelectionne.setCote_archives_6s(numero_archive_6s_textField.getText());
-    	oeuvreSelectionne.setTitre_de_l_oeuvre(titre_textField.getText());
-    	oeuvreSelectionne.setDate(date_oeuvre_textField.getText());
-    	oeuvreSelectionne.setDimensions(dimensions_textField.getText());
-    	oeuvreSelectionne.setInscriptions_au_verso(inscriptions_textArea.getText());
-    	oeuvreSelectionne.setAuteur(auteursChoiceBox.getSelectionModel().getSelectedItem());
+    	oeuvreSelectionneObj.setCote_archives_6s(numero_archive_6s_textField.getText());
+    	oeuvreSelectionneObj.setTitre_de_l_oeuvre(titre_textField.getText());
+    	oeuvreSelectionneObj.setDate(date_oeuvre_textField.getText());
+    	oeuvreSelectionneObj.setDimensions(dimensions_textField.getText());
+    	oeuvreSelectionneObj.setInscriptions_au_verso(inscriptions_textArea.getText());
+    	oeuvreSelectionneObj.setAuteur(auteursChoiceBox.getSelectionModel().getSelectedItem());
     	
-    	oeuvreTraiteeSelectionne.setAlterations(new ArrayList(Arrays.asList(degradations_textArea.getText().split(System.getProperty("line.separator")))));
-    	oeuvreTraiteeSelectionne.setObservations(observations_textArea.getText());
-    	oeuvreTraiteeSelectionne.setRemarques(remarques_textArea.getText());
-    	oeuvreTraiteeSelectionne.setEtat(etat_final_choiceBox.getSelectionModel().getSelectedItem());
-    	oeuvreTraiteeSelectionne.setComplement_etat(complement_etat_textArea.getText());
-    	
-    	
+    	oeuvreTraiteeSelectionneObj.setAlterations(new ArrayList(Arrays.asList(degradations_textArea.getText().split(System.getProperty("line.separator")))));
+    	oeuvreTraiteeSelectionneObj.setObservations(observations_textArea.getText());
+    	oeuvreTraiteeSelectionneObj.setRemarques(remarques_textArea.getText());
+    	oeuvreTraiteeSelectionneObj.setEtat(etat_final_choiceBox.getSelectionModel().getSelectedItem());
+    	oeuvreTraiteeSelectionneObj.setComplement_etat(complement_etat_textArea.getText());
 
-		OeuvreTraitee.update(oeuvreTraiteeSelectionne);
-		Oeuvre.update(oeuvreSelectionne);
+		OeuvreTraitee.update(oeuvreTraiteeSelectionneObj);
+		Oeuvre.update(oeuvreSelectionneObj);
 		
 		onAnnulerEditButton();
 
@@ -478,7 +412,7 @@ public class Fiche_oeuvre_controller  implements Initializable{
     @FXML
     public void onExporter_rapport_button(){
     	
-    	FreeMarkerMaker.odt2pdf(oeuvreSelectionne, oeuvreTraiteeSelectionne);
+    	FreeMarkerMaker.odt2pdf(oeuvreSelectionneObj, oeuvreTraiteeSelectionneObj);
     };
     
     public Comparator<OeuvreTraitee> otTrieeParNom = 
@@ -590,13 +524,13 @@ public class Fiche_oeuvre_controller  implements Initializable{
     	
     	String m = matieres_listView.getSelectionModel().getSelectedItem();
     	Matiere matiere = Matiere.retrouveMatiere(m);
-		oeuvreSelectionne.addMatiereUtilisee(matiere);
+		oeuvreSelectionneObj.addMatiereUtilisee(matiere);
 
-		RestAccess.update("oeuvre", oeuvreSelectionne);
+		RestAccess.update("oeuvre", oeuvreSelectionneObj);
 
 		matieres_hbox.getChildren().clear();
 		
-		for (String m_ : oeuvreSelectionne.getMatieresUtilisees_names()){
+		for (String m_ : oeuvreSelectionneObj.getMatieresUtilisees_names()){
 			affichageMatieresUtilises(m);
 		}
 		
@@ -608,13 +542,13 @@ public class Fiche_oeuvre_controller  implements Initializable{
 		
         String t = techniques_listView.getSelectionModel().getSelectedItem();
 			
-		oeuvreSelectionne.addTechniqueUtilisee(Technique.retrouveTechnique(t));
+		oeuvreSelectionneObj.addTechniqueUtilisee(Technique.retrouveTechnique(t));
 
-		RestAccess.update("oeuvre", oeuvreSelectionne);
+		RestAccess.update("oeuvre", oeuvreSelectionneObj);
 		
 		techniques_hbox.getChildren().clear();
 		
-		for (String t_ : oeuvreSelectionne.getTechniquesUtilisees_names()){
+		for (String t_ : oeuvreSelectionneObj.getTechniquesUtilisees_names()){
 			affichageTechniquesUtilises(t);
 		}
 		
@@ -647,13 +581,13 @@ public class Fiche_oeuvre_controller  implements Initializable{
 		
 		matieres_hbox.getChildren().remove(index, index +1);
 		
-		oeuvreSelectionne.deleteMatiere(matiere.getNom());
+		oeuvreSelectionneObj.deleteMatiere(matiere.getNom());
 		
-		OeuvreTraitee.update(oeuvreTraiteeSelectionne);
-		Oeuvre.update(oeuvreSelectionne);
+		OeuvreTraitee.update(oeuvreTraiteeSelectionneObj);
+		Oeuvre.update(oeuvreSelectionneObj);
 		
 		matieres_hbox.getChildren().clear();
-		for (String m : oeuvreSelectionne.getMatieresUtilisees_names()){
+		for (String m : oeuvreSelectionneObj.getMatieresUtilisees_names()){
 			affichageMatieresUtilises(m);
 			
 		}
@@ -691,58 +625,93 @@ public class Fiche_oeuvre_controller  implements Initializable{
 		
 		techniques_hbox.getChildren().remove(index -1, index +1);
 		
-		oeuvreSelectionne.deleteTechnique(technique.getNom());
+		oeuvreSelectionneObj.deleteTechnique(technique.getNom());
 		
-		OeuvreTraitee.update(oeuvreTraiteeSelectionne);
-		Oeuvre.update(oeuvreSelectionne);
+		OeuvreTraitee.update(oeuvreTraiteeSelectionneObj);
+		Oeuvre.update(oeuvreSelectionneObj);
 		
 		techniques_hbox.getChildren().clear();
-		for (String t : oeuvreSelectionne.getTechniquesUtilisees_names()){
+		for (String t : oeuvreSelectionneObj.getTechniquesUtilisees_names()){
 			affichageTechniquesUtilises(t);	
 		}
 		//
 	}
+    
+    public void editability(boolean bool){
+		numero_archive_6s_textField.setEditable(bool);
+		titre_textField.setEditable(bool);
+		date_oeuvre_textField.setEditable(bool);
+		dimensions_textField.setEditable(bool);
+		inscriptions_textArea.setEditable(bool);
+		degradations_textArea.setEditable(bool);
+		observations_textArea.setEditable(bool);
+		remarques_textArea.setEditable(bool);
+		
+		prompt(bool);
+    }
+    
+    public void raz(){
+    	numero_archive_6s_textField.setText("");
+		titre_textField.setText("");
+		date_oeuvre_textField.setText("");
+		dimensions_textField.setText("");
+		inscriptions_textArea.setText("");
+		degradations_textArea.setText("");
+		observations_textArea.setText("");
+		remarques_textArea.setText("");
+    }
+    
+    public void prompt(boolean bool){
+    	
+    	if (bool){
+    		numero_archive_6s_textField.setPromptText("numéro d'inventaire (devrait être présent après l'import)");
+    		titre_textField.setPromptText("titre de l'oeuvre (devrait être présent après l'import)");
+    		date_oeuvre_textField.setPromptText("Date de l'oeuvre");
+    		dimensions_textField.setPromptText("Dimensions de l'oeuvre");
+    		inscriptions_textArea.setPromptText("Inscriptions");
+    		degradations_textArea.setPromptText("Dégradations");
+    		observations_textArea.setPromptText("Observations");
+    		remarques_textArea.setPromptText("éventuelles remarques");
+    	}
+    	else {
+    		numero_archive_6s_textField.setPromptText(null);
+    		titre_textField.setPromptText(null);
+    		date_oeuvre_textField.setPromptText(null);
+    		dimensions_textField.setPromptText(null);
+    		inscriptions_textArea.setPromptText(null);
+    		degradations_textArea.setPromptText(null);
+    		observations_textArea.setPromptText(null);
+    		remarques_textArea.setPromptText(null);
+    	}
+    }	
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		
-		
-		
-		oeuvreTraiteeSelectionne = Messages.getOeuvreTraitee();
-		System.out.println("oeuvreTraiteeSelectionne : " + oeuvreTraiteeSelectionne); // retourne null : pourquoi ?
-		
-		oeuvreSelectionne = oeuvreTraiteeSelectionne.getOeuvre(); // retourne null : pourquoi ?
-		System.out.println("oeuvreSelectionne :" + oeuvreSelectionne); 
-		
-		commandeSelectionne = oeuvreTraiteeSelectionne.getCommande();
-		auteur = oeuvreSelectionne.getAuteur_obj();
-
-		numero_archive_6s_textField.setEditable(false);
-		titre_textField.setEditable(false);
-		date_oeuvre_textField.setEditable(false);
-		dimensions_textField.setEditable(false);
-		inscriptions_textArea.setEditable(false);
-		degradations_textArea.setEditable(false);
-		observations_textArea.setEditable(false);
-		remarques_textArea.setEditable(false);
-
-		numero_archive_6s_textField.setText(oeuvreSelectionne.getCote_archives_6s());
-		titre_textField.setText(oeuvreSelectionne.getTitre_de_l_oeuvre());
-		date_oeuvre_textField.setText(oeuvreSelectionne.getDate());
-		dimensions_textField.setText(oeuvreSelectionne.getDimensions());
-		inscriptions_textArea.setText(oeuvreSelectionne.getInscriptions_au_verso());
-		degradations_textArea.setText(oeuvreSelectionne.get_observations());
-
-        editer.setVisible(true);
-        mise_a_jour_oeuvre.setVisible(false);
-		annuler.setVisible(false);
-
-		versOeuvreButton.setVisible(false);
+		super.init();
+        editability(false);
+        
+        versOeuvreButton.setVisible(false);
+        versOeuvreButton.setVisible(false);
 		versRapportButton.setVisible(false);
 		
+		oeuvreTraiteeSelectionneObj = Messages.getOeuvreTraiteeObj();
+		System.out.println("oeuvreTraiteeSelectionneObj : " + oeuvreTraiteeSelectionneObj); // retourne null : pourquoi ?
+		
+		oeuvreSelectionneObj = oeuvreTraiteeSelectionneObj.getOeuvre(); // retourne null : pourquoi ?
+		System.out.println("oeuvreSelectionneObj :" + oeuvreSelectionneObj); 
+		
+		commandeSelectionne = oeuvreTraiteeSelectionneObj.getCommande();
+		auteur = oeuvreSelectionneObj.getAuteur_obj();
+
+		numero_archive_6s_textField.setText(oeuvreSelectionneObj.getCote_archives_6s());
+		titre_textField.setText(oeuvreSelectionneObj.getTitre_de_l_oeuvre());
+		date_oeuvre_textField.setText(oeuvreSelectionneObj.getDate());
+		dimensions_textField.setText(oeuvreSelectionneObj.getDimensions());
+		inscriptions_textArea.setText(oeuvreSelectionneObj.getInscriptions_au_verso());
+		degradations_textArea.setText(oeuvreSelectionneObj.get_observations());
+
 		matieres = FXCollections.observableArrayList();
 		techniques = FXCollections.observableArrayList();
-		auteurs = FXCollections.observableArrayList();
 		traitementsAttendus = FXCollections.observableArrayList();
 	
 		etatsFinaux = FXCollections.observableArrayList(EtatFinal.values());
@@ -752,9 +721,6 @@ public class Fiche_oeuvre_controller  implements Initializable{
 		fichiers = FXCollections.observableArrayList();
 		
 		oeuvresTraitees = new ArrayList<Map<String, String>>();
-
-		
-		currentStage = Messages.getStage();
 		
 		complement_etat_textArea.textProperty().addListener((observable, oldValue, newValue) -> {
 			onEditerOeuvreButton();

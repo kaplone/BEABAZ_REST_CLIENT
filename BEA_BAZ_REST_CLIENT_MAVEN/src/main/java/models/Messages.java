@@ -1,5 +1,7 @@
 package models;
 
+import java.util.Map;
+
 import org.bson.types.ObjectId;
 
 import javafx.collections.ObservableList;
@@ -11,7 +13,8 @@ public class Messages {
 	
     private static Client client;
 	private static Commande commande;
-	private static OeuvreTraitee oeuvreTraitee;
+	private static Map<String, String> oeuvreTraitee;
+	private static OeuvreTraitee oeuvreTraiteeObj;
 	
 	private static Auteur auteur;
 	private static TacheTraitement tacheTraitement;
@@ -49,12 +52,12 @@ public class Messages {
 		Messages.exportStage = exportStage;
 	}
 
-	public static OeuvreTraitee getOeuvreTraitee() {
+	public static Map<String, String> getOeuvreTraitee() {
 		return oeuvreTraitee;
 	}
 
-	public static void setOeuvreTraitee(OeuvreTraitee oeuvreTraitee) {
-		Messages.oeuvreTraitee = oeuvreTraitee;
+	public static void setOeuvreTraitee(Map<String, String> oeuvreTraiteeSelectionne) {
+		Messages.oeuvreTraitee = oeuvreTraiteeSelectionne;
 	}
 
 
@@ -95,6 +98,16 @@ public class Messages {
 
 	public static void setFichier(Fichier fichier) {
 		Messages.fichier = fichier;
+	}
+
+
+	public static OeuvreTraitee getOeuvreTraiteeObj() {
+		return oeuvreTraiteeObj;
+	}
+
+
+	public static void setOeuvreTraiteeObj(OeuvreTraitee oeuvreTraiteeObj) {
+		Messages.oeuvreTraiteeObj = oeuvreTraiteeObj;
 	}
 	
 

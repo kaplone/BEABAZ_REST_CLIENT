@@ -133,6 +133,18 @@ public class Fiche_controller{
     	mise_a_jour.setText("Enregistrer");
     }
     
+    public void onCreerButton() {
+    	
+    	edit = false;
+    	
+    	nouveau.setVisible(false);
+    	annuler.setVisible(true);
+    	editer.setVisible(false);
+    	mise_a_jour.setVisible(true);
+    	
+    	mise_a_jour.setText("Créer");
+    }
+    
     public void onEditerButton(){
     	
     	edit = true;
@@ -176,8 +188,17 @@ public class Fiche_controller{
     
     
 	public void init() {
+		etatInitial();
     	
 		currentStage = Messages.getStage();
+		
+		versClientButton.setVisible(true);
+		versRapportButton.setVisible(true);
+		versModelesButton.setVisible(true);
+		versTraitementsButton.setVisible(true);
+		versFichiersButton.setVisible(true);
+		versProduitsButton.setVisible(true);
+		versAuteursButton.setVisible(true);
     	
 		if(Messages.getCommande() != null){
 		    versCommandeButton.setVisible(true);
@@ -193,13 +214,7 @@ public class Fiche_controller{
 			versOeuvreButton.setVisible(false);
 		}
 		
-        versClientButton.setVisible(true);
-		
 		versRapportButton.setVisible(false);
-		
-		editer.setVisible(true);
-        mise_a_jour.setVisible(false);
-		annuler.setVisible(false);
     }
 
 }
