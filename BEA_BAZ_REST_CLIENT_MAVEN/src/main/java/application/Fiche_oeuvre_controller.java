@@ -60,11 +60,13 @@ import javafx.stage.Stage;
 public class Fiche_oeuvre_controller extends Fiche_controller implements Initializable{
 
 	@FXML
-	private TableView<TacheTraitement> traitements_attendus_tableView;
+	private ListView<TacheTraitement> traitements_attendus_all_tableView;
 	@FXML
 	private TableColumn<TacheTraitement, String> traitements_attendus_tableColumn;
 	@FXML
 	private TableColumn<TacheTraitement, ImageView> faits_attendus_tableColumn;
+	@FXML
+	private TableView<TacheTraitement> traitements_attendus_tableView;
 	
 	@FXML
 	private ListView<String> fichiers_listView;
@@ -78,8 +80,7 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 	private Label fiche_oeuvre_label;
 	@FXML
 	private Label nom_oeuvre_label;
-	@FXML
-	private ChoiceBox<String> auteursChoiceBox;
+	
 	@FXML
 	private TextField numero_archive_6s_textField;
 	@FXML
@@ -96,10 +97,11 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 	private TextArea remarques_textArea;
 	@FXML
 	private TextArea observations_textArea;
+
 	@FXML
-	private HBox matieres_hbox;
+	private ListView<String> matieres_all_listView;
 	@FXML
-	private HBox techniques_hbox;
+	private ListView<String> techniques_all_listView;
 	@FXML
 	private ListView<String> matieres_listView;
 	@FXML
@@ -108,28 +110,19 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 	@FXML
 	private ImageView preview_imageView;
 	
-	
 	@FXML
 	private GridPane grid;
 	@FXML
 	private ChoiceBox<EtatFinal> etat_final_choiceBox;
 	@FXML
 	private TextArea complement_etat_textArea;
-	
-	@FXML
-	private TableView<Map<String, String>> tableOeuvre;
-	@FXML
-	private TableColumn<Map<String, String>, String> oeuvres_nom_colonne;
-	@FXML
-	private TableColumn<Map<String, String>, ImageView> oeuvres_fait_colonne;
-	//private TableColumn<OeuvreTraitee, String> oeuvres_fait_colonne;
 
 	private List<Map<String, String>> oeuvresTraitees;
 
 	private Oeuvre oeuvreSelectionneObj;
 	private OeuvreTraitee oeuvreTraiteeSelectionneObj;
 	private Map<String, String> oeuvreTraiteeSelectionne;
-	private List<TacheTraitement> traitementCursor ;
+
 	private ObservableList<TacheTraitement> traitementsAttendus;
 	private TacheTraitement traitementSelectionne;
 	private Commande commandeSelectionne;
@@ -137,8 +130,6 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 	private Auteur auteur;
 	
 	boolean directSelect = false;
-	
-	private List<OeuvreTraitee> oeuvresTraiteesCursor;
 	
 	private ObservableList<String> matieres;
 	private ObservableList<String> techniques;
@@ -149,111 +140,28 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 	
 	private Matiere matiere;
 	private Technique technique;
-	
-	private ObjectId matiereSelectionne_id;
-	private Map<String, ObjectId> matieres_id;
-	
-	private ObjectId techniqueSelectionne_id;
-	private Map<String, ObjectId> techniques_id;
-	
-	private Map<String, ObjectId> fichiers_id;
-	
-	private ObservableList<EtatFinal> etatsFinaux;
-	
-	@FXML
-	public void onVersProduitsButton(){
-		
-		Scene fiche_produit_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_produit.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
-		fiche_produit_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_produit_scene);	
-	}
-	@FXML
-    public void onVersTraitementsButton(){
-    	Scene fiche_traitement_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_traitement.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
-		fiche_traitement_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_traitement_scene);
-    }
-    @FXML
-    public void onVersModelesButton(){
-    	Scene fiche_model_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_model.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
-		fiche_model_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_model_scene);
-    }
-    @FXML
-    public void onVersAuteursButton(){
-    	Scene fiche_auteur_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_auteur.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
-		fiche_auteur_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_auteur_scene);
-    }
-    @FXML
-    public void onMatieres_button(){
-    	Scene fiche_matiere_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_matiere.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
-		fiche_matiere_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_matiere_scene);
-    }
-    @FXML
-    public void onTechniques_button(){
-    	Scene fiche_technique_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_technique.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
-		fiche_technique_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_technique_scene);
-    }
-    
-    @FXML
-    public void onVersClientButton(){
-    	Scene fiche_client_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_client.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
-		fiche_client_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_client_scene);
-    }
-	@FXML
-	public void onVersCommandeButton(){
-		
-		Scene fiche_commande_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_commande.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
-		fiche_commande_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_commande_scene);	
-	}	
-	
-	@FXML
-	public void onOeuvreSelect(){
-	    
-		oeuvreTraiteeSelectionne = tableOeuvre.getSelectionModel().getSelectedItem();
-		Messages.setOeuvreTraitee(oeuvreTraiteeSelectionne);
-		
-		directSelect = true;
-		reloadOeuvre();
-	
-	}
 
 	
+	private ObservableList<EtatFinal> etatsFinaux;	
+	
+	@FXML
+	public void onOeuvreSelect(){	
+		directSelect = true;
+		reloadOeuvre();	
+	}
+
 	public void reloadOeuvre(){
 		
-//		complement_etat_textArea.textProperty().removeListener((observable, oldValue, newValue) -> {
-//			onEditerOeuvreButton();
-//		});
-//		auteursChoiceBox.valueProperty().removeListener((observable, oldValue, newValue) -> {
-//			onEditerOeuvreButton();
-//		});
-//		etat_final_choiceBox.valueProperty().removeListener((observable, oldValue, newValue) -> {
-//			onEditerOeuvreButton();
-//		});
-        
-		//oeuvreTraiteeSelectionneObj = OeuvreTraitee.retrouveOeuvreTraitee(oeuvreTraiteeSelectionne.values().iterator().next().toString());
-		//oeuvreSelectionneObj = oeuvreTraiteeSelectionneObj.getOeuvre();
+		oeuvreTraiteeSelectionneObj = OeuvreTraitee.retrouveOeuvreTraitee(new ObjectId(tableOeuvre.getSelectionModel().getSelectedItem().get("oeuvresTraitee_id")));
+    	Messages.setOeuvreTraiteeObj(oeuvreTraiteeSelectionneObj);
+
+		oeuvreSelectionneObj = oeuvreTraiteeSelectionneObj.getOeuvre();
 		
 		matieresUtilisees = oeuvreSelectionneObj.getMatieresUtilisees_names();
 		techniquesUtilisees = oeuvreSelectionneObj.getTechniquesUtilisees_names();
  
 		if (directSelect){
 		   tableOeuvre.scrollTo(tableOeuvre.getSelectionModel().getSelectedIndex() -9);
-		  // tableOeuvre.getSelectionModel().clearAndSelect(Messages.getOeuvre_index());
-		  // tableOeuvre.getSelectionModel().focus(Messages.getOeuvre_index());
 		}
 		else {
 			tableOeuvre.scrollTo(tableOeuvre.getSelectionModel().getSelectedIndex());
@@ -271,9 +179,6 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		observations_textArea.setText(oeuvreTraiteeSelectionneObj.getObservations());
 		remarques_textArea.setText(oeuvreTraiteeSelectionneObj.getRemarques());
 		
-		matieres_hbox.getChildren().clear();
-		techniques_hbox.getChildren().clear();
-		
 		if (oeuvreSelectionneObj.getMatieresUtilisees_names() != null){
 			for (String m : oeuvreSelectionneObj.getMatieresUtilisees_names()){
 				affichageMatieresUtilises(m);
@@ -290,54 +195,15 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		
 		Fichier fichierSelectionne = Fichier.fromJson(fichierSelectionne_str);
 		
-		
-//		System.out.println(fichierSelectionne.getFichierLie().toString());
-		
 		preview_imageView.setImage(new Image(String.format("file:%s" ,fichierSelectionne.getFichierLie().toString())));
 		
 		etat_final_choiceBox.getSelectionModel().select(oeuvreTraiteeSelectionneObj.getEtat());
 		complement_etat_textArea.setText(oeuvreTraiteeSelectionneObj.getComplement_etat());
-
-		editer.setVisible(true);
-        mise_a_jour.setVisible(false);
-		annuler.setVisible(false);
+		nom_oeuvre_label.setText(oeuvreSelectionneObj.getNom());
 	
 		afficherTraitements();
-		afficherFichiers();
-		
-//		complement_etat_textArea.textProperty().addListener((observable, oldValue, newValue) -> {
-//			onEditerOeuvreButton();
-//		});
-		
-//		String auteur_str = RestAccess.request("auteur", "nom", oeuvreSelectionne.getAuteur());
-//
-//		auteur = Auteur.fromJson(auteur_str);
-//		
-//		
-		afficherAuteurs();
-		auteursChoiceBox.getSelectionModel().select(auteur.getNom());
-		
-//		auteursChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-//			
-//			System.out.println(oldValue);
-//			System.out.println(newValue);
-//			
-//			if(newValue != null && ! newValue.equals(auteur.getNom())){
-//				
-//				System.out.println(auteurs_id);
-//				System.out.println(auteurs_id.get(newValue));
-//				
-//				auteur = RestAccess.request("auteur", auteurs_id.get(newValue)).as(Auteur.class).next();
-//				
-//				Messages.setAuteur(auteur);
-//				onEditerOeuvreButton();
-//			}	
-//		});
-//		
-//		etat_final_choiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-//			onEditerOeuvreButton();
-//		});
-		
+		afficherFichiers();	
+		afficherAuteurs();		
 	}
 	
 	public void afficherTraitements(){
@@ -354,13 +220,15 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 
 		traitements_attendus_tableColumn.setCellValueFactory(new PropertyValueFactory<TacheTraitement, String>("nom"));
 		faits_attendus_tableColumn.setCellValueFactory(new PropertyValueFactory<TacheTraitement, ImageView>("icone_progression"));
-		traitements_attendus_tableView.setItems(traitementsAttendus);
+		traitements_attendus_all_tableView.setItems(traitementsAttendus);
 
 	}
 	
     public void afficherAuteurs(){
     	
     	Contexte.getFiche_commande_controller().afficherAuteurs();
+    	auteursChoiceBox.setItems(observableAuteurs);
+    	auteursChoiceBox.getSelectionModel().select(auteur.getNom());
 	}
 
     @FXML
@@ -419,16 +287,11 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
     		(OeuvreTraitee o1, OeuvreTraitee o2)-> o1.getNom().compareTo(o2.getNom());
     
     public void afficherOeuvres(){
-		
-		ObservableList<Map<String, String>> liste_oeuvres = FXCollections.observableArrayList();
 
-		
-		liste_oeuvres = FXCollections.observableArrayList(commandeSelectionne.getOeuvresTraitees());
-	
-		oeuvres_nom_colonne.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get("oeuvresTraitee_string").toString()));
+    	Contexte.getFiche_commande_controller().afficherOeuvres();
+    	oeuvres_nom_colonne.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get("oeuvresTraitee_string").toString()));
 		oeuvres_fait_colonne.setCellValueFactory(data -> new SimpleObjectProperty<ImageView>(getImageView(data)));
-    	
-		tableOeuvre.setItems(liste_oeuvres);
+    	tableOeuvre.setItems(obs_oeuvres);
 		
 	}
     
@@ -451,7 +314,7 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
                                .map(a -> a.getNom())
                                .collect(Collectors.toList()));
        
-       techniques_listView.setItems(techniques);		
+       techniques_all_listView.setItems(techniques);		
 	}
     
    public void afficherMatieres(){
@@ -462,7 +325,7 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
                .map(a -> a.getNom())
                .collect(Collectors.toList()));
         
-	   matieres_listView.setItems(matieres);	
+	   matieres_all_listView.setItems(matieres);	
 	}
     
     public void afficherFichiers(){
@@ -494,7 +357,7 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
     @FXML
     public void onTraitementAttenduSelect(){
     	
-    	TacheTraitement ttAtt = traitements_attendus_tableView.getSelectionModel().getSelectedItem();
+    	TacheTraitement ttAtt = traitements_attendus_all_tableView.getSelectionModel().getSelectedItem();
     	Messages.setTacheTraitement(ttAtt);
     	
     	Scene fiche_tache_traitement_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_tache_traitement.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
@@ -522,13 +385,13 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
     @FXML
 	public void onMatiereSelect(){
     	
-    	String m = matieres_listView.getSelectionModel().getSelectedItem();
+    	String m = matieres_all_listView.getSelectionModel().getSelectedItem();
     	Matiere matiere = Matiere.retrouveMatiere(m);
 		oeuvreSelectionneObj.addMatiereUtilisee(matiere);
 
 		RestAccess.update("oeuvre", oeuvreSelectionneObj);
 
-		matieres_hbox.getChildren().clear();
+		//matieres_hbox.getChildren().clear();
 		
 		for (String m_ : oeuvreSelectionneObj.getMatieresUtilisees_names()){
 			affichageMatieresUtilises(m);
@@ -540,13 +403,13 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
     @FXML
 	public void onTechniqueSelect(){
 		
-        String t = techniques_listView.getSelectionModel().getSelectedItem();
+        String t = techniques_all_listView.getSelectionModel().getSelectedItem();
 			
 		oeuvreSelectionneObj.addTechniqueUtilisee(Technique.retrouveTechnique(t));
 
 		RestAccess.update("oeuvre", oeuvreSelectionneObj);
 		
-		techniques_hbox.getChildren().clear();
+		//techniques_hbox.getChildren().clear();
 		
 		for (String t_ : oeuvreSelectionneObj.getTechniquesUtilisees_names()){
 			affichageTechniquesUtilises(t);
@@ -568,25 +431,25 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		
 		b2.setOnAction((event) -> deleteMatiereLie((Button)event.getSource()));
 
-		matieres_hbox.getChildren().add(b);
-		matieres_hbox.getChildren().add(b2);
+//		matieres_hbox.getChildren().add(b);
+//		matieres_hbox.getChildren().add(b2);
 		HBox.setMargin(b2, new Insets(0,10,0,0));
 	}
     
     public void deleteMatiereLie(Button e){
 		
-		int index = matieres_hbox.getChildren().indexOf(e);
-
-		Matiere matiere = Matiere.retrouveMatiere(((Button) matieres_hbox.getChildren().get(index -1)).getText());
-		
-		matieres_hbox.getChildren().remove(index, index +1);
+//		int index = matieres_hbox.getChildren().indexOf(e);
+//
+//		Matiere matiere = Matiere.retrouveMatiere(((Button) matieres_hbox.getChildren().get(index -1)).getText());
+//		
+//		matieres_hbox.getChildren().remove(index, index +1);
 		
 		oeuvreSelectionneObj.deleteMatiere(matiere.getNom());
 		
 		OeuvreTraitee.update(oeuvreTraiteeSelectionneObj);
 		Oeuvre.update(oeuvreSelectionneObj);
 		
-		matieres_hbox.getChildren().clear();
+//		matieres_hbox.getChildren().clear();
 		for (String m : oeuvreSelectionneObj.getMatieresUtilisees_names()){
 			affichageMatieresUtilises(m);
 			
@@ -610,8 +473,8 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		
 		b2.setOnAction((event) -> deleteTechniqueLie((Button)event.getSource()));
 
-		techniques_hbox.getChildren().add(b);
-		techniques_hbox.getChildren().add(b2);
+//		techniques_hbox.getChildren().add(b);
+//		techniques_hbox.getChildren().add(b2);
 		HBox.setMargin(b2, new Insets(0,10,0,0));
 	}	
     
@@ -619,18 +482,18 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
     
     public void deleteTechniqueLie(Button e){
 		
-		int index = techniques_hbox.getChildren().indexOf(e);
-
-		Technique technique = Technique.retrouveTechnique((((Button) techniques_hbox.getChildren().get(index -1)).getText()));
-		
-		techniques_hbox.getChildren().remove(index -1, index +1);
+//		int index = techniques_hbox.getChildren().indexOf(e);
+//
+//		Technique technique = Technique.retrouveTechnique((((Button) techniques_hbox.getChildren().get(index -1)).getText()));
+//		
+//		techniques_hbox.getChildren().remove(index -1, index +1);
 		
 		oeuvreSelectionneObj.deleteTechnique(technique.getNom());
 		
 		OeuvreTraitee.update(oeuvreTraiteeSelectionneObj);
 		Oeuvre.update(oeuvreSelectionneObj);
 		
-		techniques_hbox.getChildren().clear();
+//		techniques_hbox.getChildren().clear();
 		for (String t : oeuvreSelectionneObj.getTechniquesUtilisees_names()){
 			affichageTechniquesUtilises(t);	
 		}
@@ -702,6 +565,8 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		
 		commandeSelectionne = oeuvreTraiteeSelectionneObj.getCommande();
 		auteur = oeuvreSelectionneObj.getAuteur_obj();
+		
+		nom_oeuvre_label.setText(oeuvreSelectionneObj.getNom());
 
 		numero_archive_6s_textField.setText(oeuvreSelectionneObj.getCote_archives_6s());
 		titre_textField.setText(oeuvreSelectionneObj.getTitre_de_l_oeuvre());
@@ -726,16 +591,13 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 			onEditerOeuvreButton();
 		});
 		
-        auteursChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-			
-			System.out.println(oldValue);
-			System.out.println(newValue);
-			
-			if(newValue != null && ! newValue.equals(auteur.getNom())){
-				auteur = Auteur.retrouveAuteur(newValue);
-				onEditerOeuvreButton();
-			}	
-		});
+//        auteursChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+//			
+//			if(newValue != null && ! newValue.equals(auteur.getNom())){
+//				auteur = Auteur.retrouveAuteur(newValue);
+//				onEditerOeuvreButton();
+//			}	
+//		});
 		
 		etat_final_choiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
 			onEditerOeuvreButton();
@@ -744,7 +606,8 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		afficherOeuvres();
 		afficherMatieres();
 		afficherTechniques();
-		reloadOeuvre();
+		afficherAuteurs();
+		//reloadOeuvre();
 
 	}
 }

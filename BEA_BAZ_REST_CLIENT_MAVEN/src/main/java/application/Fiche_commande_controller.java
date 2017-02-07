@@ -100,17 +100,9 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
 	
 	@FXML
 	private ChoiceBox<String> modelChoiceBox;
-	@FXML
-	private ChoiceBox<String> auteursChoiceBox;
 	
 	@FXML
 	private VBox commandeExportVbox;
-	@FXML
-	private TableView<Map<String, String>> tableOeuvre;
-	@FXML
-	private TableColumn<Map<String, String>, String> oeuvres_nom_colonne;
-	@FXML
-	private TableColumn<Map<String, String>, ImageView> oeuvres_fait_colonne;
 	
 	@FXML
 	private GridPane traitementGrid;
@@ -120,14 +112,12 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
     
 	private ObservableList<Traitement> liste_traitements;
 	private ObservableList<String> observableTraitements;
-	
-	private static ObservableList<String> observableAuteurs;
-	
+
 	private static ObservableList<String> observableModeles;
 
 	private List<Map<String, Object>> listeOeuvresTraitees;
 //	private OeuvreTraitee[] oeuvresTraitees;
-	private ObservableList<Map<String, String>> obs_oeuvres;
+	
 	
 	private Commande commande;
 	
@@ -361,12 +351,17 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
     		(Map<String, Object> o1, Map<String, Object> o2)-> o1.get("oeuvresTraitee_string").toString().compareTo(o2.get("oeuvresTraitee_string").toString());
     
     public void afficherOeuvres(){
-
-		obs_oeuvres = FXCollections.observableArrayList(commande.getOeuvresTraitees());
-
+        
+    	if(obs_oeuvres == null){
+    		obs_oeuvres = FXCollections.observableArrayList(commande.getOeuvresTraitees());
+    	}
+    	else {
+    		obs_oeuvres.clear();
+    		obs_oeuvres.addAll(commande.getOeuvresTraitees());
+    	}
+    	 
     	oeuvres_nom_colonne.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get("oeuvresTraitee_string").toString()));
 		oeuvres_fait_colonne.setCellValueFactory(data -> new SimpleObjectProperty<ImageView>(getImageView(data)));
-    	
 		tableOeuvre.setItems(obs_oeuvres);
 	}
     
@@ -399,11 +394,9 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
 	    
 	    if (auteurs == null){
 	    	observableAuteurs = FXCollections.observableArrayList();
-	    	
-            auteurs = Arrays.asList(Auteur.retrouveAuteurs());
-			
-			observableAuteurs.add(null);
-			for (Auteur auteur : auteurs){
+	    	auteurs = Arrays.asList(Auteur.retrouveAuteurs());
+	    	observableAuteurs.add(null);
+	    	for (Auteur auteur : auteurs){
 				observableAuteurs.add(auteur.getNom());
 
 			}
@@ -471,7 +464,7 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
     	OeuvreTraitee ot_ = OeuvreTraitee.retrouveOeuvreTraitee(new ObjectId(tableOeuvre.getSelectionModel().getSelectedItem().get("oeuvresTraitee_id")));
     	Messages.setOeuvreTraiteeObj(ot_);
 
-    	Scene fiche_oeuvre_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_oeuvre.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
+    	Scene fiche_oeuvre_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_oeuvre_v2.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_oeuvre_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		System.out.println(currentStage);

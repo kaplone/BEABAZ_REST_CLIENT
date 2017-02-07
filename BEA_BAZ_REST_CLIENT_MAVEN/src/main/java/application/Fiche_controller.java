@@ -1,10 +1,17 @@
 package application;
 
+import java.util.Map;
+
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import models.Contexte;
 import models.Messages;
@@ -45,9 +52,21 @@ public class Fiche_controller{
 	@FXML
 	protected Button mise_a_jour;
 	
+	@FXML
+	protected ChoiceBox<String> auteursChoiceBox;
+	@FXML
+	protected TableView<Map<String, String>> tableOeuvre;
+	@FXML
+	protected TableColumn<Map<String, String>, String> oeuvres_nom_colonne;
+	@FXML
+	protected TableColumn<Map<String, String>, ImageView> oeuvres_fait_colonne;
+	
 	protected Stage currentStage;
 	
 	protected boolean edit = false;
+	
+	protected static ObservableList<String> observableAuteurs;
+	protected static ObservableList<Map<String, String>> obs_oeuvres;
 	
 	@FXML
 	public void onVersProduitsButton(){
