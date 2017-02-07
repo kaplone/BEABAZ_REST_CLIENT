@@ -211,8 +211,7 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		traitementsAttendus.clear();
 				
 		for (String tt : oeuvreTraiteeSelectionneObj.getTraitementsAttendus_names()){
-			
-			System.out.println( "tt = " + tt);
+
 			//traitementsAttendus.add(TacheTraitement.retrouveTacheTraitement(tt));	
 			
 			traitementsAttendus.add(RestObjectMapper.retrouveObjet("tacheTraitement", new ObjectId(tt), TacheTraitement.class));
@@ -558,10 +557,8 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		versRapportButton.setVisible(false);
 		
 		oeuvreTraiteeSelectionneObj = Messages.getOeuvreTraiteeObj();
-		System.out.println("oeuvreTraiteeSelectionneObj : " + oeuvreTraiteeSelectionneObj); // retourne null : pourquoi ?
 		
-		oeuvreSelectionneObj = oeuvreTraiteeSelectionneObj.getOeuvre(); // retourne null : pourquoi ?
-		System.out.println("oeuvreSelectionneObj :" + oeuvreSelectionneObj); 
+		oeuvreSelectionneObj = oeuvreTraiteeSelectionneObj.getOeuvre();
 		
 		commandeSelectionne = oeuvreTraiteeSelectionneObj.getCommande();
 		auteur = oeuvreSelectionneObj.getAuteur_obj();

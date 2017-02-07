@@ -43,10 +43,10 @@ public class Oeuvre extends Commun{
 		techniquesUtilisees_id = new HashMap<>();
 	}
 	
-	@Override
-	public String toString(){
-		return this.cote_archives;
-	}
+//	@Override
+//	public String toString(){
+//		return this.cote_archives;
+//	}
 	
 	@Override
 	public String getNom(){
@@ -335,7 +335,6 @@ public class Oeuvre extends Commun{
 	public static Oeuvre retrouveOeuvre(ObjectId id){
 
         String oeuvre_str= RestAccess.request("oeuvre", id);
-        System.out.println("oeuvre_str : " + oeuvre_str);
         Oeuvre c = null;
 		
 		try {

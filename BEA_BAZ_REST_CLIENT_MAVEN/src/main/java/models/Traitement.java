@@ -139,7 +139,7 @@ public class Traitement extends Commun{
 	public static Traitement[] retrouveTraitements(){
 		
 		String traitement_str= RestAccess.request("traitement");
-		System.out.println("traitement_str : " + traitement_str);
+		//System.out.println("traitement_str : " + traitement_str);
         Traitement[] c = null ;
 		
 		try {

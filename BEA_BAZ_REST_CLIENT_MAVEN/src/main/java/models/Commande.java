@@ -117,7 +117,6 @@ public class Commande  extends Commun{
 	}
 	
 	public void setLocalDateFinProjet(LocalDate dateFinProjet) {
-        System.out.println("LocaleDate : " + dateFinProjet);
         
 		setDateFinProjet(dateFinProjet.toString());
 	}
@@ -234,7 +233,7 @@ public class Commande  extends Commun{
 	public static Commande retrouveCommande(String commandeSelectionne){
 
         String commande_str= RestAccess.request("commande", "nom", commandeSelectionne);
-        System.out.println("commande from String : " + commande_str);
+        //System.out.println("commande from String : " + commande_str);
         
         Commande c = null;
 		
@@ -250,7 +249,6 @@ public class Commande  extends Commun{
 	public static Commande retrouveCommande(ObjectId id){
 
         String commande_str= RestAccess.request("commande", id);
-        System.out.println("commande from Id : " + commande_str);
         
         Commande c = null;
 		

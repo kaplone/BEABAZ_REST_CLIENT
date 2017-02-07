@@ -151,16 +151,21 @@ public class Fiche_client_controller extends Fiche_controller implements Initial
     	
     	liste_clients = FXCollections.observableArrayList();
 		liste_commandes  = FXCollections.observableArrayList();
-
-		clientCursor = Client.retrouveClients();
 		
-		for (Client client : clientCursor){
-			
-			liste_clients.add(client.getNom());
-		}
+		liste_clients.addAll(Client.retrouveClientsStr());
 		
 		listView_client.setItems(liste_clients);
-    	
+		
+        client = Messages.getClient();
+        
+        if (client != null){       	
+			clientSelectionne = client.getNom();
+			listView_client.getSelectionModel().select(liste_clients.indexOf(clientSelectionne));
+		}
+        else {
+        	listView_client.getSelectionModel().select(0);
+        }
+        onClientSelect();   	
     }
     
     @FXML
@@ -263,27 +268,6 @@ public class Fiche_client_controller extends Fiche_controller implements Initial
 		
 		Messages.setCommande(null);
 		
-		liste_clients = FXCollections.observableArrayList();
-		liste_commandes  = FXCollections.observableArrayList();
-		
-		liste_clients.addAll(Client.retrouveClientsStr());
-		
-		listView_client.setItems(liste_clients);
-		
-        client = Messages.getClient();
-        
-        if (client != null){       	
-			clientSelectionne = client.getNom();
-			listView_client.getSelectionModel().select(liste_clients.indexOf(clientSelectionne));
-		}
-		else if (!liste_clients.isEmpty()){
-			listView_client.getSelectionModel().select(0);
-            clientSelectionne = listView_client.getSelectionModel().getSelectedItem();
-            onClientSelect();
-
-			Messages.setClient(Client.retrouveClient(clientSelectionne));
-		}
-
 		rafraichirAffichage();
 		affichageInfos();
 	}

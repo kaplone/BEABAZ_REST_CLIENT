@@ -140,8 +140,7 @@ public class Client extends Commun{
 	public static Client[] retrouveClients(){
 		
 		String client_str= RestAccess.request("client");
-		
-		System.out.println(client_str);
+
         Client[] c = null ;
 		
 		try {

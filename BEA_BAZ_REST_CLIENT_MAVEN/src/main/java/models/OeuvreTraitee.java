@@ -45,6 +45,9 @@ public class OeuvreTraitee extends Commun {
     
     private String cote;
     
+    @JsonIgnore
+    private static Commande commande;
+    
     public OeuvreTraitee(){
     	
     	traitementsAttendus = new ArrayList<>();
@@ -163,8 +166,7 @@ public class OeuvreTraitee extends Commun {
 	}
 	
 	public Oeuvre getOeuvre(){
-		
-		System.out.println("oeuvre_id : " + oeuvre_id);
+
 		return Oeuvre.retrouveOeuvre(new ObjectId(oeuvre_id));
 	}
 
@@ -189,7 +191,10 @@ public class OeuvreTraitee extends Commun {
 	}
 
 	public Commande getCommande() {
-		return Commande.retrouveCommande(new ObjectId(commande_id));
+		if(commande == null){
+			commande = Commande.retrouveCommande(new ObjectId(commande_id));
+		}
+		return commande;
 	}
 	
 	public void setCommande_id(String commande_id) {

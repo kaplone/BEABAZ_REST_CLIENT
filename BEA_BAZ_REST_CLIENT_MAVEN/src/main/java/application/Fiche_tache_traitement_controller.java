@@ -510,7 +510,7 @@ public class Fiche_tache_traitement_controller  implements Initializable{
     	
     	observable_liste_tachestraitements_lies.add(tt);
     	
-    	ot.addTraitementAttendu(tt.getNom(), tt.get_id());
+//    	ot.addTraitementAttendu(tt.getNom(), tt.get_id());
     	
     	//MongoAccess.update("oeuvreTraitee", ot);
     	
@@ -554,7 +554,7 @@ public class Fiche_tache_traitement_controller  implements Initializable{
 			onEditerTraitementButton();
 		});
 		
-		ot = Messages.getOeuvreTraitee();
+//		ot = Messages.getOeuvreTraitee();
 		//commande = Messages.getCommande();
 		traitementSource = tacheTraitementSelectionne.getTraitement();
 		

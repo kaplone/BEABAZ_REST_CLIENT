@@ -466,8 +466,7 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
 
     	Scene fiche_oeuvre_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_oeuvre_v2.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_oeuvre_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		System.out.println(currentStage);
+
 		currentStage.setScene(fiche_oeuvre_scene);
     	
     }
