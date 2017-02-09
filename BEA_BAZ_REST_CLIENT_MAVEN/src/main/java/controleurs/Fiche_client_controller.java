@@ -1,4 +1,4 @@
-package application;
+package controleurs;
 
 import java.net.URL;
 import java.util.Map;
@@ -9,6 +9,7 @@ import org.jongo.MongoCursor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import application.JfxUtils;
 import models.Client;
 import models.Commande;
 import models.Contexte;

@@ -47,7 +47,8 @@ public class Main_BEA_BAZ extends Application {
 			Pane root = new Pane();
 			
 			Scene fiche_client_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_client.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
-			fiche_client_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			//fiche_client_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			fiche_client_scene.getStylesheets().add(getClass().getResource("../controleurs/application.css").toExternalForm());
 			primaryStage.setScene(fiche_client_scene);
 			primaryStage.show();
 		} catch(Exception e) {

@@ -1,8 +1,10 @@
-package application;
+package controleurs;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +16,7 @@ import org.bson.types.ObjectId;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
+import application.JfxUtils;
 import enums.EtatFinal;
 import enums.Progression;
 import utils.FreeMarkerMaker;
@@ -43,6 +46,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -191,12 +195,6 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 			}
 		}
 		
-		String fichierSelectionne_str = RestAccess.request("fichier", "nom", oeuvreSelectionneObj.getCote_archives_6s(), true);
-		
-		Fichier fichierSelectionne = Fichier.fromJson(fichierSelectionne_str);
-		
-		preview_imageView.setImage(new Image(String.format("file:%s" ,fichierSelectionne.getFichierLie().toString())));
-		
 		etat_final_choiceBox.getSelectionModel().select(oeuvreTraiteeSelectionneObj.getEtat());
 		complement_etat_textArea.setText(oeuvreTraiteeSelectionneObj.getComplement_etat());
 		nom_oeuvre_label.setText(oeuvreSelectionneObj.getNom());
@@ -329,28 +327,75 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
     
     public void afficherFichiers(){
     	
+    	List<String> contenu_fichiers = oeuvreTraiteeSelectionneObj.getFichiers().stream()
+				 .map(a -> a.get("fichier_string").replaceAll("_JPG", ".jpg"))
+				 .collect(Collectors.toList());
+    	
+    	Collections.sort(contenu_fichiers);
+    	
+    	if (contenu_fichiers.stream().anyMatch(a -> a.contains("AR"))){
+    		contenu_fichiers.add(0, "AR!");
+    	}
+    	if (contenu_fichiers.stream().anyMatch(a -> a.contains("IR"))){
+    		
+    		System.out.println("IR trouvé : " + contenu_fichiers.stream().filter(b -> b.contains("AR")).count());
+    		contenu_fichiers.add((int) contenu_fichiers.stream().filter(b -> b.contains("AR")).count(), "IR!");
+    	}
+    	if (contenu_fichiers.stream().anyMatch(a -> a.contains("PR"))){
+    		
+    		System.out.println("IR trouvé : " + contenu_fichiers.stream().filter(b -> b.contains("AR") || b.contains("IR")).count());
+    		contenu_fichiers.add((int) contenu_fichiers.stream().filter(b -> b.contains("AR") || b.contains("IR")).count(), "PR!");
+    	}
+    	
     	fichiers.clear();
-    	fichiers.addAll(Arrays.asList(Fichier.retrouveFichiers())
-                .stream()
-                .map(a -> a.getNom())
-                .collect(Collectors.toList()));
-    	
-    	fichiers_listView.setItems(fichiers);
-    	
-    	fichiers.sort(new Comparator<String>() {
+    	fichiers_listView.setItems(fichiers); 
 
-			@Override
-			public int compare(String o1, String o2) {
+    	fichiers_listView.setCellFactory(cell -> {
 			
-				return String.format("%s_%02d", o1.split("\\.")[1], Integer.parseInt(o1.split("\\.")[2]))
-			.compareTo(String.format("%s_%02d", o2.split("\\.")[1], Integer.parseInt(o2.split("\\.")[2])));
-			}
+			return new ListCell<String>(){
+			
+				 @Override
+			        protected void updateItem(String item, boolean empty) {
+			            super.updateItem(item, empty);
+			            
+			            if (item == null || empty) {
+			                setText(null);
+			            }
+			            else {
+			            	switch (item){
+				            case "AR!" : setText("Avant restauration");
+				                         setOpacity(0.5);
+				                         setDisable(true);
+				                         break;
+				            case "IR!" : setText("Pendant restauration");
+				            			 setOpacity(0.5);
+				            			 setDisable(true);
+				            			 break;
+				            case "PR!" : setText("Après restauration");
+				            			 setOpacity(0.5);
+				            			 setDisable(true);
+				            			 break;	
+				            default : setText("   " + item);
+				            		  setOpacity(1);
+				            }
+			            }
+			        }
+			};
+
 		});
     	
-    	//fichiers.addAll(fichiers.stream().map(a -> Normalize.normalizeDenormStringField(a)).collect(Collectors.toList()));
+    	fichiers.addAll(contenu_fichiers);
 
-    	
-    	
+		String fichierSelectionne_str = RestAccess.request("fichier", "nom", oeuvreSelectionneObj.getCote_archives_6s(), true);
+		Fichier fichierSelectionne = Fichier.fromJson(fichierSelectionne_str);
+		File file = new File(String.format("file:%s" ,fichierSelectionne.getFichierLie().toString()));
+		
+		if (file.exists()){
+			preview_imageView.setImage(new Image(String.format("file:%s" ,fichierSelectionne.getFichierLie().toString())));
+		}
+		else {
+			preview_imageView.setImage(new Image("images/scott-1.jpg"));
+		}	
     }
     
     @FXML
@@ -370,15 +415,17 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
     public void onFichierSelect(){
     	
     	String f = fichiers_listView.getSelectionModel().getSelectedItem();
-    	Fichier fichier = Fichier.retrouveFichier(f);
     	
-    	Messages.setFichier(fichier);
-    	
-    	Scene fiche_fichier_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_fichier.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
-		fiche_fichier_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_fichier_scene);
-    	
+    	if (f != null){
+    		Fichier fichier = Fichier.retrouveFichier(f);
+        	
+        	Messages.setFichier(fichier);
+        	
+        	Scene fiche_fichier_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_fichier.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
+    		fiche_fichier_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+    		
+    		currentStage.setScene(fiche_fichier_scene);
+    	}	
     }
     
     @FXML
@@ -604,6 +651,7 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		afficherMatieres();
 		afficherTechniques();
 		afficherAuteurs();
+		afficherFichiers();
 		//reloadOeuvre();
 
 	}

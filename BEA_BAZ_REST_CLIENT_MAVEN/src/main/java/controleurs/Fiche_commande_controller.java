@@ -1,4 +1,4 @@
-package application;
+package controleurs;
 
 import java.io.IOException;
 import java.net.URL;
@@ -28,6 +28,7 @@ import org.bson.types.ObjectId;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import application.JfxUtils;
 import enums.Progression;
 import models.Auteur;
 import models.Client;
@@ -304,8 +305,8 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
 		
 		 
 	}
-	@FXML
-    public void onRapportsButton(){}
+//	@FXML
+//    public void onRapportsButton(){}
 	@FXML
     public void onVersRapportButton(){}
 	

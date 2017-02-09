@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
+import controleurs.Fiche_controller;
 import utils.JsonUtils;
 import utils.RestAccess;
 import models.Matiere;
