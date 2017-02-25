@@ -1,4 +1,4 @@
-package application;
+package controleurs;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +9,8 @@ import java.util.ResourceBundle;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import controleurs.Fiche_controller;
+import application.Documents;
+import application.JfxUtils;
 import enums.Progression;
 import utils.JsonUtils;
 import utils.RestAccess;
@@ -46,8 +47,6 @@ public class Fiche_traitement_controller extends Fiche_controller implements Ini
 	private ListView<Traitement> listView_traitements;
 	@FXML
 	private ListView<Produit> listView_produits;
-	@FXML
-	private Button nouveau_traitement;
 	@FXML
 	private Button nouveau_detail;
 	@FXML
@@ -220,7 +219,7 @@ public class Fiche_traitement_controller extends Fiche_controller implements Ini
     	nom_traitement_textField.setPromptText("saisir le nom affiché du nouveau traitement");
     	nom_complet_traitement_textField.setPromptText("saisir le nom complet du nouveau traitement");
     	remarques_traitement_textArea.setPromptText("éventuelles remarques");
-    	nouveau_traitement.setVisible(false);
+    	nouveau.setVisible(false);
     	
     	traitementSelectionne = new Traitement();
     	
@@ -246,7 +245,7 @@ public class Fiche_traitement_controller extends Fiche_controller implements Ini
     	remarques_traitement_textArea.setText("");
     	nom_traitement_textField.setPromptText("");
     	remarques_traitement_textArea.setPromptText("");
-    	nouveau_traitement.setText("Nouveau traitement");
+    	nouveau.setText("Nouveau traitement");
     	rafraichirAffichage();
     	listView_traitements.getSelectionModel().select(traitementSelectionne);
     	affichageInfos();
@@ -291,7 +290,7 @@ public class Fiche_traitement_controller extends Fiche_controller implements Ini
     	nom_traitement_textField.setEditable(false);
     	nom_complet_traitement_textField.setEditable(false);
 		remarques_traitement_textArea.setEditable(false);
-		nouveau_traitement.setVisible(true);
+		nouveau.setVisible(true);
 		rafraichirAffichage();
 		listView_traitements.getSelectionModel().select(traitementSelectionne);
     	affichageInfos();

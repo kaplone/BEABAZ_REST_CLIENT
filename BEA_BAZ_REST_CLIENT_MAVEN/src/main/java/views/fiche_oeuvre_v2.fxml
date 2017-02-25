@@ -106,7 +106,7 @@
                                           <RowConstraints minHeight="10.0" prefHeight="280.0" vgrow="SOMETIMES" />
                                        </rowConstraints>
                                        <children>
-                                          <ListView fx:id="matieres_all_listView" onMouseReleased="#onMatiereSelect" prefHeight="120.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                          <ListView fx:id="matieres_all_listView" prefHeight="120.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                                           <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                              <children>
                                                 <Button fx:id="remove_m" mnemonicParsing="false" text="--&gt;" />
@@ -145,7 +145,7 @@
                                           <RowConstraints maxHeight="280.0" minHeight="10.0" prefHeight="280.0" vgrow="SOMETIMES" />
                                        </rowConstraints>
                                        <children>
-                                          <ListView fx:id="techniques_all_listView" onMouseReleased="#onTechniqueSelect" prefHeight="133.0" prefWidth="288.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                          <ListView fx:id="techniques_all_listView" prefHeight="133.0" prefWidth="288.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                                           <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                              <children>
                                                 <Button fx:id="remove_t" mnemonicParsing="false" text="--&gt;" />

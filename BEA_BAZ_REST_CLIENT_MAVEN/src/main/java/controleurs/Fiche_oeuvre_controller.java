@@ -38,6 +38,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -54,10 +55,17 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 
@@ -101,13 +109,14 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 	private TextArea remarques_textArea;
 	@FXML
 	private TextArea observations_textArea;
-
-	@FXML
-	private ListView<String> matieres_all_listView;
-	@FXML
-	private ListView<String> techniques_all_listView;
+    
 	@FXML
 	private ListView<String> matieres_listView;
+	@FXML
+	private ListView<String> matieres_all_listView;
+	
+	@FXML
+	private ListView<String> techniques_all_listView;
 	@FXML
 	private ListView<String> techniques_listView;
 	
@@ -120,6 +129,19 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 	private ChoiceBox<EtatFinal> etat_final_choiceBox;
 	@FXML
 	private TextArea complement_etat_textArea;
+	
+	@FXML
+	private Button exporter_rapport_button;
+	
+	@FXML
+	private Button add_m;
+	@FXML
+	private Button remove_m;
+	
+	@FXML
+	private Button add_t;
+	@FXML
+	private Button remove_t;
 
 	private List<Map<String, String>> oeuvresTraitees;
 
@@ -135,9 +157,12 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 	
 	boolean directSelect = false;
 	
-	private ObservableList<String> matieres;
-	private ObservableList<String> techniques;
+	private ObservableList<String> matieres_all;
+	private ObservableList<String> techniques_all;
 	private ObservableList<String> fichiers;
+	
+	private ObservableList<String> matieresUtilisees_obs;
+	private ObservableList<String> techniquesUtilisees_obs;
 	
 	private Set<String> matieresUtilisees;
 	private Set<String> techniquesUtilisees;
@@ -160,9 +185,9 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
     	Messages.setOeuvreTraiteeObj(oeuvreTraiteeSelectionneObj);
 
 		oeuvreSelectionneObj = oeuvreTraiteeSelectionneObj.getOeuvre();
-		
-		matieresUtilisees = oeuvreSelectionneObj.getMatieresUtilisees_names();
-		techniquesUtilisees = oeuvreSelectionneObj.getTechniquesUtilisees_names();
+
+		matieresUtilisees = oeuvreSelectionneObj.getMatieresUtilisees_names();    	
+    	techniquesUtilisees = oeuvreSelectionneObj.getTechniquesUtilisees_names();
  
 		if (directSelect){
 		   tableOeuvre.scrollTo(tableOeuvre.getSelectionModel().getSelectedIndex() -9);
@@ -183,22 +208,12 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		observations_textArea.setText(oeuvreTraiteeSelectionneObj.getObservations());
 		remarques_textArea.setText(oeuvreTraiteeSelectionneObj.getRemarques());
 		
-		if (oeuvreSelectionneObj.getMatieresUtilisees_names() != null){
-			for (String m : oeuvreSelectionneObj.getMatieresUtilisees_names()){
-				affichageMatieresUtilises(m);
-			}
-		}
-		
-		if (oeuvreSelectionneObj.getTechniquesUtilisees_names() != null){
-			for (String t : oeuvreSelectionneObj.getTechniquesUtilisees_names()){
-				affichageTechniquesUtilises(t);
-			}
-		}
-		
 		etat_final_choiceBox.getSelectionModel().select(oeuvreTraiteeSelectionneObj.getEtat());
 		complement_etat_textArea.setText(oeuvreTraiteeSelectionneObj.getComplement_etat());
 		nom_oeuvre_label.setText(oeuvreSelectionneObj.getNom());
 	
+		afficherMatieres();
+		afficherTechniques();
 		afficherTraitements();
 		afficherFichiers();	
 		afficherAuteurs();		
@@ -238,7 +253,7 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
     public void onAnnulerEditButton(){
     	super.onAnnulerEditButton();
     	editability(false);
-		
+
 		reloadOeuvre();
     	
     }
@@ -268,12 +283,7 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 
     	
     }
-
-
-    @FXML
-    public void onVersOeuvreButton(){}
-    @FXML
-    public void onVersFichiersButton(){}
+    
     @FXML
     public void onExporter_rapport_button(){
     	
@@ -301,29 +311,129 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
     	
     	return imv; 	
     }
-    
+
+   
    public void afficherTechniques(){
-	   
-	   techniques.clear();
-	   
-       techniques.addAll(Arrays.asList(Technique.retrouveTechniques())
-    		                   .stream()
-                               .map(a -> a.getNom())
-                               .collect(Collectors.toList()));
-       
-       techniques_all_listView.setItems(techniques);		
-	}
-    
-   public void afficherMatieres(){
-   	
-       matieres.clear();
-       matieres.addAll(Arrays.asList(Matiere.retrouveMatieres())
+	   	
+       techniques_all.clear();
+       techniques_all.addAll(Arrays.asList(technique.retrouveTechniques())
                .stream()
                .map(a -> a.getNom())
                .collect(Collectors.toList()));
-        
-	   matieres_all_listView.setItems(matieres);	
+       
+       techniquesUtilisees_obs.clear();
+	   techniquesUtilisees_obs.addAll(techniquesUtilisees);
+	   techniques_listView.setItems(techniquesUtilisees_obs);
+	    
+       miseAJourAffichageTechniques();
+ 
 	}
+   
+    public void miseAJourAffichageTechniques(){
+
+    	techniques_all_listView.setCellFactory(cell -> {
+			
+			return new ListCell<String>(){
+			
+				 @Override
+			        protected void updateItem(String item, boolean empty) {
+			            super.updateItem(item, empty);
+		  
+			            if (item == null || empty) {
+			            }
+			            
+			            else {
+			            	
+			            	setText(item);
+
+			                if (techniquesUtilisees_obs.contains(item)){
+			                	setDisable(true);
+			                	setOpacity(0.5);
+			                }
+			            }
+				 }
+			};
+	   });  
+    }
+   
+    public void ajouter_technique(String m){
+    	if (m != null){
+    		techniquesUtilisees_obs.add(m);
+    		techniques_all_listView.getSelectionModel().select(null);
+    		techniques_all_listView.getSelectionModel().clearSelection();
+        	miseAJourAffichageTechniques();
+        	onEditerButton();
+    	} 	
+    }
+    
+    public void retirer_technique(String m){
+    	if (m != null){
+    		techniquesUtilisees_obs.remove(m);
+        	miseAJourAffichageTechniques();
+        	onEditerButton();
+    	} 	
+    }
+    
+   public void afficherMatieres(){
+   	
+       matieres_all.clear();
+       matieres_all.addAll(Arrays.asList(Matiere.retrouveMatieres())
+               .stream()
+               .map(a -> a.getNom())
+               .collect(Collectors.toList()));
+       
+       matieresUtilisees_obs.clear();
+	   matieresUtilisees_obs.addAll(matieresUtilisees);
+	   matieres_listView.setItems(matieresUtilisees_obs);
+	    
+       miseAJourAffichageMatieres();
+ 
+	}
+   
+    public void miseAJourAffichageMatieres(){
+
+    	matieres_all_listView.setCellFactory(cell -> {
+			
+			return new ListCell<String>(){
+			
+				 @Override
+			        protected void updateItem(String item, boolean empty) {
+			            super.updateItem(item, empty);
+		  
+			            if (item == null || empty) {
+			            }
+			            
+			            else {
+			            	
+			            	setText(item);
+
+			                if (matieresUtilisees_obs.contains(item)){
+			                	setDisable(true);
+			                	setOpacity(0.5);
+			                }
+			            }
+				 }
+			};
+	   });  
+    }
+   
+    public void ajouter_matiere(String m){
+    	if (m != null){
+    		matieresUtilisees_obs.add(m);
+    		matieres_all_listView.getSelectionModel().select(null);
+    		matieres_all_listView.getSelectionModel().clearSelection();
+        	miseAJourAffichageMatieres();
+        	onEditerButton();
+    	} 	
+    }
+    
+    public void retirer_matiere(String m){
+    	if (m != null){
+    		matieresUtilisees_obs.remove(m);
+        	miseAJourAffichageMatieres();
+        	onEditerButton();
+    	} 	
+    }
     
     public void afficherFichiers(){
     	
@@ -428,124 +538,6 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
     	}	
     }
     
-    @FXML
-	public void onMatiereSelect(){
-    	
-    	String m = matieres_all_listView.getSelectionModel().getSelectedItem();
-    	Matiere matiere = Matiere.retrouveMatiere(m);
-		oeuvreSelectionneObj.addMatiereUtilisee(matiere);
-
-		RestAccess.update("oeuvre", oeuvreSelectionneObj);
-
-		//matieres_hbox.getChildren().clear();
-		
-		for (String m_ : oeuvreSelectionneObj.getMatieresUtilisees_names()){
-			affichageMatieresUtilises(m);
-		}
-		
-		
-	}
-    
-    @FXML
-	public void onTechniqueSelect(){
-		
-        String t = techniques_all_listView.getSelectionModel().getSelectedItem();
-			
-		oeuvreSelectionneObj.addTechniqueUtilisee(Technique.retrouveTechnique(t));
-
-		RestAccess.update("oeuvre", oeuvreSelectionneObj);
-		
-		//techniques_hbox.getChildren().clear();
-		
-		for (String t_ : oeuvreSelectionneObj.getTechniquesUtilisees_names()){
-			affichageTechniquesUtilises(t);
-		}
-		
-	}
-    
-    public void affichageMatieresUtilises(String m){
-
-		ImageView iv = new ImageView(new Image(Progression.NULL_.getUsedImage()));
-		iv.setPreserveRatio(true);
-        iv.setSmooth(true);
-        iv.setCache(true);
-        iv.setFitWidth(15);
-		
-		
-		Button b = new Button(m);
-		Button b2 = new Button("", iv);
-		
-		b2.setOnAction((event) -> deleteMatiereLie((Button)event.getSource()));
-
-//		matieres_hbox.getChildren().add(b);
-//		matieres_hbox.getChildren().add(b2);
-		HBox.setMargin(b2, new Insets(0,10,0,0));
-	}
-    
-    public void deleteMatiereLie(Button e){
-		
-//		int index = matieres_hbox.getChildren().indexOf(e);
-//
-//		Matiere matiere = Matiere.retrouveMatiere(((Button) matieres_hbox.getChildren().get(index -1)).getText());
-//		
-//		matieres_hbox.getChildren().remove(index, index +1);
-		
-		oeuvreSelectionneObj.deleteMatiere(matiere.getNom());
-		
-		OeuvreTraitee.update(oeuvreTraiteeSelectionneObj);
-		Oeuvre.update(oeuvreSelectionneObj);
-		
-//		matieres_hbox.getChildren().clear();
-		for (String m : oeuvreSelectionneObj.getMatieresUtilisees_names()){
-			affichageMatieresUtilises(m);
-			
-		}
-		//affichageMatieresUtilisees();
-	}
-
-    
-
-    public void affichageTechniquesUtilises(String t){
-
-		ImageView iv = new ImageView(new Image(Progression.NULL_.getUsedImage()));
-		iv.setPreserveRatio(true);
-        iv.setSmooth(true);
-        iv.setCache(true);
-        iv.setFitWidth(15);
-		
-		
-		Button b = new Button(t);
-		Button b2 = new Button("", iv);
-		
-		b2.setOnAction((event) -> deleteTechniqueLie((Button)event.getSource()));
-
-//		techniques_hbox.getChildren().add(b);
-//		techniques_hbox.getChildren().add(b2);
-		HBox.setMargin(b2, new Insets(0,10,0,0));
-	}	
-    
-// pareil pour technique (deleteTechnique liee(), deleteTechnique, getTechniques, affichageTechniqueUtilisées)
-    
-    public void deleteTechniqueLie(Button e){
-		
-//		int index = techniques_hbox.getChildren().indexOf(e);
-//
-//		Technique technique = Technique.retrouveTechnique((((Button) techniques_hbox.getChildren().get(index -1)).getText()));
-//		
-//		techniques_hbox.getChildren().remove(index -1, index +1);
-		
-		oeuvreSelectionneObj.deleteTechnique(technique.getNom());
-		
-		OeuvreTraitee.update(oeuvreTraiteeSelectionneObj);
-		Oeuvre.update(oeuvreSelectionneObj);
-		
-//		techniques_hbox.getChildren().clear();
-		for (String t : oeuvreSelectionneObj.getTechniquesUtilisees_names()){
-			affichageTechniquesUtilises(t);	
-		}
-		//
-	}
-    
     public void editability(boolean bool){
 		numero_archive_6s_textField.setEditable(bool);
 		titre_textField.setEditable(bool);
@@ -600,8 +592,8 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
         editability(false);
         
         versOeuvreButton.setVisible(false);
-        versOeuvreButton.setVisible(false);
-		versRapportButton.setVisible(false);
+        nouveau.setVisible(false);
+    	editer.setVisible(true);
 		
 		oeuvreTraiteeSelectionneObj = Messages.getOeuvreTraiteeObj();
 		
@@ -619,10 +611,92 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		inscriptions_textArea.setText(oeuvreSelectionneObj.getInscriptions_au_verso());
 		degradations_textArea.setText(oeuvreSelectionneObj.get_observations());
 
-		matieres = FXCollections.observableArrayList();
-		techniques = FXCollections.observableArrayList();
+		matieres_all = FXCollections.observableArrayList();
+		matieres_all_listView.setItems(matieres_all);
+		matieresUtilisees_obs = FXCollections.observableArrayList();
+		
+		matieres_all_listView.onDragDetectedProperty().set(dd -> {
+			
+			Dragboard dragBoard = matieres_all_listView.startDragAndDrop(TransferMode.MOVE);			
+			ClipboardContent content = new ClipboardContent();			 
+			content.putString(matieres_all_listView.getSelectionModel().getSelectedItem());			 
+			dragBoard.setContent(content);
+			 
+			matieres_listView.setOnDragOver(dd_ -> dd_.acceptTransferModes(TransferMode.MOVE));
+			 
+			matieres_listView.setOnDragDropped(dd_ -> {
+				ajouter_matiere(dd_.getDragboard().getString());
+			    dd_.setDropCompleted(true);
+			 });
+
+		});
+		
+		matieres_all_listView.setOnDragDropped(dd_ -> dd_.setDropCompleted(true));
+		
+        matieres_listView.onDragDetectedProperty().set(dd -> {
+			
+			Dragboard dragBoard = matieres_listView.startDragAndDrop(TransferMode.MOVE);			
+			ClipboardContent content = new ClipboardContent();			 
+			content.putString(matieres_listView.getSelectionModel().getSelectedItem());			 
+			dragBoard.setContent(content);
+			 
+			matieres_all_listView.setOnDragOver(dd_ -> dd_.acceptTransferModes(TransferMode.MOVE));
+			 
+			matieres_all_listView.setOnDragDropped(dd_ -> {
+				retirer_matiere(dd_.getDragboard().getString());
+			    dd_.setDropCompleted(true);
+			 });
+		});
+        
+        matieresUtilisees = oeuvreSelectionneObj.getMatieresUtilisees_names();
+		add_m.setOnAction(a -> ajouter_matiere(matieres_all_listView.getSelectionModel().getSelectedItem()));
+		remove_m.setOnAction(a -> retirer_matiere(matieres_listView.getSelectionModel().getSelectedItem()));
+		
+		techniques_all = FXCollections.observableArrayList();
+		techniques_all_listView.setItems(techniques_all);
+		techniquesUtilisees_obs = FXCollections.observableArrayList();
+		
+		techniques_all_listView.onDragDetectedProperty().set(dd -> {
+			
+			Dragboard dragBoard = techniques_all_listView.startDragAndDrop(TransferMode.MOVE);			
+			ClipboardContent content = new ClipboardContent();			 
+			content.putString(techniques_all_listView.getSelectionModel().getSelectedItem());			 
+			dragBoard.setContent(content);
+			 
+			techniques_listView.setOnDragOver(dd_ -> dd_.acceptTransferModes(TransferMode.MOVE));
+			 
+			techniques_listView.setOnDragDropped(dd_ -> {
+				ajouter_technique(dd_.getDragboard().getString());
+			    dd_.setDropCompleted(true);
+			 });
+
+		});
+		
+		techniques_all_listView.setOnDragDropped(dd_ -> dd_.setDropCompleted(true));
+		
+        techniques_listView.onDragDetectedProperty().set(dd -> {
+			
+			Dragboard dragBoard = techniques_listView.startDragAndDrop(TransferMode.MOVE);			
+			ClipboardContent content = new ClipboardContent();			 
+			content.putString(techniques_listView.getSelectionModel().getSelectedItem());			 
+			dragBoard.setContent(content);
+			 
+			techniques_all_listView.setOnDragOver(dd_ -> dd_.acceptTransferModes(TransferMode.MOVE));
+			 
+			techniques_all_listView.setOnDragDropped(dd_ -> {
+				retirer_technique(dd_.getDragboard().getString());
+			    dd_.setDropCompleted(true);
+			 });
+		});
+        
+        techniquesUtilisees = oeuvreSelectionneObj.getTechniquesUtilisees_names();
+		add_t.setOnAction(a -> ajouter_technique(techniques_all_listView.getSelectionModel().getSelectedItem()));
+		remove_t.setOnAction(a -> retirer_technique(techniques_listView.getSelectionModel().getSelectedItem()));
+		
+		
+		
 		traitementsAttendus = FXCollections.observableArrayList();
-	
+		
 		etatsFinaux = FXCollections.observableArrayList(EtatFinal.values());
 		etat_final_choiceBox.setItems(etatsFinaux);
 	
@@ -631,9 +705,11 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		
 		oeuvresTraitees = new ArrayList<Map<String, String>>();
 		
-		complement_etat_textArea.textProperty().addListener((observable, oldValue, newValue) -> {
-			onEditerOeuvreButton();
-		});
+		
+		
+//		complement_etat_textArea.textProperty().addListener((observable, oldValue, newValue) -> {
+//			onEditerOeuvreButton();
+//		});
 		
 //        auteursChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
 //			
@@ -643,9 +719,9 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 //			}	
 //		});
 		
-		etat_final_choiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-			onEditerOeuvreButton();
-		});
+//		etat_final_choiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+//			onEditerOeuvreButton();
+//		});		
 
 		afficherOeuvres();
 		afficherMatieres();
