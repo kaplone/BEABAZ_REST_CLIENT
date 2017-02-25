@@ -16,7 +16,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1020.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controleurs.Fiche_client_controller">
+<BorderPane xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controleurs.Fiche_client_controller">
    <left>
       <VBox alignment="TOP_CENTER" prefHeight="1007.0" prefWidth="280.0" BorderPane.alignment="CENTER">
          <children>
@@ -66,12 +66,12 @@
       </VBox>
    </right>
    <center>
-      <VBox alignment="TOP_CENTER" prefHeight="437.0" prefWidth="869.0" BorderPane.alignment="CENTER">
+      <VBox alignment="TOP_CENTER" prefHeight="437.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </BorderPane.margin>
          <children>
-            <Pane prefHeight="50.0" prefWidth="889.0">
+            <Pane prefHeight="50.0">
                <children>
                   <Label layoutX="35.0" layoutY="6.0" text="FICHE CLIENT :">
                      <font>
@@ -81,10 +81,10 @@
                   <Line endX="700.0" endY="50.0" startY="50.0" />
                </children>
             </Pane>
-            <GridPane prefHeight="400.0" prefWidth="869.0" VBox.vgrow="NEVER">
+            <GridPane prefHeight="400.0" VBox.vgrow="NEVER">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="470.0" minWidth="10.0" prefWidth="185.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1156.0" minWidth="10.0" prefWidth="1087.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1156.0" minWidth="10.0" prefWidth="500.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
@@ -104,7 +104,7 @@
                         <Insets bottom="10.0" right="10.0" top="10.0" />
                      </GridPane.margin>
                   </Label>
-                  <TextArea fx:id="remarques_client_textArea" prefHeight="145.0" prefWidth="559.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                  <TextArea fx:id="remarques_client_textArea" prefHeight="145.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                      <GridPane.margin>
                         <Insets top="10.0" />
                      </GridPane.margin></TextArea>

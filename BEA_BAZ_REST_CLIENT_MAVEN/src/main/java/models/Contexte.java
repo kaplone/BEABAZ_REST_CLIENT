@@ -4,8 +4,8 @@ import controleurs.Fiche_commande_controller;
 
 public class Contexte {
 	
-	public static final int largeurFenetre = 1920;
-	public static final int hauteurFenetre = 1020;
+	public static final int largeurFenetre = 1366;
+	public static final int hauteurFenetre = 720;
 	
 	public static Fiche_commande_controller fiche_commande_controller;
 	
