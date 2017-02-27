@@ -33,8 +33,7 @@ public class Fiche_auteur_controller extends Fiche_controller implements Initial
 	private Button nouveau;
 	@FXML
 	private TextField nom_complet_auteur_textField;
-	
-	//private Auteur[] auteurCursor;
+
 	private Auteur auteurSelectionne;
 	
 	@FXML
@@ -61,12 +60,7 @@ public class Fiche_auteur_controller extends Fiche_controller implements Initial
     	
     	liste_auteurs = FXCollections.observableArrayList();
     	JsonUtils.JsonToListObj(RestAccess.requestAll("auteur"), liste_auteurs, new TypeReference<List<Auteur>>() {});
-    	
-//		auteurCursor = Auteur.retrouveAuteurs();
-//		for (Auteur auteur : auteurCursor) {
-//			liste_auteurs.add(auteur);
-//		}	
-    	
+
 		listView_auteur.setItems(liste_auteurs);  
 		afficherAuteur();
     }
@@ -86,16 +80,13 @@ public class Fiche_auteur_controller extends Fiche_controller implements Initial
     @FXML
     public void onAnnulerEditButton(){
     	super.onAnnulerEditButton();
+    	onAuteurSelect();
     }
     
     @FXML
     public void onMiseAJourAuteurButton(){
     	super.onMiseAJourButton();
 
-    	if (auteurSelectionne == null){
-    		auteurSelectionne = new Auteur();
-    	}
-    	
     	auteurSelectionne.setNom(nom_auteur_textField.getText());
     	auteurSelectionne.setNom_complet(nom_complet_auteur_textField.getText());
     	auteurSelectionne.setRemarques(remarques_auteur_textArea.getText());
@@ -166,18 +157,15 @@ public class Fiche_auteur_controller extends Fiche_controller implements Initial
 		
 		liste_auteurs = FXCollections.observableArrayList();
 		JsonUtils.JsonToListObj(RestAccess.requestAll("auteur"), liste_auteurs, new TypeReference<List<Auteur>>() {});
-		
-//		auteurCursor = Auteur.retrouveAuteurs();		
-//		for (Auteur auteur : auteurCursor) {
-//			liste_auteurs.add(auteur);
-//		}
-		
+
 		listView_auteur.setItems(liste_auteurs);
+		
+		listView_auteur.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			onAuteurSelect();
+		});
 		
 		if (! liste_auteurs.isEmpty()){
 			listView_auteur.getSelectionModel().select(0);
-			auteurSelectionne = listView_auteur.getSelectionModel().getSelectedItem();
-			onAuteurSelect();
 		}
 	}
 }

@@ -5,9 +5,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.bson.types.ObjectId;
-import org.jongo.MongoCursor;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import application.JfxUtils;
 import models.Client;
@@ -24,7 +21,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 
 public class Fiche_client_controller extends Fiche_controller implements Initializable{
 	
@@ -52,19 +48,28 @@ public class Fiche_client_controller extends Fiche_controller implements Initial
 
 	@FXML
 	private Button nouvelle_commande;
+
+	private String clientSelectionne;
+	private String commandeSelectionne;
+
+	private Map <String, String> commandes_id;
+
+	private Client client;
 	
-	Client[] clientCursor;
-	MongoCursor<Commande> commandeCursor ;
-	String clientSelectionne;
-	String commandeSelectionne;
-	
-	Map <String, String> clients_id;
-	Map <String, String> commandes_id;
-	
-	Commande commande;
-	Client client;
-	
-	ObjectMapper mapper;	
+	@FXML
+	public void onCommandeSelect(){
+		
+		commandeSelectionne = listView_commandes.getSelectionModel().getSelectedItem();
+		
+		Commande co = Commande.retrouveCommande(new ObjectId(client.getCommandes_id().get(commandeSelectionne)));
+		
+		Messages.setCommande(co);
+		Messages.setOeuvreTraitee(null);
+		
+		Scene fiche_commande_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_commande.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
+		fiche_commande_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+		currentStage.setScene(fiche_commande_scene);	
+	}
 
 	@FXML
 	public void onAjoutCommande(){
@@ -79,39 +84,85 @@ public class Fiche_client_controller extends Fiche_controller implements Initial
 
 	@FXML
 	public void onClientSelect(){
-
-		clientSelectionne = listView_client.getSelectionModel().getSelectedItem();
+		super.onAnnulerEditButton();
 		
-        client = Client.retrouveClient(clientSelectionne);
-
-		Messages.setClient(client);
+		if (listView_client.getSelectionModel().getSelectedItem() == null) {
+			editer.setVisible(false);
+		} else {
+			clientSelectionne = listView_client.getSelectionModel().getSelectedItem();
+			client = Client.retrouveClient(clientSelectionne);
+			afficherClient();
+			editer.setVisible(true);
+			Messages.setClient(client);
+		}
 		Messages.setCommande(null);
-		Messages.setOeuvreTraitee(null);
-		
-		affichageInfos();
-		
+		Messages.setOeuvreTraitee(null);	
 	}
-	
-	@FXML
-	public void onCommandeSelect(){
-		
-		commandeSelectionne = listView_commandes.getSelectionModel().getSelectedItem();
-		
-		Commande co = Commande.retrouveCommande(new ObjectId(client.getCommandes_id().get(commandeSelectionne)));
-		
-		Messages.setCommande(co);
-		Messages.setOeuvreTraitee(null);
-		
-		Scene fiche_commande_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_commande.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
-		fiche_commande_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		currentStage.setScene(fiche_commande_scene);
-		
-		
-	}
-	
-    private void affichageInfos(){
+
+    public void rafraichirAffichage(){
     	
-    	liste_commandes.clear();
+    	liste_clients = FXCollections.observableArrayList();
+		liste_commandes  = FXCollections.observableArrayList();
+		
+		liste_clients.addAll(Client.retrouveClientsStr());
+		listView_client.setItems(liste_clients);
+		
+        client = Messages.getClient();
+        
+        if (client != null){       	
+			clientSelectionne = client.getNom();
+			listView_client.getSelectionModel().select(clientSelectionne);
+		}
+        else {
+        	listView_client.getSelectionModel().select(0);
+        }
+        afficherClient();   	
+    }
+    
+    @FXML
+    public void onEditerClientButton(){
+    	super.onEditerButton();
+    }
+    
+    @FXML
+    public void onAnnulerEditButton(){
+    	super.onAnnulerEditButton();
+    	onClientSelect();
+    }
+    
+    public void onNouveauClientButton() {	
+    	super.onNouveauButton();  
+    	client = new Client();
+    	liste_commandes.clear();	
+    }
+    
+    @FXML
+    public void onMiseAJourClientButton(){
+    	super.onMiseAJourButton();
+    	
+    	client.setNom(nom_client_textField.getText());
+    	client.setRemarques(remarques_client_textArea.getText());
+    	client.setNom_complet(nom_complet_client_textField.getText());
+    	client.setAdresse_rue(adresse_voie_textField.getText());
+    	client.setAdresse_cp(adresse_cp_textField.getText());
+    	client.setAdresse_ville(adresse_ville_textField.getText());
+
+		if (edit) {	
+			Client.update(client);	
+		}
+		else {			
+		   Client.save(client);
+		   listView_client.getSelectionModel().select(client.getNom());
+		   rafraichirAffichage();	   
+		}
+    }
+    
+    public void afficherClient() {
+		editability(false);
+		editer.setVisible(true);
+		prompt(false);
+        
+		liste_commandes.clear();
     	
     	if (client != null){
     		nom_label.setText(client.getNom());
@@ -125,98 +176,9 @@ public class Fiche_client_controller extends Fiche_controller implements Initial
         	commandes_id = client.getCommandes_id(); 
     		liste_commandes.addAll(commandes_id.keySet());
     		
-    		listView_commandes.setItems(liste_commandes);
-   		
-    	}  	
-    }
-    
-    public void onNouveauClientButton() {	
-    	super.onNouveauButton();   	
-    	editability(true);
-    	raz();
-	
-    }
-    
-    public void onAnnulerButton() {
-    	super.etatInitial();
-    	editability(false);
-    	raz();
-
-    	nouveau.setText("Nouveau client");
-    	rafraichirAffichage();
-    	listView_client.getSelectionModel().select(clientSelectionne);
-    	affichageInfos();
-    }
-    
-    public void rafraichirAffichage(){
-    	
-    	liste_clients = FXCollections.observableArrayList();
-		liste_commandes  = FXCollections.observableArrayList();
-		
-		liste_clients.addAll(Client.retrouveClientsStr());
-		
-		listView_client.setItems(liste_clients);
-		
-        client = Messages.getClient();
-        
-        if (client != null){       	
-			clientSelectionne = client.getNom();
-			listView_client.getSelectionModel().select(liste_clients.indexOf(clientSelectionne));
-		}
-        else {
-        	listView_client.getSelectionModel().select(0);
-        }
-        onClientSelect();   	
-    }
-    
-    @FXML
-    public void onEditerClientButton(){
-    	super.onEditerButton();
-    	editability(true);
-    }
-    
-    @FXML
-    public void onAnnulerEditButton(){
-    	super.onAnnulerEditButton();
-    	editability(false);
-		
-		rafraichirAffichage();
-		listView_client.getSelectionModel().select(clientSelectionne);
-    	affichageInfos();	
-    }
-    
-    @FXML
-    public void onMiseAJourClientButton(){
-    	super.onMiseAJourButton();
-    	editability(false);
-    	
-    	if (! edit){
-    		client = new Client();
-    	}
-    	else {
-    		client = Client.retrouveClient(clientSelectionne);
-    	}
-    	
-    	client.setNom(nom_client_textField.getText());
-    	client.setRemarques(remarques_client_textArea.getText());
-    	client.setNom_complet(nom_complet_client_textField.getText());
-    	client.setAdresse_rue(adresse_voie_textField.getText());
-    	client.setAdresse_cp(adresse_cp_textField.getText());
-    	client.setAdresse_ville(adresse_ville_textField.getText());
-
-		if (edit) {
-			
-			Client.update(client);
-			rafraichirAffichage();
-		}
-		else {
-			
-		   Client.save(client);
-		   
-		}
-		onAnnulerEditButton();
-    	
-    }
+    		listView_commandes.setItems(liste_commandes);		
+    	}		
+	}
     
     public void editability(boolean bool){
     	nom_client_textField.setEditable(bool);
@@ -261,7 +223,6 @@ public class Fiche_client_controller extends Fiche_controller implements Initial
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
         super.init();
-        editability(false);
         
         versClientButton.setVisible(false);
 		versCommandeButton.setVisible(false);
@@ -269,7 +230,17 @@ public class Fiche_client_controller extends Fiche_controller implements Initial
 		
 		Messages.setCommande(null);
 		
-		rafraichirAffichage();
-		affichageInfos();
+		liste_clients = FXCollections.observableArrayList();
+		liste_commandes  = FXCollections.observableArrayList();
+		
+		liste_clients.addAll(Client.retrouveClientsStr());
+		listView_client.setItems(liste_clients);
+		listView_client.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			onClientSelect();
+		});
+        
+		if (! liste_clients.isEmpty()){
+			listView_client.getSelectionModel().select(0);
+		}
 	}
 }

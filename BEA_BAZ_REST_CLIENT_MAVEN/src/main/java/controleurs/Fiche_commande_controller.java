@@ -1,32 +1,18 @@
 package controleurs;
 
-import java.io.IOException;
 import java.net.URL;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.Vector;
 import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import application.JfxUtils;
 import enums.Progression;
@@ -36,15 +22,12 @@ import models.Commande;
 import models.Contexte;
 import models.Messages;
 import models.Model;
-import models.Oeuvre;
 import models.OeuvreTraitee;
 import models.Traitement;
-import utils.FreeMarkerMaker;
 import utils.JsonUtils;
 import utils.RestAccess;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableStringValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -54,21 +37,16 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 public class Fiche_commande_controller extends Fiche_controller implements Initializable{
 	
@@ -106,31 +84,22 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
 	private ArrayList<Traitement> traitements_attendus;
     
 	private ObservableList<Traitement> liste_traitements;
-	private ObservableList<String> observableTraitements;
 
-	private static ObservableList<String> observableModeles;
-
-	private List<Map<String, Object>> listeOeuvresTraitees;
-//	private OeuvreTraitee[] oeuvresTraitees;
-	
+	private static ObservableList<String> observableModeles;	
 	
 	private Commande commande;
 	
 	private Client client;
 	private Model modele;
     private Auteur auteur;
-    
-    private String client_name;
+
 	private String modele_name;
     private String auteur_name;
     
     private int index;
-    private int i;
     
     private static List<Model> models;
     private static List<Auteur> auteurs;
-    
-    DateTimeFormatter formatter;
     
     @FXML
     public void onImporterButton(){
@@ -507,8 +476,6 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
 		versCommandeButton.setVisible(false);
 		
 		client = Messages.getClient(); 
-		
-		observableTraitements = FXCollections.observableArrayList();
 
 		traitements_selectionnes = new ArrayList<>();
 		traitements_attendus = new ArrayList<>();
@@ -538,8 +505,7 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
 		}
 
 		else { 
-			editability(true);
-			super.onCreerButton();
+			super.onNouveauButton();
 
 			
 			commande = new Commande();

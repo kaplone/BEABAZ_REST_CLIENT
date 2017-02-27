@@ -80,6 +80,9 @@ public class Traitement extends Commun{
 	public List<Produit> getListe_produits() {
 		return liste_produits;
 	}
+	public Set<String> getListe_produits_names() {
+		return produits.keySet();
+	}
 
 	public void setListe_produits(List<Produit> produits) {
 		this.liste_produits = produits;

@@ -4,28 +4,20 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.TreeMap;
-
-import org.bson.types.ObjectId;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import application.Documents;
 import utils.JsonUtils;
 import utils.RestAccess;
-import models.Messages;
 import models.Technique;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -54,8 +46,6 @@ public class Fiche_technique_controller extends Fiche_controller implements Init
 	private TextArea remarques_technique_textArea;
 	
 	private File file;
-	
-	private Map<String, ObjectId> techniques_id;
 
 	Technique techniqueSelectionne;
 	
@@ -73,8 +63,7 @@ public class Fiche_technique_controller extends Fiche_controller implements Init
 		}
 		else {
 			 return (File) null;
-		}
-		
+		}	
 	}
 	
 	@FXML
@@ -86,8 +75,7 @@ public class Fiche_technique_controller extends Fiche_controller implements Init
 			file_path_textField.setVisible(true);
 			file_path_textField.setText(file.toString());
 			importerButton.setVisible(true);
-		}
-		
+		}		
 	}
 	@FXML
 	public void on_import_file_button(){
@@ -97,174 +85,84 @@ public class Fiche_technique_controller extends Fiche_controller implements Init
 			importerButton.setVisible(false);
 			rafraichirAffichage();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-    private void affichageInfos(){
-    	
-    	if (techniqueSelectionne != null){
-    		if (listView_techniques.getSelectionModel().getSelectedItem() != null){
-    			nom_label.setText(techniqueSelectionne.getNom());
-        		nom_technique_textField.setText(techniqueSelectionne.getNom());
-            	remarques_technique_textArea.setText(techniqueSelectionne.getRemarques());
-        	}
-        	else {
-        		raz();
-        	}
-    	}
-
-//    	liste_techniques.clear();
-//    	JsonUtils.JsonToListObj(RestAccess.requestAll("technique"), liste_techniques, new TypeReference<List<Technique>>() {});
-//    	
-//    	if (techniqueSelectionne != null){
-//    		listView_techniques.setItems(liste_techniques);		
-//    	}	
-    }
+	 public void onTechniqueSelect(){
+		 super.onAnnulerEditButton();
+	    	
+		if (listView_techniques.getSelectionModel().getSelectedItem() == null) {
+			editer.setVisible(false);
+		} else {
+			if (listView_techniques.getSelectionModel().getSelectedItem().getNom() != null) {
+				techniqueSelectionne = listView_techniques.getSelectionModel().getSelectedItem();
+				afficherTechnique();
+				editer.setVisible(true);
+			} else {
+				editer.setVisible(false);
+			}
+		}
+	}
     
+	public void rafraichirAffichage() {
+
+		liste_techniques = FXCollections.observableArrayList();
+		JsonUtils.JsonToListObj(RestAccess.requestAll("technique"), liste_techniques, new TypeReference<List<Technique>>() {});
+
+		listView_techniques.setItems(liste_techniques);
+		afficherTechnique();
+	}
+
     public void onNouvelle_techniqueButton() {
     	super.onNouveauButton();
-    	editability(true);
-    	raz();
-    	
+
     	techniqueSelectionne = new Technique();    	
-    }
-    
-    public void onAnnulerButton() {
-    	super.etatInitial();
-    	editability(false);
-    	raz();
-
-    	nouveau.setText("Nouveau traitement");
-    	
-    	if (listView_techniques.getSelectionModel().getSelectedItem() == null){
-    		editer.setVisible(false);
-    	}
-    	else {
-    		if (listView_techniques.getSelectionModel().getSelectedItem().getNom() == null){
-    			editer.setVisible(true);
-    		}
-    		else {
-    			editer.setVisible(false);
-    		}
-    		
-    	}
-    	
-    	rafraichirAffichage();
-    	listView_techniques.getSelectionModel().select(techniqueSelectionne);
-    	affichageInfos();
-    	
-    }
-    
-    public void rafraichirAffichage(){
-
-		liste_techniques  = FXCollections.observableArrayList();
-		JsonUtils.JsonToListObj(RestAccess.requestAll("technique"), liste_techniques, new TypeReference<List<Technique>>() {});
-		
-//		techniques_id = new TreeMap<>();
-
-		//techniqueCursor = RestAccess.request("technique").as(Technique.class);
-		
-//		while (techniqueCursor.hasNext()){
-//			Technique t = techniqueCursor.next();
-//			liste_techniques.add(t);
-//			techniques_id.put(t.getNom(), t.get_id());
-//		}
-//		Messages.setTechniques_id(techniques_id);
-		
-		listView_techniques.setItems(liste_techniques);
-		
-		
-    	
     }
     
     @FXML
     public void onEditerTraitementButton(){
     	super.onEditerButton();
-        editability(true);
     }
     
     @FXML
     public void onAnnulerEditButton(){
-    	super.onAnnulerEditButton();
-    	editability(false);
-    	
-    	annuler.setVisible(false);
-    	
-    	if (listView_techniques.getSelectionModel().getSelectedItem() == null){
-    		editer.setVisible(false);
-    	}
-    	else {
-    		if (listView_techniques.getSelectionModel().getSelectedItem().getNom() == null){
-    			editer.setVisible(true);
-    		}
-    		else {
-    			editer.setVisible(false);
-    		}   		
-    	} 
-    	
+    	super.onAnnulerEditButton();  
+    	onTechniqueSelect();
     }
     
     @FXML
     public void onMiseAJourTechniqueButton(){
     	super.onMiseAJourButton();
-    	editability(false);
-
-    	if (techniqueSelectionne == null) {
-    		techniqueSelectionne = new Technique();
-    	}
-    	
+	
     	techniqueSelectionne.setNom(nom_technique_textField.getText());
     	techniqueSelectionne.setRemarques(remarques_technique_textArea.getText());
     	techniqueSelectionne.setNom_complet(nom_complet_technique_textField.getText());
-    	
-    	listView_techniques.getSelectionModel().select(techniqueSelectionne);
-		
+
 		if (edit) {
 			Technique.update(techniqueSelectionne);
-			afficherTechnique();
-			rafraichirAffichage();
-			onAnnulerEditButton();
 		}
 		else {
-			
 		   Technique.save(techniqueSelectionne);
-		   onAnnulerEditButton();
-		}
-    	
+		   listView_techniques.getSelectionModel().select(techniqueSelectionne);
+		   rafraichirAffichage();
+		}   	
     }
     
     public void afficherTechnique(){
     	editability(false);
 		editer.setVisible(true);
+		prompt(false);
 		
-		nom_label.setText(techniqueSelectionne.getNom());
-		nom_technique_textField.setText(techniqueSelectionne.getNom());
-		nom_complet_technique_textField.setText(techniqueSelectionne.getNom_complet());
-		remarques_technique_textArea.setText(techniqueSelectionne.getRemarques());
+		if (techniqueSelectionne != null){
+			nom_label.setText(techniqueSelectionne.getNom());
+			nom_technique_textField.setText(techniqueSelectionne.getNom());
+			nom_complet_technique_textField.setText(techniqueSelectionne.getNom_complet());
+			remarques_technique_textArea.setText(techniqueSelectionne.getRemarques());
+		}		
     }
-    
-    public void onTechniqueSelect(){
-    	
-    	if (listView_techniques.getSelectionModel().getSelectedItem() == null){
-
-			editer.setVisible(false);	
-		}
-		else {
-			
-			if (listView_techniques.getSelectionModel().getSelectedItem().getNom() != null){
-
-				techniqueSelectionne = listView_techniques.getSelectionModel().getSelectedItem();	
-				afficherTechnique();
-				editer.setVisible(true);
-    		}
-    		else {
-    			editer.setVisible(false);
-    		}	
-		}    		
-    }  
-    
+   
+    @Override
     public void editability(boolean bool){
     	nom_technique_textField.setEditable(bool);
     	nom_complet_technique_textField.setEditable(bool);
@@ -272,12 +170,14 @@ public class Fiche_technique_controller extends Fiche_controller implements Init
 		prompt(bool);
     }
     
+    @Override
     public void raz(){
     	nom_technique_textField.setText("");
     	nom_complet_technique_textField.setText("");
     	remarques_technique_textArea.setText("");
     }
     
+    @Override
     public void prompt(boolean bool){
     	
     	if (bool){
@@ -295,12 +195,8 @@ public class Fiche_technique_controller extends Fiche_controller implements Init
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		super.init();
-        editability(false);
         
-
 		versTechniquesButton.setVisible(false);
-		
-		techniques_id = new TreeMap<>();
 
 		file_path_textField.setVisible(false);
 		importerButton.setVisible(false);
@@ -308,28 +204,15 @@ public class Fiche_technique_controller extends Fiche_controller implements Init
 		liste_techniques  = FXCollections.observableArrayList();
 		JsonUtils.JsonToListObj(RestAccess.requestAll("technique"), liste_techniques, new TypeReference<List<Technique>>() {});
 		
-        //techniqueCursor = RestAccess.request("technique").as(Technique.class);
-		
-//        while (techniqueCursor.hasNext()){
-//			Technique t = techniqueCursor.next();
-//			liste_techniques.add(t);
-//			techniques_id.put(t.getNom(), t.get_id());
-//		}
-		
-//		for (Technique t : techniques){
-//			techniques_id.put(t.getNom(), t.get_id());
-//		}
-		//Messages.setTechniques_id(techniques_id);
-		
 		listView_techniques.setItems(liste_techniques);
 		
 		listView_techniques.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 			onTechniqueSelect();
 		});
 		
-		listView_techniques.getSelectionModel().select(0);
-		techniqueSelectionne = listView_techniques.getSelectionModel().getSelectedItem();
-
+		if (! liste_techniques.isEmpty()){
+			listView_techniques.getSelectionModel().select(0);
+		}
+		
 	}
-
 }

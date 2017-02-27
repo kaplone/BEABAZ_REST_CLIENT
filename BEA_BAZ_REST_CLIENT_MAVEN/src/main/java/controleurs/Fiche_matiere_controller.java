@@ -44,7 +44,6 @@ public class Fiche_matiere_controller extends Fiche_controller implements Initia
 
 	private File file;
     
-	private Matiere[] matiereCursor;
 	private Matiere matiereSelectionne;
 
 	protected File chooseExport() {
@@ -93,26 +92,16 @@ public class Fiche_matiere_controller extends Fiche_controller implements Initia
 		if (listView_matieres.getSelectionModel().getSelectedItem() == null) {
 			editer.setVisible(false);
 		} else {
-
-			if (listView_matieres.getSelectionModel().getSelectedItem().getNom() != null) {
-				matiereSelectionne = listView_matieres.getSelectionModel().getSelectedItem();
-				afficherMatiere();
-				editer.setVisible(true);
-			} else {
-				editer.setVisible(false);
-			}
+			matiereSelectionne = listView_matieres.getSelectionModel().getSelectedItem();
+			afficherMatiere();
+			editer.setVisible(true);
 		}
 	}
 	
 	public void rafraichirAffichage() {
 
 		liste_matieres = FXCollections.observableArrayList();
-		//JsonUtils.JsonToListObj(RestAccess.requestAll("matiere"), liste_matieres, new TypeReference<List<Matiere>>() {});
-		matiereCursor = Matiere.retrouveMatieres();
-		
-		for (Matiere matiere : matiereCursor) {
-			liste_matieres.add(matiere);
-		}
+		JsonUtils.JsonToListObj(RestAccess.requestAll("matiere"), liste_matieres, new TypeReference<List<Matiere>>() {});
 
 		listView_matieres.setItems(liste_matieres);
 		afficherMatiere();
@@ -131,21 +120,16 @@ public class Fiche_matiere_controller extends Fiche_controller implements Initia
 
 	public void onAnnulerEditButton() {
 		super.onAnnulerEditButton();
+		onMatiereSelect();
 	}
 
 	@FXML
 	public void onMiseAJourMatiereButton() {
 		super.onMiseAJourButton();
 
-		if (matiereSelectionne == null) {
-			matiereSelectionne = new Matiere();
-		}
-
 		matiereSelectionne.setNom(nom_matiere_textField.getText());
 		matiereSelectionne.setRemarques(remarques_matiere_textArea.getText());
 		matiereSelectionne.setNom_complet(nom_complet_matiere_textField.getText());
-
-		
 
 		if (edit) {
 			Matiere.update(matiereSelectionne);
@@ -154,7 +138,6 @@ public class Fiche_matiere_controller extends Fiche_controller implements Initia
 			listView_matieres.getSelectionModel().select(matiereSelectionne);
 			rafraichirAffichage();
 		}
-
 	}
 
 	public void afficherMatiere() {
@@ -162,13 +145,12 @@ public class Fiche_matiere_controller extends Fiche_controller implements Initia
 		editer.setVisible(true);
 		prompt(false);
         
-		if (listView_matieres.getSelectionModel().getSelectedItem() != null){
+		if (matiereSelectionne != null){
 			nom_label.setText(matiereSelectionne.getNom());
 			nom_matiere_textField.setText(matiereSelectionne.getNom());
 			nom_complet_matiere_textField.setText(matiereSelectionne.getNom_complet());
 			remarques_matiere_textArea.setText(matiereSelectionne.getRemarques());
-		}
-		
+		}		
 	}
     
 	@Override
@@ -221,11 +203,6 @@ public class Fiche_matiere_controller extends Fiche_controller implements Initia
         
 		if (! liste_matieres.isEmpty()){
 			listView_matieres.getSelectionModel().select(0);
-			matiereSelectionne = listView_matieres.getSelectionModel().getSelectedItem();
-			onMatiereSelect();
 		}
-		
-
 	}
-
 }
