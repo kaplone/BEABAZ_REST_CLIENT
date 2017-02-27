@@ -114,7 +114,7 @@ public class Fiche_client_controller extends Fiche_controller implements Initial
     	liste_commandes.clear();
     	
     	if (client != null){
-    		
+    		nom_label.setText(client.getNom());
     		nom_client_textField.setText(clientSelectionne);
     		nom_complet_client_textField.setText(client.getNom_complet());
         	adresse_voie_textField.setText(client.getAdresse_rue());

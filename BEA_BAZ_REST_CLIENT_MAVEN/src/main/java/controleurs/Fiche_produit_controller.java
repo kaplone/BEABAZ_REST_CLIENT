@@ -43,11 +43,7 @@ public class Fiche_produit_controller extends Fiche_controller implements Initia
 	private Button importerButton;
 	@FXML
 	private TextField file_path_textField;
-	
-	@FXML
-	private Label fiche_traitement_label;
-	@FXML
-	private Label nom_traitement_label;
+
 	@FXML
 	private TextField nom_produit_textField;
 	@FXML
@@ -59,8 +55,6 @@ public class Fiche_produit_controller extends Fiche_controller implements Initia
 	
 	Produit produitSelectionne;
 	TacheTraitement traitementSelectionne;
-	
-	Stage currentStage;
 
 	Produit detail;
 		
@@ -106,16 +100,23 @@ public class Fiche_produit_controller extends Fiche_controller implements Initia
 	}
 	
     private void affichageInfos(Produit produitSelectionne){
-	
-    	nom_produit_textField.setText(produitSelectionne.getNom());
-    	remarques_produit_textArea.setText(produitSelectionne.getRemarques());
     	
-    	liste_produits.clear();
-    	JsonUtils.JsonToListObj(RestAccess.requestAll("produit"), liste_produits, new TypeReference<List<Produit>>() {});
-    	
-    	if (produitSelectionne != null){
-    		listView_produits.setItems(liste_produits);		
+    	if (listView_produits.getSelectionModel().getSelectedItem() != null){
+    		nom_produit_textField.setText(produitSelectionne.getNom());
+        	remarques_produit_textArea.setText(produitSelectionne.getRemarques());
     	}	
+    	else {
+    		raz();
+    	}
+	
+    	
+//    	
+//    	liste_produits.clear();
+//    	JsonUtils.JsonToListObj(RestAccess.requestAll("produit"), liste_produits, new TypeReference<List<Produit>>() {});
+//    	
+//    	if (produitSelectionne != null){
+//    		listView_produits.setItems(liste_produits);		
+//    	}	
     }
     
     public void onNouveauProduitButton() {
@@ -130,9 +131,22 @@ public class Fiche_produit_controller extends Fiche_controller implements Initia
     	super.etatInitial();
     	editability(false);
     	raz();
-    	
-    	mise_a_jour.setText("Mise à jour");
+
     	nouveau.setText("Nouveau traitement");
+    	
+    	if (listView_produits.getSelectionModel().getSelectedItem() == null){
+    		editer.setVisible(false);
+    	}
+    	else {
+    		if (listView_produits.getSelectionModel().getSelectedItem().getNom() == null){
+    			editer.setVisible(true);
+    		}
+    		else {
+    			editer.setVisible(false);
+    		}
+    		
+    	}
+    	
     	rafraichirAffichage();
     	listView_produits.getSelectionModel().select(produitSelectionne);
     	affichageInfos(produitSelectionne);
@@ -158,11 +172,23 @@ public class Fiche_produit_controller extends Fiche_controller implements Initia
     public void onAnnulerEditButton(){
     	super.onAnnulerEditButton();
     	editability(false);
+    	
 		nouveau.setVisible(true);
 		
-		rafraichirAffichage();
-		listView_produits.getSelectionModel().select(produitSelectionne);
-    	affichageInfos(produitSelectionne);    	
+		if (listView_produits.getSelectionModel().getSelectedItem() == null){
+    		editer.setVisible(false);
+    	}
+    	else {
+    		if (listView_produits.getSelectionModel().getSelectedItem().getNom() == null){
+    			editer.setVisible(true);
+    		}
+    		else {
+    			editer.setVisible(false);
+    		}   		
+    	} 	
+//		rafraichirAffichage();
+//		listView_produits.getSelectionModel().select(produitSelectionne);
+//    	affichageInfos(produitSelectionne);    	
     }
     
     @FXML
@@ -196,20 +222,33 @@ public class Fiche_produit_controller extends Fiche_controller implements Initia
     public void afficherProduit(){
 		editability(false);
 		editer.setVisible(true);
-		
-		fiche_traitement_label.setText("FICHE PRODUIT :");
-		nom_traitement_label.setText(produitSelectionne.getNom());
+
+		nom_label.setText(produitSelectionne.getNom());
 		nom_produit_textField.setText(produitSelectionne.getNom());
 		nom_complet_produit_textField.setText(produitSelectionne.getNom_complet());
 		remarques_produit_textArea.setText(produitSelectionne.getRemarques());
-		//rafraichirAffichage();
     }
 
-//    @FXML
-//    public void onAjoutDetail(){}
 
     @FXML
     public void onProduitSelect(){
+    	
+    	if (listView_auteur.getSelectionModel().getSelectedItem() == null){
+
+			editer.setVisible(false);	
+		}
+		else {
+			
+			if (listView_auteur.getSelectionModel().getSelectedItem().getNom() != null){
+
+				auteurSelectionne = listView_auteur.getSelectionModel().getSelectedItem();	
+				affichageInfos(auteurSelectionne);
+				editer.setVisible(true);
+    		}
+    		else {
+    			editer.setVisible(false);
+    		}	
+		}
     	
     	produitSelectionne = listView_produits.getSelectionModel().getSelectedItem();
     	Messages.setProduit(produitSelectionne);

@@ -72,14 +72,8 @@ import javafx.stage.Stage;
 
 public class Fiche_commande_controller extends Fiche_controller implements Initializable{
 	
-//	@FXML
-//	private ObservableList<Oeuvre> liste_oeuvres;
 	@FXML
 	private Label nomClientLabel;
-	@FXML
-	private Label fiche_commande_label;
-	@FXML
-	private Label nom_commande_label;
 	@FXML
 	private TextField nomCommandeTextField;
 
@@ -156,11 +150,7 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
 		importCommandeButton.setDisable(true); 
 		//commandeExportVbox.setVisible(false); // c'est quoi ???
 		versRapportButton.setVisible(false);
-		
-		fiche_commande_label.setText("FICHE COMMANDE :");
-		nom_commande_label.setText(commande.getNom());
-		nomCommandeTextField.setDisable(false);
-		
+		nomCommandeTextField.setDisable(false);		
 	}
 	
 	@FXML
@@ -171,11 +161,8 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
 		editability(false);
 		
 		importCommandeButton.setDisable(false);
-
-		fiche_commande_label.setText("FICHE COMMANDE :");
 		nomCommandeTextField.setDisable(true);
-		
-		
+
 		if (edit_save) {
 
 			afficherCommande();
@@ -264,11 +251,13 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
 		editability(false);
 		
 		importCommandeButton.setDisable(false);
+		
+		nom_label.setText(commande.getNom());
 
-		fiche_commande_label.setText("FICHE COMMANDE :");
-		nomClientLabel.setText(client.getNom());
-		nomCommandeTextField.setDisable(true);
-		nomClientLabel.setText(client.getNom());
+//		fiche_commande_label.setText("FICHE COMMANDE :");
+//		nomClientLabel.setText(client.getNom());
+//		nomCommandeTextField.setDisable(true);
+//		nomClientLabel.setText(client.getNom());
 
 		for (ChoiceBox<Traitement> cbt : traitements_selectionnes){
 			cbt.getSelectionModel().clearSelection();
@@ -318,7 +307,7 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
 //			dateDebutProjetPicker.setValue(c.getDateDebutProjet());;
 //			dateFinProjetPicker.setValue(c.getDateFinProjet());
 			remarques.setText(c.getRemarques());
-			nom_commande_label.setText(c.getNom());
+			nom_label.setText(c.getNom());
 			nomCommandeTextField.setText(c.getNom());	
 		}
 	}
@@ -343,9 +332,11 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
     		}
     	}
     	
-		for (int i = 0; i < commande.getTraitements_attendus().size(); i++){
-			((ChoiceBox<String>)traitementGrid.getChildren().get(i)).getSelectionModel().select(commande.getTraitements_attendus().get(i).keySet().iterator().next());
-    	}
+    	if (commande != null && commande.getTraitements_attendus() != null){
+    		for (int i = 0; i < commande.getTraitements_attendus().size(); i++){
+    			((ChoiceBox<String>)traitementGrid.getChildren().get(i)).getSelectionModel().select(commande.getTraitements_attendus().get(i).keySet().iterator().next());
+        	}
+    	}	
     }
     
     public Comparator<? super Map<String, Object>> otTrieeParNom = 
@@ -563,9 +554,6 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
 
 			commandeExportVbox.setVisible(false);
 			versRapportButton.setVisible(false);
-			
-			fiche_commande_label.setText("FICHE COMMANDE (nouvelle commande) :");
-			nom_commande_label.setText("");
 
 			try {
 			    nomClientLabel.setText(client.getNom());

@@ -73,7 +73,7 @@ public class Fiche_fichier_controller extends Fiche_controller implements Initia
 	
     private void affichageInfos(){
 
-    	
+    	nom_label.setText(fichierSelectionne.getNom());
     	nom_fichier_textField.setText(fichierSelectionne.getNom());
     	remarques_fichier_textArea.setText(fichierSelectionne.getRemarques());
     	fichier_legende_textField.setText(fichierSelectionne.getLegende());

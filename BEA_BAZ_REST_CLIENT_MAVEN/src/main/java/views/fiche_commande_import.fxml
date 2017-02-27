@@ -47,7 +47,7 @@
                      </font>
                   </Label>
                   <Line endX="800.0" endY="50.0" startY="50.0" />
-                  <Label fx:id="nom_commande_label" layoutX="382.0" layoutY="18.0" text="( Import )">
+                  <Label fx:id="nom_label" layoutX="382.0" layoutY="18.0" text="( Import )">
                      <font>
                         <Font size="20.0" />
                      </font>

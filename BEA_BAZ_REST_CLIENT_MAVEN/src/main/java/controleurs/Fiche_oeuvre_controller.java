@@ -87,12 +87,7 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 	private Polygon precedent_fleche;
 	@FXML
 	private Polygon suivant_fleche;
-	
-	@FXML
-	private Label fiche_oeuvre_label;
-	@FXML
-	private Label nom_oeuvre_label;
-	
+
 	@FXML
 	private TextField numero_archive_6s_textField;
 	@FXML
@@ -180,7 +175,7 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 	}
 
 	public void reloadOeuvre(){
-		
+
 		oeuvreTraiteeSelectionneObj = OeuvreTraitee.retrouveOeuvreTraitee(new ObjectId(tableOeuvre.getSelectionModel().getSelectedItem().get("oeuvresTraitee_id")));
     	Messages.setOeuvreTraiteeObj(oeuvreTraiteeSelectionneObj);
 
@@ -210,7 +205,7 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		
 		etat_final_choiceBox.getSelectionModel().select(oeuvreTraiteeSelectionneObj.getEtat());
 		complement_etat_textArea.setText(oeuvreTraiteeSelectionneObj.getComplement_etat());
-		nom_oeuvre_label.setText(oeuvreSelectionneObj.getNom());
+		nom_label.setText(oeuvreSelectionneObj.getNom());
 	
 		afficherMatieres();
 		afficherTechniques();
@@ -602,7 +597,7 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		commandeSelectionne = oeuvreTraiteeSelectionneObj.getCommande();
 		auteur = oeuvreSelectionneObj.getAuteur_obj();
 		
-		nom_oeuvre_label.setText(oeuvreSelectionneObj.getNom());
+		nom_label.setText(oeuvreSelectionneObj.getNom());
 
 		numero_archive_6s_textField.setText(oeuvreSelectionneObj.getCote_archives_6s());
 		titre_textField.setText(oeuvreSelectionneObj.getTitre_de_l_oeuvre());
@@ -728,7 +723,5 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		afficherTechniques();
 		afficherAuteurs();
 		afficherFichiers();
-		//reloadOeuvre();
-
 	}
 }

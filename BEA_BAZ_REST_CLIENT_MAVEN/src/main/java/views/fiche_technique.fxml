@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.Pane?>
 
-<BorderPane prefHeight="722.0" prefWidth="1275.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Fiche_technique_controller">
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controleurs.Fiche_technique_controller">
    <center>
       <VBox alignment="TOP_CENTER" prefHeight="437.0" prefWidth="869.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -17,13 +17,13 @@
          <children>
             <Pane prefHeight="50.0" prefWidth="889.0">
                <children>
-                  <Label fx:id="fiche_technique_label" layoutX="35.0" layoutY="6.0" text="FICHE TECHNIQUE :">
+                  <Label layoutX="35.0" layoutY="6.0" text="FICHE TECHNIQUE :">
                      <font>
                         <Font size="31.0" />
                      </font>
                   </Label>
                   <Line endX="700.0" endY="50.0" startY="50.0" />
-                  <Label fx:id="nom_technique_label" layoutX="372.0" layoutY="20.0" text="Label">
+                  <Label fx:id="nom_label" layoutX="372.0" layoutY="20.0" text="Label">
                      <font>
                         <Font size="20.0" />
                      </font>
@@ -144,12 +144,12 @@
                   <Insets left="10.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="matieres_button" mnemonicParsing="false" onAction="#onMatieres_button" text="Matières">
+            <Button fx:id="versMatieresButton" mnemonicParsing="false" onAction="#onMatieres_button" text="Matières">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="techniques_button" mnemonicParsing="false" text="Techniques">
+            <Button fx:id="versTechniquesButton" mnemonicParsing="false" text="Techniques">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>

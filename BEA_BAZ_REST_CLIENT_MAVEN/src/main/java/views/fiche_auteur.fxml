@@ -46,6 +46,11 @@
                         <Font size="31.0" />
                      </font>
                   </Label>
+                  <Label fx:id="nom_label" layoutX="372.0" layoutY="20.0" text="Label">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
                   <Line endX="700.0" endY="50.0" startY="50.0" />
                </children>
             </Pane>

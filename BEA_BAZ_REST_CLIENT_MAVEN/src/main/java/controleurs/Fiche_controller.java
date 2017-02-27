@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
@@ -17,7 +18,7 @@ import javafx.stage.Stage;
 import models.Contexte;
 import models.Messages;
 
-public class Fiche_controller{
+public abstract class Fiche_controller{
 	
 	@FXML
 	protected Button versClientButton;
@@ -52,6 +53,9 @@ public class Fiche_controller{
 	protected Button editer;
 	@FXML
 	protected Button mise_a_jour;
+	
+	@FXML
+	protected Label nom_label;
 	
 	@FXML
 	protected ChoiceBox<String> auteursChoiceBox;
@@ -151,6 +155,12 @@ public class Fiche_controller{
     	mise_a_jour.setVisible(true);
     	
     	mise_a_jour.setText("Enregistrer");
+    	nom_label.setText("");
+    	
+    	raz();
+    	prompt(true);
+    	editability(true);
+    	
     }
     
     public void onCreerButton() {
@@ -163,6 +173,9 @@ public class Fiche_controller{
     	mise_a_jour.setVisible(true);
     	
     	mise_a_jour.setText("Créer");
+    	
+    	prompt(false);
+    	editability(false);
     }
     
     public void onEditerButton(){
@@ -175,6 +188,9 @@ public class Fiche_controller{
     	mise_a_jour.setVisible(true);
     	
     	mise_a_jour.setText("Mise à jour");
+    	
+    	editability(true);
+        prompt(true);
     }
     
     public void onAnnulerEditButton(){
@@ -185,6 +201,9 @@ public class Fiche_controller{
     	annuler.setVisible(false);
     	editer.setVisible(true);
     	mise_a_jour.setVisible(false);
+    	
+        editability(false);
+        prompt(false);
     }
     
     public void onMiseAJourButton(){
@@ -195,6 +214,9 @@ public class Fiche_controller{
     	nouveau.setVisible(true);
     	editer.setVisible(true);
     	mise_a_jour.setVisible(false);
+    	
+    	editability(false);
+    	prompt(false);
     }
     
     public void etatInitial(){
@@ -204,6 +226,9 @@ public class Fiche_controller{
     	mise_a_jour.setVisible(false);
     }
     
+    public abstract void editability(boolean b);
+    public abstract void prompt(boolean b);
+    public abstract void raz();
     
     
     
@@ -235,6 +260,9 @@ public class Fiche_controller{
 		}
 		
 		versRapportButton.setVisible(false);
+		
+		editability(false);
+    	prompt(false);
     }
 
 }
