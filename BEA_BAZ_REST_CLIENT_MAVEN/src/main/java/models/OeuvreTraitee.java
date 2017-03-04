@@ -45,6 +45,10 @@ public class OeuvreTraitee extends Commun {
     
     private String cote;
     
+    private Set<String> traitementsAttendus_id;
+    private Set<String> traitementsAttendus_names;
+    private Set<TacheTraitement> traitementsAttendus_obj;
+    
     @JsonIgnore
     private static Commande commande;
     
@@ -112,11 +116,33 @@ public class OeuvreTraitee extends Commun {
 	}
 	public Set<String> getTraitementsAttendus_names() {
 
-    	return traitementsAttendus.stream()
-				                  .map(a -> a.get("traitementAttendu_string"))
-				                  .collect(Collectors.toSet());
+    	return traitementsAttendus_names;
 	}
+	
+	public Set<String> getTraitementsAttendus_id() {
 
+    	return traitementsAttendus_id;
+	}
+	
+	public Set<TacheTraitement> getTraitementsAttendus_obj() {
+	
+    	return traitementsAttendus_obj;
+	}
+	
+	public void setTraitementsAttendus_names(Set<String> traitementsAttendus_names) {
+
+    	this.traitementsAttendus_names = traitementsAttendus_names;
+	}
+	
+	public void setTraitementsAttendus_id(Set<String> traitementsAttendus_id) {
+
+    	this.traitementsAttendus_id = traitementsAttendus_id;
+	}
+	
+	public void setTraitementsAttendus_obj(Set<TacheTraitement> traitementsAttendus_obj) {
+	
+    	this.traitementsAttendus_obj = traitementsAttendus_obj;
+	}
 
 	public void addTraitementAttendu(Traitement traitementAttendu) {
 		this.addTraitementAttendu(traitementAttendu.getNom(), traitementAttendu.get_id().toString());
@@ -180,6 +206,7 @@ public class OeuvreTraitee extends Commun {
 
 	public void setTraitementsAttendus(List<Map<String, String>> traitementsAttendus) {
 		this.traitementsAttendus = traitementsAttendus;
+		System.out.println("this.traitementsAttendus : " + this.traitementsAttendus.toString());
 	}
 
 	public void setFichiers(List<Map<String, String>> fichiers) {
@@ -243,6 +270,7 @@ public class OeuvreTraitee extends Commun {
 	public static OeuvreTraitee retrouveOeuvreTraitee(ObjectId id){
 
         String oeuvre_str= RestAccess.request("oeuvreTraitee", id);
+        System.out.println(oeuvre_str);
         OeuvreTraitee c = null;
 		
 		try {

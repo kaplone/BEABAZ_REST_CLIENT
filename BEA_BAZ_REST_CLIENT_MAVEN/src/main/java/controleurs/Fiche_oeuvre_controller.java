@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -31,6 +32,7 @@ import models.Matiere;
 import models.Messages;
 import models.Oeuvre;
 import models.OeuvreTraitee;
+import models.Produit;
 import models.TacheTraitement;
 import models.Technique;
 import models.Traitement;
@@ -45,6 +47,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -65,6 +68,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
@@ -72,7 +76,7 @@ import javafx.stage.Stage;
 public class Fiche_oeuvre_controller extends Fiche_controller implements Initializable{
 
 	@FXML
-	private ListView<TacheTraitement> traitements_attendus_all_tableView;
+	private ListView<Traitement> traitements_all_listView;
 	@FXML
 	private TableColumn<TacheTraitement, String> traitements_attendus_tableColumn;
 	@FXML
@@ -137,16 +141,21 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 	private Button add_t;
 	@FXML
 	private Button remove_t;
-
-	private List<Map<String, String>> oeuvresTraitees;
+	
+	@FXML
+	private Button add_tr;
+	@FXML
+	private Button remove_tr;
+	
+	@FXML
+	private CheckBox defaut_checkBox;
+	@FXML
+	private VBox import_texte_vbox;
+	@FXML
+	private TextArea traitements_importes_textArea;
 
 	private Oeuvre oeuvreSelectionneObj;
 	private OeuvreTraitee oeuvreTraiteeSelectionneObj;
-	private Map<String, String> oeuvreTraiteeSelectionne;
-
-	private ObservableList<TacheTraitement> traitementsAttendus;
-	private TacheTraitement traitementSelectionne;
-	private Commande commandeSelectionne;
 
 	private Auteur auteur;
 	
@@ -155,16 +164,19 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 	private ObservableList<String> matieres_all;
 	private ObservableList<String> techniques_all;
 	private ObservableList<String> fichiers;
+	private ObservableList<Traitement> traitements_all;
 	
 	private ObservableList<String> matieresUtilisees_obs;
 	private ObservableList<String> techniquesUtilisees_obs;
+	private ObservableList<TacheTraitement> traitementsUtilisees_obs;
+	private ObservableList<TacheTraitement> traitementsAttendus;
 	
 	private Set<String> matieresUtilisees;
 	private Set<String> techniquesUtilisees;
+	private Set<String> traitementsUtilisees;
 	
-	private Matiere matiere;
-	private Technique technique;
-
+	private Map<String, Traitement> map_traitements;
+	private Map<String, TacheTraitement> map_tacheTraitements;
 	
 	private ObservableList<EtatFinal> etatsFinaux;	
 	
@@ -206,6 +218,21 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		etat_final_choiceBox.getSelectionModel().select(oeuvreTraiteeSelectionneObj.getEtat());
 		complement_etat_textArea.setText(oeuvreTraiteeSelectionneObj.getComplement_etat());
 		nom_label.setText(oeuvreSelectionneObj.getNom());
+		
+		traitementsUtilisees = oeuvreTraiteeSelectionneObj.getTraitementsAttendus_names();
+		
+		System.out.println("traitementsUtilisees : " + traitementsUtilisees.toString());
+		
+		// bouchon
+		if (Integer.parseInt(oeuvreSelectionneObj.getCote_archives_6s()) %2 == 0){
+			import_texte_vbox.setVisible(false);
+			import_texte_vbox.setPrefHeight(0);
+		}
+		else {
+			import_texte_vbox.setVisible(true);
+			import_texte_vbox.setPrefHeight(44);
+			traitements_importes_textArea.setText("Le numéro d'inventaire de la fiche est impair :\nTout ça vient de l'import ....");
+		}
 	
 		afficherMatieres();
 		afficherTechniques();
@@ -215,21 +242,82 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 	}
 	
 	public void afficherTraitements(){
-		
-		traitementsAttendus.clear();
-				
-		for (String tt : oeuvreTraiteeSelectionneObj.getTraitementsAttendus_names()){
-
-			//traitementsAttendus.add(TacheTraitement.retrouveTacheTraitement(tt));	
-			
-			traitementsAttendus.add(RestObjectMapper.retrouveObjet("tacheTraitement", new ObjectId(tt), TacheTraitement.class));
+	   	
+	       if (traitements_all.isEmpty()){
+	    	   traitements_all.addAll(Arrays.asList(Traitement.retrouveTraitements()));
+	       }	    
+	       miseAJourAffichageTraitements();
+	 
 		}
+	   
+	    public void miseAJourAffichageTraitements(){
 
-		traitements_attendus_tableColumn.setCellValueFactory(new PropertyValueFactory<TacheTraitement, String>("nom"));
-		faits_attendus_tableColumn.setCellValueFactory(new PropertyValueFactory<TacheTraitement, ImageView>("icone_progression"));
-		traitements_attendus_all_tableView.setItems(traitementsAttendus);
+	    	traitements_all_listView.setCellFactory(cell -> {
+				
+				return new ListCell<Traitement>(){
+				
+					 @Override
+				        protected void updateItem(Traitement item, boolean empty) {
+				            super.updateItem(item, empty);
+			  
+				            if (item == null || empty) {
+				            }
+				            
+				            else {
+				            	
+				            	setText(item.getNom());
 
-	}
+				                if (traitementsUtilisees.contains(item.getNom())){
+				                	setDisable(true);
+				                	setOpacity(0.5);
+				                }
+				            }
+					 }
+				};
+		   });  
+
+	    	traitementsUtilisees_obs.setAll(oeuvreTraiteeSelectionneObj.getTraitementsAttendus_obj());
+	
+			traitements_attendus_tableColumn.setCellValueFactory(new PropertyValueFactory<TacheTraitement, String>("nom"));
+			faits_attendus_tableColumn
+					.setCellValueFactory(new PropertyValueFactory<TacheTraitement, ImageView>("icone_progression"));
+			traitements_attendus_tableView.setItems(traitementsUtilisees_obs);
+			
+			traitements_attendus_tableView.setOnMouseClicked(a -> {
+				if (a.isControlDown()){
+					System.out.println("dragged");
+				}
+				else {
+					Messages.setTacheTraitement(traitements_attendus_tableView.getSelectionModel().getSelectedItem());
+					Scene fiche_tache_traitement_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_tache_traitement.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
+					fiche_tache_traitement_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+					
+					currentStage.setScene(fiche_tache_traitement_scene);
+				}
+			});
+	    }
+	   
+	    public void ajouter_traitement(String m){
+	    	if (m != null){
+	    		
+	    		System.out.println(m);
+	    		TacheTraitement tt = new TacheTraitement(map_traitements.get(m));
+	    		
+	    		traitementsUtilisees_obs.add(tt);
+	    		traitements_all_listView.getSelectionModel().select(null);
+	    		traitements_all_listView.getSelectionModel().clearSelection();
+	        	miseAJourAffichageTraitements();
+	        	onEditerButton();
+	    	} 	
+	    }
+	    
+	    public void retirer_traitement(String m){
+	    	if (m != null){
+	    		traitementsUtilisees_obs.remove(map_tacheTraitements.get(m));
+	        	miseAJourAffichageTraitements();
+	        	onEditerButton();
+	    	} 	
+	    }
 	
     public void afficherAuteurs(){
     	
@@ -310,12 +398,13 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
    
    public void afficherTechniques(){
 	   	
-       techniques_all.clear();
-       techniques_all.addAll(Arrays.asList(technique.retrouveTechniques())
-               .stream()
-               .map(a -> a.getNom())
-               .collect(Collectors.toList()));
-       
+       if (techniques_all.isEmpty()){
+    	   techniques_all.addAll(Arrays.asList(Technique.retrouveTechniques())
+                         .stream()
+                         .map(a -> a.getNom())
+                         .collect(Collectors.toList()));
+       }
+ 
        techniquesUtilisees_obs.clear();
 	   techniquesUtilisees_obs.addAll(techniquesUtilisees);
 	   techniques_listView.setItems(techniquesUtilisees_obs);
@@ -371,12 +460,13 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
     
    public void afficherMatieres(){
    	
-       matieres_all.clear();
-       matieres_all.addAll(Arrays.asList(Matiere.retrouveMatieres())
-               .stream()
-               .map(a -> a.getNom())
-               .collect(Collectors.toList()));
-       
+       if (matieres_all.isEmpty()){
+    	   matieres_all.addAll(Arrays.asList(Matiere.retrouveMatieres())
+                   	   .stream()
+                   	   .map(a -> a.getNom())
+                   	   .collect(Collectors.toList()));
+       }
+ 
        matieresUtilisees_obs.clear();
 	   matieresUtilisees_obs.addAll(matieresUtilisees);
 	   matieres_listView.setItems(matieresUtilisees_obs);
@@ -503,18 +593,18 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		}	
     }
     
-    @FXML
-    public void onTraitementAttenduSelect(){
-    	
-    	TacheTraitement ttAtt = traitements_attendus_all_tableView.getSelectionModel().getSelectedItem();
-    	Messages.setTacheTraitement(ttAtt);
-    	
-    	Scene fiche_tache_traitement_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_tache_traitement.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
-		fiche_tache_traitement_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
-		currentStage.setScene(fiche_tache_traitement_scene);
-    	
-    }
+//    @FXML
+//    public void onTraitementAttenduSelect(){
+//    	
+//    	TacheTraitement ttAtt = traitements_attendus_all_tableView.getSelectionModel().getSelectedItem();
+//    	Messages.setTacheTraitement(ttAtt);
+//    	
+//    	Scene fiche_tache_traitement_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_tache_traitement.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
+//		fiche_tache_traitement_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+//		
+//		currentStage.setScene(fiche_tache_traitement_scene);
+//    	
+//    }
 
     @FXML
     public void onFichierSelect(){
@@ -594,7 +684,6 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		
 		oeuvreSelectionneObj = oeuvreTraiteeSelectionneObj.getOeuvre();
 		
-		commandeSelectionne = oeuvreTraiteeSelectionneObj.getCommande();
 		auteur = oeuvreSelectionneObj.getAuteur_obj();
 		
 		nom_label.setText(oeuvreSelectionneObj.getNom());
@@ -688,19 +777,60 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		add_t.setOnAction(a -> ajouter_technique(techniques_all_listView.getSelectionModel().getSelectedItem()));
 		remove_t.setOnAction(a -> retirer_technique(techniques_listView.getSelectionModel().getSelectedItem()));
 		
+		traitements_all = FXCollections.observableArrayList();
+		traitements_all_listView.setItems(traitements_all);
+		traitementsUtilisees_obs = FXCollections.observableArrayList();
+		map_traitements = new HashMap<>();
+		map_tacheTraitements = new HashMap<>();
+		
+		JsonUtils.JsonToListObj(RestAccess.requestAll("traitement"), traitements_all,
+				new TypeReference<List<Traitement>>() {
+				});
+		traitements_all.forEach(a -> map_traitements.put(a.getNom(), a));
+		
+		traitements_all_listView.onDragDetectedProperty().set(dd -> {
+			
+			Dragboard dragBoard = traitements_all_listView.startDragAndDrop(TransferMode.MOVE);			
+			ClipboardContent content = new ClipboardContent();			 
+			content.putString(traitements_all_listView.getSelectionModel().getSelectedItem().getNom());			 
+			dragBoard.setContent(content);
+			 
+			traitements_attendus_tableView.setOnDragOver(dd_ -> dd_.acceptTransferModes(TransferMode.MOVE));
+			 
+			traitements_attendus_tableView.setOnDragDropped(dd_ -> {
+				ajouter_traitement(dd_.getDragboard().getString());
+			    dd_.setDropCompleted(true);
+			 });
+
+		});
+		
+		traitements_all_listView.setOnDragDropped(dd_ -> dd_.setDropCompleted(true));
+		
+		traitements_attendus_tableView.onDragDetectedProperty().set(dd -> {
+			
+			Dragboard dragBoard = traitements_attendus_tableView.startDragAndDrop(TransferMode.MOVE);			
+			ClipboardContent content = new ClipboardContent();			 
+			content.putString(traitements_attendus_tableView.getSelectionModel().getSelectedItem().getNom());			 
+			dragBoard.setContent(content);
+			 
+			traitements_all_listView.setOnDragOver(dd_ -> dd_.acceptTransferModes(TransferMode.MOVE));
+			 
+			traitements_all_listView.setOnDragDropped(dd_ -> {
+				retirer_traitement(dd_.getDragboard().getString());
+			    dd_.setDropCompleted(true);
+			 });
+		});
+        
+        traitementsUtilisees = oeuvreTraiteeSelectionneObj.getTraitementsAttendus_names();
+		add_tr.setOnAction(a -> ajouter_traitement(traitements_all_listView.getSelectionModel().getSelectedItem().getNom()));
+		remove_tr.setOnAction(a -> retirer_traitement(traitements_attendus_tableView.getSelectionModel().getSelectedItem().getNom()));
 		
 		
-		traitementsAttendus = FXCollections.observableArrayList();
 		
 		etatsFinaux = FXCollections.observableArrayList(EtatFinal.values());
 		etat_final_choiceBox.setItems(etatsFinaux);
-	
-		traitementsAttendus = FXCollections.observableArrayList();
+
 		fichiers = FXCollections.observableArrayList();
-		
-		oeuvresTraitees = new ArrayList<Map<String, String>>();
-		
-		
 		
 //		complement_etat_textArea.textProperty().addListener((observable, oldValue, newValue) -> {
 //			onEditerOeuvreButton();

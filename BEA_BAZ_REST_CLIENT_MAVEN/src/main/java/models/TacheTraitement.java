@@ -8,12 +8,9 @@ import java.util.Map;
 import java.util.Set;
 import org.bson.types.ObjectId;
 import utils.RestAccess;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import enums.Progression;
 
@@ -25,12 +22,40 @@ public class TacheTraitement extends Commun{
 	private ObjectId traitement_id;
 	private String complement;
 	private Map<String, ObjectId> produitsLies;
+	private Set<String> produitsLies_names;
+	private Set<String> produitsLies_id;
     
     private boolean supp; 
     
     public TacheTraitement(){
     	produitsLies = new HashMap<>();
     }
+    
+    public TacheTraitement(Traitement t){
+    	produitsLies = new HashMap<>();
+    	traitement_id = t.get_id();
+    	  	
+    }
+    
+//    public static TacheTraitement retrouveTacheTraitement(ObjectId id){
+//
+//        String tacheTraitement_str= RestAccess.request("tacheTraitement", id);
+//        TacheTraitement c = null;
+//		
+//		try {
+//			  c = Commun.getMapper().readValue(tacheTraitement_str, TacheTraitement.class);
+//		  }
+//		  catch (IOException e) {
+//			  
+//	    }
+//		
+//		return c;
+//	}
+//    
+//    public static TacheTraitement retrouveTacheTraitement(String id){
+//		
+//		return retrouveTacheTraitement(new ObjectId(id));
+//	}
     
     public static void update(TacheTraitement c){
 
@@ -145,11 +170,17 @@ public class TacheTraitement extends Commun{
 	}
 
 	public Set<String> getProduitsLies_names() {
-		return produitsLies.keySet();
+		return produitsLies_names;
+	}
+	public void setProduitsLies_names(Set<String> produitsLies_names) {
+		this.produitsLies_names = produitsLies_names;
 	}
 	
 	public  Collection<ObjectId> getProduitsLies_id() {
 		return produitsLies.values();
+	}
+	public void setProduitsLies_id(Set<String> produitsLies_id) {
+		this.produitsLies_id = produitsLies_id;
 	}
 
 	public void addProduitLie(Produit produitLie) {

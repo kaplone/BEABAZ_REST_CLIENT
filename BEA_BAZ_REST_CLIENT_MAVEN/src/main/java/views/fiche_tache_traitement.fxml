@@ -1,49 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="722.0" prefWidth="1275.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Fiche_tache_traitement_controller">
-   <right>
-      <VBox alignment="TOP_CENTER" prefHeight="649.0" prefWidth="288.0" BorderPane.alignment="CENTER">
-         <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" text="Produits">
-               <VBox.margin>
-                  <Insets bottom="10.0" top="10.0" />
-               </VBox.margin>
-            </Label>
-            <ListView fx:id="listView_produits" onKeyReleased="#onProduitSelect" onMouseClicked="#onProduitSelect" prefHeight="152.0" prefWidth="288.0">
-               <VBox.margin>
-                  <Insets bottom="10.0" top="10.0" />
-               </VBox.margin>
-            </ListView>
-            <Button fx:id="nouveau_produit_button" mnemonicParsing="false" onAction="#onAjoutProduit" text="Nouveau produit">
-               <VBox.margin>
-                  <Insets bottom="10.0" top="10.0" />
-               </VBox.margin>
-            </Button>
-            <Label text="Traitements">
-               <VBox.margin>
-                  <Insets bottom="10.0" top="10.0" />
-               </VBox.margin>
-            </Label>
-            <ListView fx:id="tous_les_traitements_listView" prefHeight="308.0" prefWidth="288.0">
-               <VBox.margin>
-                  <Insets bottom="10.0" top="10.0" />
-               </VBox.margin>
-            </ListView>
-         </children>
-         <BorderPane.margin>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </BorderPane.margin>
-      </VBox>
-   </right>
+<BorderPane xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controleurs.Fiche_tache_traitement_controller">
    <center>
       <VBox alignment="TOP_CENTER" prefHeight="437.0" prefWidth="869.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -65,7 +44,7 @@
                   </Label>
                </children>
             </Pane>
-            <GridPane prefHeight="477.0" prefWidth="691.0" VBox.vgrow="NEVER">
+            <GridPane prefHeight="100.0" prefWidth="837.0" VBox.vgrow="NEVER">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="429.0" minWidth="10.0" prefWidth="199.0" />
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="764.0" minWidth="10.0" prefWidth="492.0" />
@@ -74,34 +53,71 @@
                   <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
                   <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="359.0" minHeight="30.0" prefHeight="296.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <VBox.margin>
-                  <Insets left="10.0" right="10.0" top="80.0" />
+                  <Insets left="10.0" right="10.0" top="20.0" />
                </VBox.margin>
                <children>
-                  <Label text="Remarques : " GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="TOP">
+                  <Label text="Remarques : " GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="TOP">
                      <GridPane.margin>
                         <Insets bottom="10.0" right="10.0" top="10.0" />
                      </GridPane.margin>
                   </Label>
-                  <TextArea fx:id="remarques_traitement_textArea" prefHeight="145.0" prefWidth="559.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                  <TextArea fx:id="remarques_traitement_textArea" prefHeight="30.0" prefWidth="559.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                      <GridPane.margin>
                         <Insets top="10.0" />
                      </GridPane.margin></TextArea>
                   <Label text="Oeuvre traitée : " />
-                  <Label text="Traitement de base : " GridPane.rowIndex="2" />
-                  <Label text="Commande : " GridPane.rowIndex="1" />
+                  <Label text="Traitement de base : " GridPane.rowIndex="1" />
                   <Label fx:id="ot_label" text="Label" GridPane.columnIndex="1" />
-                  <Label fx:id="t_label" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <Label fx:id="commande_label" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Label text="Produit utilisé :" GridPane.rowIndex="4" />
-                  <Label text="Complément du traitement :" GridPane.rowIndex="3" />
-                  <HBox fx:id="produitsLiesHbox" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <TextField fx:id="complement_textField" promptText="Complément éventuel du traitement" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Label fx:id="t_label" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Label text="Complément du traitement :" GridPane.rowIndex="2" />
+                  <TextField fx:id="complement_textField" promptText="Complément éventuel du traitement" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                </children>
+            </GridPane>
+            <GridPane prefHeight="300.0" prefWidth="600.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="432.0" minWidth="10.0" prefWidth="419.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="239.0" minWidth="10.0" prefWidth="60.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="457.0" minWidth="10.0" prefWidth="390.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints maxHeight="20.0" minHeight="10.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="280.0" minHeight="10.0" prefHeight="280.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <VBox GridPane.columnIndex="2" GridPane.rowIndex="1">
+                     <children>
+                        <ListView fx:id="produits_pre_listView" onKeyReleased="#onProduitSelect" onMouseClicked="#onProduitSelect" prefHeight="152.0" prefWidth="288.0">
+                           <VBox.margin>
+                              <Insets bottom="10.0" top="10.0" />
+                           </VBox.margin>
+                        </ListView>
+                        <ListView fx:id="produits_reste_listView" prefHeight="133.0" prefWidth="288.0" />
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <children>
+                        <Button fx:id="remove_pr" mnemonicParsing="false" text="--&gt;" />
+                        <Button fx:id="add_pr" mnemonicParsing="false" text="&lt;--" />
+                     </children>
+                  </VBox>
+                  <ListView fx:id="produits_listView" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Label text="Produits utilisés" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2">
+                     <children>
+                        <Label text="Produits non séléctionnés" />
+                     </children>
+                  </HBox>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="20.0" top="20.0" />
+               </VBox.margin>
             </GridPane>
             <HBox alignment="CENTER_LEFT" prefHeight="55.0" prefWidth="711.0">
                <children>
@@ -145,7 +161,7 @@
             </HBox>
             <HBox fx:id="hbox" alignment="TOP_CENTER" prefHeight="50.0" prefWidth="200.0">
                <VBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="100.0" />
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
                </VBox.margin>
                <children>
                   <Button fx:id="mise_a_jour" mnemonicParsing="false" onAction="#onMiseAJourTraitementButton" text="Mise à jour" />
@@ -221,7 +237,7 @@
       </HBox>
    </top>
    <left>
-      <VBox alignment="TOP_CENTER" prefHeight="669.0" prefWidth="216.0" BorderPane.alignment="CENTER">
+      <VBox alignment="TOP_CENTER" prefHeight="669.0" prefWidth="288.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </BorderPane.margin>
@@ -231,12 +247,13 @@
                   <Insets bottom="10.0" top="10.0" />
                </VBox.margin>
             </Label>
-            <TableView fx:id="traitements_associes_tableView" onKeyReleased="#onTraitementAssocieSelect" onMouseClicked="#onTraitementAssocieSelect" prefHeight="614.0" prefWidth="216.0">
+            <TableView fx:id="traitements_associes_tableView" onKeyReleased="#onTraitementAssocieSelect" onMouseClicked="#onTraitementAssocieSelect" prefHeight="577.0" prefWidth="288.0">
               <columns>
-                <TableColumn fx:id="traitements_associes_tableColumn" prefWidth="154.0" text="Traitement" />
-                <TableColumn fx:id="traitements_associes_faits_tableColumn" minWidth="6.0" prefWidth="61.0" text="Fait" />
+                <TableColumn fx:id="traitements_associes_tableColumn" prefWidth="239.0" text="Traitement" />
+                <TableColumn fx:id="traitements_associes_faits_tableColumn" minWidth="6.0" prefWidth="48.0" text="Fait" />
               </columns>
             </TableView>
+            <Button fx:id="nouveau" mnemonicParsing="false" text="Nouvelle tache traitement" />
          </children>
       </VBox>
    </left>

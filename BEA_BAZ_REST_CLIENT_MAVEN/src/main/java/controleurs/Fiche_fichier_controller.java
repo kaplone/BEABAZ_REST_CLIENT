@@ -294,4 +294,22 @@ protected File chooseExport(){
 		affichageInfos();
 	}
 
+	@Override
+	public void editability(boolean b) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void prompt(boolean b) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void raz() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
