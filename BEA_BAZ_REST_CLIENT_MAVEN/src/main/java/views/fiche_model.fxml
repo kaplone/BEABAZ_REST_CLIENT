@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.Pane?>
 
-<BorderPane prefHeight="722.0" prefWidth="1275.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Fiche_modele_controller">
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controleurs.Fiche_modele_controller">
    <left>
       <VBox alignment="TOP_CENTER" prefHeight="649.0" prefWidth="218.0" BorderPane.alignment="CENTER">
          <children>
@@ -79,7 +79,7 @@
                         <Insets top="10.0" />
                      </GridPane.margin></TextArea>
                   <TextField fx:id="nom_model_textField" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" GridPane.columnIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="NEVER" />
-                  <TextField fx:id="file_path_textField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <TextField fx:id="file_path_model_textField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <Button fx:id="cheminVersModelButton" mnemonicParsing="false" onAction="#onCheminVersModelButton" text="Rechercher un modèle" GridPane.rowIndex="1" />
                </children>
             </GridPane>
