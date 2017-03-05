@@ -89,7 +89,7 @@
                <children>
                   <VBox GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <children>
-                        <ListView fx:id="produits_pre_listView" onKeyReleased="#onProduitSelect" onMouseClicked="#onProduitSelect" prefHeight="152.0" prefWidth="288.0">
+                        <ListView fx:id="produits_pre_listView" prefHeight="152.0" prefWidth="288.0">
                            <VBox.margin>
                               <Insets bottom="10.0" top="10.0" />
                            </VBox.margin>
@@ -247,7 +247,7 @@
                   <Insets bottom="10.0" top="10.0" />
                </VBox.margin>
             </Label>
-            <TableView fx:id="traitements_associes_tableView" onKeyReleased="#onTraitementAssocieSelect" onMouseClicked="#onTraitementAssocieSelect" prefHeight="577.0" prefWidth="288.0">
+            <TableView fx:id="traitements_associes_tableView" prefHeight="577.0" prefWidth="288.0">
               <columns>
                 <TableColumn fx:id="traitements_associes_tableColumn" prefWidth="239.0" text="Traitement" />
                 <TableColumn fx:id="traitements_associes_faits_tableColumn" minWidth="6.0" prefWidth="48.0" text="Fait" />

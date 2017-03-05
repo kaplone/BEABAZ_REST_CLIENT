@@ -118,8 +118,23 @@ public class Fiche_tache_traitement_controller extends Fiche_controller implemen
 	private int selectedIndex;
 	
 	@FXML
-	public void onProduitSelect(){
-
+	public void onTacheSelect(){
+		super.onAnnulerEditButton();
+    	
+		if (traitements_associes_tableView.getSelectionModel().getSelectedItem() == null){
+			tacheTraitementSelectionne = null;
+			editer.setVisible(false);	
+		}
+		else {
+			if (traitements_associes_tableView.getSelectionModel().getSelectedItem().getNom() != null){
+				tacheTraitementSelectionne = traitements_associes_tableView.getSelectionModel().getSelectedItem();	
+				afficherTache();
+				editer.setVisible(true);
+    		}
+    		else {
+    			editer.setVisible(false);
+    		}	
+		}
 		
 	}
 	
@@ -245,7 +260,6 @@ public class Fiche_tache_traitement_controller extends Fiche_controller implemen
 		traitements_associes_tableView.getSelectionModel().clearAndSelect(selectedIndex);
 
 		afficherProgression();
-    	afficherTraitement();
     	afficherProduits();
     }
     
@@ -259,7 +273,7 @@ public class Fiche_tache_traitement_controller extends Fiche_controller implemen
     	afficherTraitementsAssocies();	
     }
     
-    public void afficherTraitement(){
+    public void afficherTache(){
     	
     	remarques_traitement_textArea.setEditable(false);
         editer.setVisible(true);
@@ -340,11 +354,16 @@ public class Fiche_tache_traitement_controller extends Fiche_controller implemen
 		
 		tacheTraitementSelectionne = Messages.getTacheTraitement();
 		
-		complement_textField.textProperty().addListener((observable, oldValue, newValue) -> {
-			onEditerTraitementButton();
+		traitements_associes_tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			onTacheSelect();
 		});
 		
 		ot = Messages.getOeuvreTraiteeObj();
+		
+//		if (! liste_auteurs.isEmpty()){
+//			listView_auteur.getSelectionModel().select(0);
+//		}
+		
 		traitementSource = tacheTraitementSelectionne.getTraitement();
 		
 		ot_label.setText(ot.getNom());

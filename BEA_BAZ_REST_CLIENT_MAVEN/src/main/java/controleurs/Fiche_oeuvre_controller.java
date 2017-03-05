@@ -188,18 +188,20 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 
 	public void reloadOeuvre() {
 
-		oeuvreTraiteeSelectionneObj = OeuvreTraitee.retrouveOeuvreTraitee(
-				new ObjectId(tableOeuvre.getSelectionModel().getSelectedItem().get("oeuvresTraitee_id")));
-		Messages.setOeuvreTraiteeObj(oeuvreTraiteeSelectionneObj);
-
-		oeuvreSelectionneObj = oeuvreTraiteeSelectionneObj.getOeuvre();
-
-		matieresUtilisees = oeuvreSelectionneObj.getMatieresUtilisees_names();
-		techniquesUtilisees = oeuvreSelectionneObj.getTechniquesUtilisees_names();
-
 		if (directSelect) {
+			
+			System.out.println("reload oeuvre (direct)");
 			tableOeuvre.scrollTo(tableOeuvre.getSelectionModel().getSelectedIndex() - 9);
+			oeuvreTraiteeSelectionneObj = OeuvreTraitee.retrouveOeuvreTraitee(new ObjectId(tableOeuvre.getSelectionModel().getSelectedItem().get("oeuvresTraitee_id")));
+			Messages.setOeuvreTraiteeObj(oeuvreTraiteeSelectionneObj);
+			oeuvreSelectionneObj = oeuvreTraiteeSelectionneObj.getOeuvre();
+			matieresUtilisees = oeuvreSelectionneObj.getMatieresUtilisees_names();
+			techniquesUtilisees = oeuvreSelectionneObj.getTechniquesUtilisees_names();
+			traitementsUtilisees = oeuvreTraiteeSelectionneObj.getTraitementsAttendus_names();
+			traitementsUtilisees_obs.setAll(oeuvreTraiteeSelectionneObj.getTraitementsAttendus_obj());
+			traitementsUtilisees_obs.forEach(a -> map_tacheTraitements.put(a.getNom(), a));
 		} else {
+			System.out.println("reload oeuvre (edit ?)");
 			tableOeuvre.scrollTo(tableOeuvre.getSelectionModel().getSelectedIndex());
 		}
 
@@ -217,10 +219,6 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		etat_final_choiceBox.getSelectionModel().select(oeuvreTraiteeSelectionneObj.getEtat());
 		complement_etat_textArea.setText(oeuvreTraiteeSelectionneObj.getComplement_etat());
 		nom_label.setText(oeuvreSelectionneObj.getNom());
-
-		traitementsUtilisees = oeuvreTraiteeSelectionneObj.getTraitementsAttendus_names();
-
-		System.out.println("traitementsUtilisees : " + traitementsUtilisees.toString());
 
 		// bouchon
 		if (Integer.parseInt(oeuvreSelectionneObj.getCote_archives_6s()) % 2 == 0) {
@@ -275,36 +273,26 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 			};
 		});
 
-		traitementsUtilisees_obs.setAll(oeuvreTraiteeSelectionneObj.getTraitementsAttendus_obj());
-
 		traitements_attendus_tableColumn.setCellValueFactory(new PropertyValueFactory<TacheTraitement, String>("nom"));
-		faits_attendus_tableColumn
-				.setCellValueFactory(new PropertyValueFactory<TacheTraitement, ImageView>("icone_progression"));
+		faits_attendus_tableColumn.setCellValueFactory(new PropertyValueFactory<TacheTraitement, ImageView>("icone_progression"));
 		traitements_attendus_tableView.setItems(traitementsUtilisees_obs);
 
 		traitements_attendus_tableView.setOnMouseClicked(a -> {
-			if (a.isControlDown()) {
-				System.out.println("dragged");
-			} else {
-				Messages.setTacheTraitement(traitements_attendus_tableView.getSelectionModel().getSelectedItem());
-				Scene fiche_tache_traitement_scene = new Scene(
-						(Parent) JfxUtils.loadFxml("/views/fiche_tache_traitement.fxml"), Contexte.largeurFenetre,
-						Contexte.hauteurFenetre);
-				fiche_tache_traitement_scene.getStylesheets()
-						.add(getClass().getResource("application.css").toExternalForm());
-
-				currentStage.setScene(fiche_tache_traitement_scene);
-			}
+			Messages.setTacheTraitement(traitements_attendus_tableView.getSelectionModel().getSelectedItem());
+			Scene fiche_tache_traitement_scene = new Scene(
+					(Parent) JfxUtils.loadFxml("/views/fiche_tache_traitement.fxml"),
+					Contexte.largeurFenetre,
+					Contexte.hauteurFenetre);
+			fiche_tache_traitement_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			currentStage.setScene(fiche_tache_traitement_scene);
 		});
 	}
 
 	public void ajouter_traitement(String m) {
 		if (m != null) {
-
-			System.out.println(m);
 			TacheTraitement tt = new TacheTraitement(map_traitements.get(m));
-
 			traitementsUtilisees_obs.add(tt);
+			traitementsUtilisees.add(m);
 			traitements_all_listView.getSelectionModel().select(null);
 			traitements_all_listView.getSelectionModel().clearSelection();
 			miseAJourAffichageTraitements();
@@ -315,6 +303,7 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 	public void retirer_traitement(String m) {
 		if (m != null) {
 			traitementsUtilisees_obs.remove(map_tacheTraitements.get(m));
+			traitementsUtilisees.remove(m);
 			miseAJourAffichageTraitements();
 			onEditerButton();
 		}
@@ -337,9 +326,9 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 	public void onAnnulerEditButton() {
 		super.onAnnulerEditButton();
 		editability(false);
-
+        
+		directSelect = false;
 		reloadOeuvre();
-
 	}
 
 	@FXML
@@ -354,7 +343,7 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		oeuvreSelectionneObj.setInscriptions_au_verso(inscriptions_textArea.getText());
 		oeuvreSelectionneObj.setAuteur(auteursChoiceBox.getSelectionModel().getSelectedItem());
 
-		oeuvreTraiteeSelectionneObj.setAlterations(new ArrayList(
+		oeuvreTraiteeSelectionneObj.setAlterations(new ArrayList<>(
 				Arrays.asList(degradations_textArea.getText().split(System.getProperty("line.separator")))));
 		oeuvreTraiteeSelectionneObj.setObservations(observations_textArea.getText());
 		oeuvreTraiteeSelectionneObj.setRemarques(remarques_textArea.getText());
@@ -384,6 +373,10 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 				data -> new SimpleStringProperty(data.getValue().get("oeuvresTraitee_string").toString()));
 		oeuvres_fait_colonne.setCellValueFactory(data -> new SimpleObjectProperty<ImageView>(getImageView(data)));
 		tableOeuvre.setItems(obs_oeuvres);
+		
+		tableOeuvre.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			onOeuvreSelect();
+		});
 
 	}
 
@@ -464,13 +457,9 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 			matieres_all.addAll(Arrays.asList(Matiere.retrouveMatieres()).stream().map(a -> a.getNom())
 					.collect(Collectors.toList()));
 		}
-
-		matieresUtilisees_obs.clear();
-		matieresUtilisees_obs.addAll(matieresUtilisees);
-		matieres_listView.setItems(matieresUtilisees_obs);
-
+	    
+		matieresUtilisees_obs.setAll(matieresUtilisees);
 		miseAJourAffichageMatieres();
-
 	}
 
 	public void miseAJourAffichageMatieres() {
@@ -704,6 +693,7 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		matieres_all = FXCollections.observableArrayList();
 		matieres_all_listView.setItems(matieres_all);
 		matieresUtilisees_obs = FXCollections.observableArrayList();
+		matieres_listView.setItems(matieresUtilisees_obs);
 
 		matieres_all_listView.onDragDetectedProperty().set(dd -> {
 
@@ -788,12 +778,16 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		traitementsUtilisees_obs = FXCollections.observableArrayList();
 		map_traitements = new HashMap<>();
 		map_tacheTraitements = new HashMap<>();
+		
+		traitementsUtilisees_obs.setAll(oeuvreTraiteeSelectionneObj.getTraitementsAttendus_obj());
+		traitementsUtilisees_obs.forEach(a -> map_tacheTraitements.put(a.getNom(), a));
 
 		JsonUtils.JsonToListObj(RestAccess.requestAll("traitement"), traitements_all,
 				new TypeReference<List<Traitement>>() {
 				});
+		
 		traitements_all.forEach(a -> map_traitements.put(a.getNom(), a));
-
+		
 		traitements_all_listView.onDragDetectedProperty().set(dd -> {
 
 			Dragboard dragBoard = traitements_all_listView.startDragAndDrop(TransferMode.MOVE);

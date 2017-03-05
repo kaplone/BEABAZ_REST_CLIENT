@@ -34,6 +34,8 @@ public class TacheTraitement extends Commun{
     public TacheTraitement(Traitement t){
     	produitsLies = new HashMap<>();
     	traitement_id = t.get_id();
+    	fait_ = Progression.TODO_;
+    	super.setNom(t.getNom());
     	  	
     }
     
