@@ -238,6 +238,9 @@ public class Fiche_client_controller extends Fiche_controller implements Initial
 		listView_client.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 			onClientSelect();
 		});
+		listView_commandes.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			onCommandeSelect();
+		});
         
 		if (! liste_clients.isEmpty()){
 			listView_client.getSelectionModel().select(0);

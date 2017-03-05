@@ -25,7 +25,7 @@
                   <Insets bottom="10.0" top="10.0" />
                </VBox.margin>
             </Label>
-            <ListView fx:id="listView_client" onKeyReleased="#onClientSelect" onMouseClicked="#onClientSelect" prefHeight="773.0" prefWidth="280.0">
+            <ListView fx:id="listView_client" prefHeight="773.0" prefWidth="280.0">
                <VBox.margin>
                   <Insets bottom="10.0" top="10.0" />
                </VBox.margin>
@@ -49,12 +49,12 @@
                   <Insets bottom="10.0" top="10.0" />
                </VBox.margin>
             </Label>
-            <ListView fx:id="listView_commandes" onKeyTyped="#onCommandeSelect" onMouseClicked="#onCommandeSelect" prefHeight="773.0" prefWidth="138.0">
+            <ListView fx:id="listView_commandes" prefHeight="773.0" prefWidth="138.0">
                <VBox.margin>
                   <Insets bottom="10.0" top="10.0" />
                </VBox.margin>
             </ListView>
-            <Button fx:id="nouvelle_commande_button" mnemonicParsing="false" onAction="#onAjoutCommande" text="Nouvelle commande">
+            <Button fx:id="nouvelle_commande" mnemonicParsing="false" onAction="#onAjoutCommande" text="Nouvelle commande">
                <VBox.margin>
                   <Insets bottom="10.0" top="10.0" />
                </VBox.margin>
@@ -188,12 +188,12 @@
                   <Insets left="10.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="matieres_button" mnemonicParsing="false" onAction="#onMatieres_button" text="Matières">
+            <Button fx:id="versMatieresButton" mnemonicParsing="false" onAction="#onMatieres_button" text="Matières">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="techniques_button" mnemonicParsing="false" onAction="#onTechniques_button" text="Techniques">
+            <Button fx:id="versTechniquesButton" mnemonicParsing="false" onAction="#onTechniques_button" text="Techniques">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>

@@ -138,17 +138,11 @@ public class RestAccess {
 	}
 
     public static String request(String table, Progression progres, Commande commande) {	
-    	
-    	System.out.println(String.format("%s/%s/%s/%s", adresse, table, progres.toString(), commande.get_id().toString()));
-
     	request = new HttpGet(String.format("%s/%s/%s/%s", adresse, table, progres.toString(), commande.get_id().toString()));
     	return traitementReponse();
 	}
     
     public static String request(String table, String field, String valeur, boolean regex) {	
-		
-    	System.out.println(String.format("%s/%s/%s/%s/%s", adresse, table, field, valeur, regex));
-
     	request = new HttpGet(String.format("%s/%s/%s/%s/%s", adresse, table, field, valeur, regex));
     	return traitementReponse();
 	}

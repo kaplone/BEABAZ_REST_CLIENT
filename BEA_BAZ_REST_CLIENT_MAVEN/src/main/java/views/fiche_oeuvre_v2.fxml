@@ -493,7 +493,7 @@
                         </HBox>
                      </children>
                   </VBox>
-                  <TableView fx:id="tableOeuvre" onKeyReleased="#onOeuvreSelect" onMouseClicked="#onOeuvreSelect" prefHeight="773.0" prefWidth="291.0">
+                  <TableView fx:id="tableOeuvre" prefHeight="773.0" prefWidth="291.0">
                      <columns>
                         <TableColumn fx:id="oeuvres_nom_colonne" prefWidth="248.0" text="Nom" />
                         <TableColumn fx:id="oeuvres_fait_colonne" prefWidth="42.0" text="Fait" />

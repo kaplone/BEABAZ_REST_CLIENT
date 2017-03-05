@@ -180,17 +180,9 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 
 	private ObservableList<EtatFinal> etatsFinaux;
 
-	@FXML
-	public void onOeuvreSelect() {
-		directSelect = true;
-		reloadOeuvre();
-	}
-
 	public void reloadOeuvre() {
 
 		if (directSelect) {
-			
-			System.out.println("reload oeuvre (direct)");
 			tableOeuvre.scrollTo(tableOeuvre.getSelectionModel().getSelectedIndex() - 9);
 			oeuvreTraiteeSelectionneObj = OeuvreTraitee.retrouveOeuvreTraitee(new ObjectId(tableOeuvre.getSelectionModel().getSelectedItem().get("oeuvresTraitee_id")));
 			Messages.setOeuvreTraiteeObj(oeuvreTraiteeSelectionneObj);
@@ -201,7 +193,6 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 			traitementsUtilisees_obs.setAll(oeuvreTraiteeSelectionneObj.getTraitementsAttendus_obj());
 			traitementsUtilisees_obs.forEach(a -> map_tacheTraitements.put(a.getNom(), a));
 		} else {
-			System.out.println("reload oeuvre (edit ?)");
 			tableOeuvre.scrollTo(tableOeuvre.getSelectionModel().getSelectedIndex());
 		}
 
@@ -240,11 +231,9 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 
 	public void afficherTraitements() {
 
-		if (traitements_all.isEmpty()) {
-			traitements_all.addAll(Arrays.asList(Traitement.retrouveTraitements()));
-		}
+		traitements_all = Messages.getTous_les_traitements();
+		traitements_all.forEach(a -> map_traitements.put(a.getNom(), a));
 		miseAJourAffichageTraitements();
-
 	}
 
 	public void miseAJourAffichageTraitements() {
@@ -278,7 +267,7 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		traitements_attendus_tableView.setItems(traitementsUtilisees_obs);
 
 		traitements_attendus_tableView.setOnMouseClicked(a -> {
-			Messages.setTacheTraitement(traitements_attendus_tableView.getSelectionModel().getSelectedItem());
+			Messages.setTraitementSelectionne(traitements_attendus_tableView.getSelectionModel().getSelectedItem());
 			Scene fiche_tache_traitement_scene = new Scene(
 					(Parent) JfxUtils.loadFxml("/views/fiche_tache_traitement.fxml"),
 					Contexte.largeurFenetre,
@@ -375,7 +364,8 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		tableOeuvre.setItems(obs_oeuvres);
 		
 		tableOeuvre.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-			onOeuvreSelect();
+			directSelect = true;
+			reloadOeuvre();
 		});
 
 	}
@@ -518,14 +508,9 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 			contenu_fichiers.add(0, "AR!");
 		}
 		if (contenu_fichiers.stream().anyMatch(a -> a.contains("IR"))) {
-
-			System.out.println("IR trouvé : " + contenu_fichiers.stream().filter(b -> b.contains("AR")).count());
 			contenu_fichiers.add((int) contenu_fichiers.stream().filter(b -> b.contains("AR")).count(), "IR!");
 		}
 		if (contenu_fichiers.stream().anyMatch(a -> a.contains("PR"))) {
-
-			System.out.println("IR trouvé : "
-					+ contenu_fichiers.stream().filter(b -> b.contains("AR") || b.contains("IR")).count());
 			contenu_fichiers.add(
 					(int) contenu_fichiers.stream().filter(b -> b.contains("AR") || b.contains("IR")).count(), "PR!");
 		}
@@ -782,12 +767,6 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		traitementsUtilisees_obs.setAll(oeuvreTraiteeSelectionneObj.getTraitementsAttendus_obj());
 		traitementsUtilisees_obs.forEach(a -> map_tacheTraitements.put(a.getNom(), a));
 
-		JsonUtils.JsonToListObj(RestAccess.requestAll("traitement"), traitements_all,
-				new TypeReference<List<Traitement>>() {
-				});
-		
-		traitements_all.forEach(a -> map_traitements.put(a.getNom(), a));
-		
 		traitements_all_listView.onDragDetectedProperty().set(dd -> {
 
 			Dragboard dragBoard = traitements_all_listView.startDragAndDrop(TransferMode.MOVE);

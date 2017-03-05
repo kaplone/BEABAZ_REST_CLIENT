@@ -206,7 +206,6 @@ public class OeuvreTraitee extends Commun {
 
 	public void setTraitementsAttendus(List<Map<String, String>> traitementsAttendus) {
 		this.traitementsAttendus = traitementsAttendus;
-		System.out.println("this.traitementsAttendus : " + this.traitementsAttendus.toString());
 	}
 
 	public void setFichiers(List<Map<String, String>> fichiers) {
@@ -270,7 +269,7 @@ public class OeuvreTraitee extends Commun {
 	public static OeuvreTraitee retrouveOeuvreTraitee(ObjectId id){
 
         String oeuvre_str= RestAccess.request("oeuvreTraitee", id);
-        System.out.println(oeuvre_str);
+        //System.out.println(oeuvre_str);
         OeuvreTraitee c = null;
 		
 		try {

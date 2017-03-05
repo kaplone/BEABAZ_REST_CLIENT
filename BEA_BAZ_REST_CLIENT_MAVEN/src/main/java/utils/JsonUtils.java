@@ -25,8 +25,6 @@ public class JsonUtils {
 	}
 	
     public static <T> ObservableList<T> JsonToListObj(String jsonString, ObservableList<T> liste_T, TypeReference<List<T>> typeReference_T){
-    	
-    	System.out.println(jsonString);
 
 		ObjectMapper om = new ObjectMapper();
 		List<T> obj;

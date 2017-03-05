@@ -233,7 +233,6 @@ public class Commande  extends Commun{
 	public static Commande retrouveCommande(String commandeSelectionne){
 
         String commande_str= RestAccess.request("commande", "nom", commandeSelectionne);
-        //System.out.println("commande from String : " + commande_str);
         
         Commande c = null;
 		

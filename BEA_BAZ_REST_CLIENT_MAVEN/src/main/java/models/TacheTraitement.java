@@ -24,6 +24,8 @@ public class TacheTraitement extends Commun{
 	private Map<String, ObjectId> produitsLies;
 	private Set<String> produitsLies_names;
 	private Set<String> produitsLies_id;
+	
+	private Traitement traitementOriginal;
     
     private boolean supp; 
     
@@ -38,26 +40,6 @@ public class TacheTraitement extends Commun{
     	super.setNom(t.getNom());
     	  	
     }
-    
-//    public static TacheTraitement retrouveTacheTraitement(ObjectId id){
-//
-//        String tacheTraitement_str= RestAccess.request("tacheTraitement", id);
-//        TacheTraitement c = null;
-//		
-//		try {
-//			  c = Commun.getMapper().readValue(tacheTraitement_str, TacheTraitement.class);
-//		  }
-//		  catch (IOException e) {
-//			  
-//	    }
-//		
-//		return c;
-//	}
-//    
-//    public static TacheTraitement retrouveTacheTraitement(String id){
-//		
-//		return retrouveTacheTraitement(new ObjectId(id));
-//	}
     
     public static void update(TacheTraitement c){
 
@@ -136,7 +118,12 @@ public class TacheTraitement extends Commun{
 	}
 	
 	public Traitement getTraitement(){
-		return Traitement.retrouveTraitement(traitement_id);
+		
+		if (traitementOriginal == null){
+			traitementOriginal = Traitement.retrouveTraitement(traitement_id);
+		}
+		
+		return traitementOriginal;
 	}
 	
 	public ImageView getIcone_progression() {

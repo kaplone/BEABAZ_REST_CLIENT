@@ -1,11 +1,18 @@
 package models;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.stage.Stage;
+import utils.JsonUtils;
+import utils.RestAccess;
 
 public class Messages {
 	
@@ -17,16 +24,20 @@ public class Messages {
 	private static OeuvreTraitee oeuvreTraiteeObj;
 	
 	private static Auteur auteur;
-	private static TacheTraitement tacheTraitement;
 	private static Produit produit;
 	private static Fichier fichier;
 	
+	private static ObservableList<Produit> tous_les_produits;
+	private static ObservableList<String> tous_les_noms_de_produits;
+	
+	private static ObservableList<Traitement> tous_les_traitements;
+	
+	private static TacheTraitement traitementSelectionne;
 	
 	public static Stage getStage(){
 		return exportStage;
 	}
-	
-	
+		
 	public static Commande getCommande() {
 		return commande;
 	}
@@ -47,7 +58,6 @@ public class Messages {
 		return exportStage;
 	}
 
-
 	public static void setExportStage(Stage exportStage) {
 		Messages.exportStage = exportStage;
 	}
@@ -60,55 +70,71 @@ public class Messages {
 		Messages.oeuvreTraitee = oeuvreTraiteeSelectionne;
 	}
 
-
 	public static Auteur getAuteur() {
 		return auteur;
 	}
-
 
 	public static void setAuteur(Auteur auteur) {
 		Messages.auteur = auteur;
 	}
 
-
-	public static TacheTraitement getTacheTraitement() {
-		return tacheTraitement;
-	}
-
-
-	public static void setTacheTraitement(TacheTraitement tacheTraitement) {
-		Messages.tacheTraitement = tacheTraitement;
-	}
-
-
 	public static Produit getProduit() {
 		return produit;
 	}
-
 
 	public static void setProduit(Produit produit) {
 		Messages.produit = produit;
 	}
 
-
 	public static Fichier getFichier() {
 		return fichier;
 	}
-
 
 	public static void setFichier(Fichier fichier) {
 		Messages.fichier = fichier;
 	}
 
-
 	public static OeuvreTraitee getOeuvreTraiteeObj() {
 		return oeuvreTraiteeObj;
 	}
 
-
 	public static void setOeuvreTraiteeObj(OeuvreTraitee oeuvreTraiteeObj) {
 		Messages.oeuvreTraiteeObj = oeuvreTraiteeObj;
 	}
-	
 
+	public static ObservableList<Produit> getTous_les_produits() {
+		
+		if (tous_les_produits == null){
+			tous_les_produits = FXCollections.observableArrayList();
+			JsonUtils.JsonToListObj(RestAccess.requestAll("produit"), tous_les_produits, new TypeReference<List<Produit>>() {});
+		}		
+		return tous_les_produits;
+	}
+	
+    public static ObservableList<String> getTous_les_nom_de_produits() {
+    	
+    	if (tous_les_noms_de_produits == null){
+			tous_les_noms_de_produits = FXCollections.observableArrayList();
+			getTous_les_produits().forEach(a -> tous_les_noms_de_produits.add(a.getNom()));
+		}		
+		return tous_les_noms_de_produits;
+	}
+
+	public static TacheTraitement getTraitementSelectionne() {
+		return traitementSelectionne;
+	}
+
+	public static void setTraitementSelectionne(TacheTraitement traitementSelectionne) {
+		Messages.traitementSelectionne = traitementSelectionne;
+	}
+
+	public static ObservableList<Traitement> getTous_les_traitements() {
+		if (tous_les_traitements == null){
+			tous_les_traitements = FXCollections.observableArrayList();
+			JsonUtils.JsonToListObj(RestAccess.requestAll("traitement"), tous_les_traitements, new TypeReference<List<Traitement>>() {});
+		}		
+		return tous_les_traitements;
+	}
+    
+    
 }

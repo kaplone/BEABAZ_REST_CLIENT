@@ -188,10 +188,6 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
 			}
 			
 		}
-		
-		//traitements_attendus = commande.getTraitements_attendus();
-		//traitements_attendus_id = commande.getTraitements_attendus_id();
-//		System.out.println("mise a jour : " + traitements_attendus_id.keySet());
 	
 		if (edit_save) {
 			Commande.update(commande);
@@ -285,20 +281,13 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
     
     public void afficherTraitements(){
     	
-    	if (liste_traitements == null){
-    		
-    		liste_traitements = FXCollections.observableArrayList();
-    		JsonUtils.JsonToListObj(RestAccess.requestAll("traitement"), liste_traitements, new TypeReference<List<Traitement>>() {});
-    		
-    		List<String> liste_traitements_str = liste_traitements.stream()
-                    											  .map(a -> a.getNom())
-                    											  .collect(Collectors.toList());
-    		
-    		
-    		
-    		for (Node cb : traitementGrid.getChildren()){			
-    			((ChoiceBox<String>) cb).setItems(FXCollections.observableArrayList(liste_traitements_str));
-    		}
+    	liste_traitements = Messages.getTous_les_traitements();
+		List<String> liste_traitements_str = liste_traitements.stream()
+                											  .map(a -> a.getNom())
+                											  .collect(Collectors.toList());
+	
+		for (Node cb : traitementGrid.getChildren()){			
+			((ChoiceBox<String>) cb).setItems(FXCollections.observableArrayList(liste_traitements_str));
     	}
     	
     	if (commande != null && commande.getTraitements_attendus() != null){

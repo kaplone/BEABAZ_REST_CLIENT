@@ -102,14 +102,10 @@ public class Traitement extends Commun{
 	}
 	
 	public static Traitement retrouveTraitement(String traitementSelectionne){
-		
-		System.out.println("------------ " + traitementSelectionne);
 
         String traitement_str= RestAccess.request("traitement", "nom", traitementSelectionne);
         Traitement c = null;
         ObjectMapper mapper = new ObjectMapper();
-        
-        System.out.println("========== " + traitement_str);
         
         if (traitement_str != null){
           try {			 
@@ -142,7 +138,6 @@ public class Traitement extends Commun{
 	public static Traitement[] retrouveTraitements(){
 		
 		String traitement_str= RestAccess.request("traitement");
-		//System.out.println("traitement_str : " + traitement_str);
         Traitement[] c = null ;
 		
 		try {

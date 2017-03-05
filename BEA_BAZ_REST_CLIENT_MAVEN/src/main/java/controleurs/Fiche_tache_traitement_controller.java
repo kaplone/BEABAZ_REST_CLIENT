@@ -1,38 +1,24 @@
 package controleurs;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
-import org.bson.types.ObjectId;
-import org.jongo.MongoCursor;
 
 import application.JfxUtils;
 import enums.Progression;
-import fr.opensagres.xdocreport.template.velocity.internal.Foreach;
-import utils.RestAccess;
-import models.Commande;
+
 import models.Messages;
 import models.OeuvreTraitee;
-import models.Produit;
 import models.TacheTraitement;
 import models.Traitement;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
@@ -42,9 +28,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 
 public class Fiche_tache_traitement_controller extends Fiche_controller implements Initializable{
 
@@ -92,18 +78,13 @@ public class Fiche_tache_traitement_controller extends Fiche_controller implemen
 	@FXML
 	private ListView<String> produits_listView;
 	@FXML
-	private ListView<String> produits_pre_listview;
+	private ListView<String> produits_pre_listView;
 	@FXML
 	private ListView<String> produits_reste_listView;
 	
 	private ObservableList<String> liste_produits;
-	
-	private ObservableList<String> liste_traitements;
-
-	private MongoCursor<TacheTraitement> traitementCursor;
-	private MongoCursor<Traitement> tousLesTraitementsCursor;
-	private Map<String, ObjectId> tousLesTraitements_id;
-	
+	private ObservableList<String> liste_pre_produits;
+	private ObservableList<String> liste_reste_produits;	
 	
 	private TacheTraitement tacheTraitementSelectionne;
 
@@ -113,9 +94,6 @@ public class Fiche_tache_traitement_controller extends Fiche_controller implemen
 
 	private Traitement traitementSource;
 	private OeuvreTraitee ot;
-
-	
-	private int selectedIndex;
 	
 	@FXML
 	public void onTacheSelect(){
@@ -135,40 +113,13 @@ public class Fiche_tache_traitement_controller extends Fiche_controller implemen
     			editer.setVisible(false);
     		}	
 		}
+		rafraichirAffichage();
 		
 	}
-	
-    public void affichageProduitsUtilises(){
-		
-	}
-    
-    public void affichageProduitsUtilises(String p){
-    	affichageProduitsUtilises();
-    }
-    
-    public void onAnnulerButton() {
-    	
-    	mise_a_jour.setText("Mise à jour");
-    	//nom_traitement_textField.setText("");
-    	remarques_traitement_textArea.setText("");
-    	//nom_traitement_textField.setPromptText("");
-    	remarques_traitement_textArea.setPromptText("");
-    	rafraichirAffichage();
-    	traitements_associes_tableView.getSelectionModel().select(tacheTraitementSelectionne);
-    	afficherTraitementsAssocies();
-    	
-    }
     
     public void rafraichirAffichage(){
-    	
-    	nom_label.setText(tacheTraitementSelectionne.getNom());
-    	complement_textField.setText(tacheTraitementSelectionne.getComplement());
-    	remarques_traitement_textArea.setText(tacheTraitementSelectionne.getRemarques());
-    	
-    	editer.setVisible(true);
-        mise_a_jour.setVisible(false);
-		annuler.setVisible(false);
-    	
+		afficherTache();
+		afficherProduits();    	
     }
     
     @FXML
@@ -202,8 +153,6 @@ public class Fiche_tache_traitement_controller extends Fiche_controller implemen
     @FXML
     public void onAjoutProduit(){
     	
-    	//Messages.setTacheTraitementEdited(listView_traitements.getSelectionModel().getSelectedItem());
-    	
     	Scene fiche_produit_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_produit.fxml"), 1275, 722);
 		fiche_produit_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
@@ -213,21 +162,18 @@ public class Fiche_tache_traitement_controller extends Fiche_controller implemen
     public void onFait_radio(){
     	
     	tacheTraitementSelectionne.setFait_(Progression.FAIT_);
-    	//MongoAccess.update("tacheTraitement", tacheTraitementSelectionne);
     	afficherTraitementsAssocies();
     	checkIfCompleted();
     }
     public void onTodo_radio(){
     	
     	tacheTraitementSelectionne.setFait_(Progression.TODO_);
-    	//MongoAccess.update("tacheTraitement", tacheTraitementSelectionne);
     	afficherTraitementsAssocies();
     	checkIfCompleted();
     }
     public void onSo_radio(){
     	
     	tacheTraitementSelectionne.setFait_(Progression.NULL_);
-    	//MongoAccess.update("tacheTraitement", tacheTraitementSelectionne);
     	afficherTraitementsAssocies();
     	checkIfCompleted();
     }
@@ -245,7 +191,6 @@ public class Fiche_tache_traitement_controller extends Fiche_controller implemen
     		
     	}
     	ot.setProgressionOeuvreTraitee(progres);
-    	//MongoAccess.update("oeuvreTraitee", ot);
     }
 
     public void afficherTraitementsAssocies(){
@@ -256,44 +201,18 @@ public class Fiche_tache_traitement_controller extends Fiche_controller implemen
 		traitements_associes_faits_tableColumn.setCellValueFactory(new PropertyValueFactory<TacheTraitement, ImageView>("icone_progression"));
 		
 		traitements_associes_tableView.setItems(observable_liste_tachestraitements_lies);
-
-		traitements_associes_tableView.getSelectionModel().clearAndSelect(selectedIndex);
-
-		afficherProgression();
-    	afficherProduits();
-    }
-    
-    public void onTraitementAssocieSelect(){
-    	
-    	tacheTraitementSelectionne = traitements_associes_tableView.getSelectionModel().getSelectedItem();
-    	selectedIndex = traitements_associes_tableView.getSelectionModel().getSelectedIndex();
-    	
-    	Messages.setTacheTraitement(tacheTraitementSelectionne);
-    	
-    	afficherTraitementsAssocies();	
     }
     
     public void afficherTache(){
+    	editability(false);
     	
-    	remarques_traitement_textArea.setEditable(false);
-        editer.setVisible(true);
-        mise_a_jour.setVisible(false);
-		annuler.setVisible(false);
-		//nom_traitement_textField.setDisable(true);
-		remarques_traitement_textArea.setDisable(true);
+    	remarques_traitement_textArea.setText(tacheTraitementSelectionne.getRemarques());
+		complement_textField.setText(tacheTraitementSelectionne.getComplement());
 		nom_label.setText(tacheTraitementSelectionne.getNom());
-
 		t_label.setText(tacheTraitementSelectionne.getTraitement().getNom_complet());
-
-		for (String p : tacheTraitementSelectionne.getProduitsLies_names()){
-			affichageProduitsUtilises(p);
-		}
-		
-		rafraichirAffichage();
     }
     
     public void afficherProgression(){
-    	
 
 		progres = tacheTraitementSelectionne.getFait_();
     	
@@ -310,11 +229,91 @@ public class Fiche_tache_traitement_controller extends Fiche_controller implemen
     }
     
     public void afficherProduits(){
-    	
-    	liste_produits.clear();
-    	liste_produits.addAll(tacheTraitementSelectionne.getTraitement().getProduits().keySet());
+
+    	liste_produits.setAll(tacheTraitementSelectionne.getTraitement().getProduits().keySet());
     	produits_listView.setItems(liste_produits);
+    	
+    	liste_pre_produits.setAll(tacheTraitementSelectionne.getTraitement().getListe_produits_names());
+    	produits_pre_listView.setItems(liste_pre_produits);
+
+    	liste_reste_produits = Messages.getTous_les_nom_de_produits();
+    	produits_reste_listView.setItems(liste_reste_produits);
+    	
+    	rafraichirProduits();    	
     }
+    
+    public void rafraichirProduits(){
+    	
+    	produits_pre_listView.setCellFactory(cell -> {
+
+			return new ListCell<String>() {
+
+				@Override
+				protected void updateItem(String item, boolean empty) {
+					super.updateItem(item, empty);
+
+					if (item == null || empty) {
+					}
+
+					else {
+
+						setText(item);
+
+						if (liste_produits.contains(item)) {
+							setDisable(true);
+							setOpacity(0.5);
+						}
+					}
+				}
+			};
+		});
+    	
+    	
+    	liste_reste_produits.removeAll(liste_pre_produits);
+    	produits_reste_listView.setCellFactory(cell -> {
+
+			return new ListCell<String>() {
+
+				@Override
+				protected void updateItem(String item, boolean empty) {
+					super.updateItem(item, empty);
+
+					if (item == null || empty) {
+					}
+
+					else {
+
+						setText(item);
+
+						if (liste_produits.contains(item)) {
+							setDisable(true);
+							setOpacity(0.5);
+						}
+					}
+				}
+			};
+		});
+    }
+    
+    public void ajouter_produit(String m) {
+		if (m != null) {
+			liste_produits.add(m);
+			produits_pre_listView.getSelectionModel().select(null);
+			produits_pre_listView.getSelectionModel().clearSelection();
+			produits_reste_listView.getSelectionModel().select(null);
+			produits_reste_listView.getSelectionModel().clearSelection();
+            rafraichirProduits();
+			onEditerButton();
+		}
+	}
+
+	public void retirer_produit(String m) {
+		if (m != null) {
+			liste_produits.remove(m);
+			rafraichirProduits();
+			onEditerButton();
+		}
+	}
     
     @Override
     public void editability(boolean bool){
@@ -352,29 +351,85 @@ public class Fiche_tache_traitement_controller extends Fiche_controller implemen
 		coche_todo.setImage(new Image(Progression.TODO_.getUsedImage()));
 		coche_so.setImage(new Image(Progression.NULL_.getUsedImage()));
 		
-		tacheTraitementSelectionne = Messages.getTacheTraitement();
+		tacheTraitementSelectionne = Messages.getTraitementSelectionne();
 		
 		traitements_associes_tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 			onTacheSelect();
 		});
 		
 		ot = Messages.getOeuvreTraiteeObj();
-		
-//		if (! liste_auteurs.isEmpty()){
-//			listView_auteur.getSelectionModel().select(0);
-//		}
-		
+
 		traitementSource = tacheTraitementSelectionne.getTraitement();
 		
 		ot_label.setText(ot.getNom());
 		t_label.setText(traitementSource.getNom());
-		
-		liste_traitements = FXCollections.observableArrayList();
+
 		liste_produits  = FXCollections.observableArrayList();
+		liste_pre_produits  = FXCollections.observableArrayList();
+		liste_reste_produits  = FXCollections.observableArrayList();
 		observable_liste_tachestraitements_lies = FXCollections.observableArrayList();
+		
+		produits_listView.onDragDetectedProperty().set(dd -> {
+
+			Dragboard dragBoard = produits_listView.startDragAndDrop(TransferMode.MOVE);
+			ClipboardContent content = new ClipboardContent();
+			content.putString(produits_listView.getSelectionModel().getSelectedItem());
+			dragBoard.setContent(content);
+
+			produits_pre_listView.setOnDragOver(dd_ -> dd_.acceptTransferModes(TransferMode.MOVE));
+
+			produits_pre_listView.setOnDragDropped(dd_ -> {
+				retirer_produit(dd_.getDragboard().getString());
+				dd_.setDropCompleted(true);
+			});
+			
+			produits_reste_listView.setOnDragOver(dd_ -> dd_.acceptTransferModes(TransferMode.MOVE));
+
+			produits_reste_listView.setOnDragDropped(dd_ -> {
+				retirer_produit(dd_.getDragboard().getString());
+				dd_.setDropCompleted(true);
+			});
+
+		});
+
+		produits_pre_listView.setOnDragDropped(dd_ -> dd_.setDropCompleted(true));
+
+		produits_pre_listView.onDragDetectedProperty().set(dd -> {
+
+			Dragboard dragBoard = produits_pre_listView.startDragAndDrop(TransferMode.MOVE);
+			ClipboardContent content = new ClipboardContent();
+			content.putString(produits_pre_listView.getSelectionModel().getSelectedItem());
+			dragBoard.setContent(content);
+
+			produits_listView.setOnDragOver(dd_ -> dd_.acceptTransferModes(TransferMode.MOVE));
+
+			produits_listView.setOnDragDropped(dd_ -> {
+				ajouter_produit(dd_.getDragboard().getString());
+				dd_.setDropCompleted(true);
+			});
+		});
+		
+		produits_reste_listView.setOnDragDropped(dd_ -> dd_.setDropCompleted(true));
+
+		produits_reste_listView.onDragDetectedProperty().set(dd -> {
+
+			Dragboard dragBoard = produits_reste_listView.startDragAndDrop(TransferMode.MOVE);
+			ClipboardContent content = new ClipboardContent();
+			content.putString(produits_reste_listView.getSelectionModel().getSelectedItem());
+			dragBoard.setContent(content);
+
+			produits_listView.setOnDragOver(dd_ -> dd_.acceptTransferModes(TransferMode.MOVE));
+
+			produits_listView.setOnDragDropped(dd_ -> {
+				ajouter_produit(dd_.getDragboard().getString());
+				dd_.setDropCompleted(true);
+			});
+		});
 
 		afficherTraitementsAssocies();
 		rafraichirAffichage();
+		
+		traitements_associes_tableView.getSelectionModel().select(tacheTraitementSelectionne);
 
 	}
 }
