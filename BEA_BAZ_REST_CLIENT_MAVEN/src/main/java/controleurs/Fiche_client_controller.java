@@ -138,7 +138,6 @@ public class Fiche_client_controller extends Fiche_controller implements Initial
     
     @FXML
     public void onMiseAJourClientButton(){
-    	super.onMiseAJourButton();
     	
     	client.setNom(nom_client_textField.getText());
     	client.setRemarques(remarques_client_textArea.getText());
@@ -148,13 +147,15 @@ public class Fiche_client_controller extends Fiche_controller implements Initial
     	client.setAdresse_ville(adresse_ville_textField.getText());
 
 		if (edit) {	
-			Client.update(client);	
+			client.update();	
 		}
 		else {			
-		   Client.save(client);
+		   client.save();
 		   listView_client.getSelectionModel().select(client.getNom());
 		   rafraichirAffichage();	   
 		}
+		
+		super.onMiseAJourButton();
     }
     
     public void afficherClient() {

@@ -1,46 +1,61 @@
 package models;
 
-import java.util.Date;
-import org.bson.types.ObjectId;
+import org.jongo.marshall.jackson.oid.MongoId;
+import org.jongo.marshall.jackson.oid.MongoObjectId;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Commun {
+public abstract class Commun {
 	
-	private ObjectId _id;
-	private Date created_at;
-	private Date updated_at;
-	private Date deleted_at;
+	@MongoId // auto
+    @MongoObjectId
+    private String _id;
+	private String created_at;
+	private String upStringd_at;
+	private String deleted_at;
 	
 	private String nom;
 	private String remarques;
+	
+	protected String stringResult;
+	
+	public void makeStringResult(){
+		try {
+			stringResult = getMapper().writeValueAsString(this);
+		} catch (JsonProcessingException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	public abstract Commun save();
+	public abstract void update();
 
-	public Date getCreated_at() {
+	public String getCreated_at() {
 		return created_at;
 	}
 
-	public void setCreated_at(Date created_at) {
+	public void setCreated_at(String created_at) {
 		this.created_at = created_at;
 	}
 
-	public Date getUpdated_at() {
-		return updated_at;
+	public String getUpdated_at() {
+		return upStringd_at;
 	}
 
-	public void setUpdated_at(Date updated_at) {
-		this.updated_at = updated_at;
+	public void setUpdated_at(String upStringd_at) {
+		this.upStringd_at = upStringd_at;
 	}
 
-	public Date getDeleted_at() {
+	public String getDeleted_at() {
 		return deleted_at;
 	}
 
-	public void setDeleted_at(Date deleted_at) {
+	public void setDeleted_at(String deleted_at) {
 		this.deleted_at = deleted_at;
 	}
 
@@ -60,11 +75,11 @@ public class Commun {
 		this.remarques = remarques;
 	}
 
-	public ObjectId get_id() {
+	public String get_id() {
 		return _id;
 	}
 
-	public void set_id(ObjectId _id) {
+	public void set_id(String _id) {
 		this._id = _id;
 	}
 	

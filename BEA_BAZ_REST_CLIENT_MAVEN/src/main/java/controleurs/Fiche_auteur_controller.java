@@ -85,21 +85,24 @@ public class Fiche_auteur_controller extends Fiche_controller implements Initial
     
     @FXML
     public void onMiseAJourAuteurButton(){
-    	super.onMiseAJourButton();
-
+    	
     	auteurSelectionne.setNom(nom_auteur_textField.getText());
     	auteurSelectionne.setNom_complet(nom_complet_auteur_textField.getText());
     	auteurSelectionne.setRemarques(remarques_auteur_textArea.getText());
 		
 		if (edit) {
-			Auteur.update(auteurSelectionne);
+			auteurSelectionne.update();
 		}
 		else {
-			
-		   Auteur.save(auteurSelectionne);
-		   listView_auteur.getSelectionModel().select(auteurSelectionne);
-		   rafraichirAffichage();
+		   Auteur temp_Auteur = auteurSelectionne.save();
+		   
+		   if (temp_Auteur != null){
+			   auteurSelectionne = temp_Auteur;
+			   listView_auteur.getSelectionModel().select(auteurSelectionne);
+			   rafraichirAffichage();
+		   }
 		}
+		super.onMiseAJourButton();
     	
     }
     

@@ -29,12 +29,21 @@ public class Client extends Commun{
 		commandes_id = new HashMap<>();
 	}
 
-	public static void update(Client c){
-		RestAccess.update("client", c);
+	public void update(){
+        makeStringResult();
+		RestAccess.update("client", stringResult);
 	}
 	
-    public static void save(Client c){	
-		RestAccess.save("client", c);	
+    public Client save(){
+    	makeStringResult();
+		String reponse = RestAccess.save("client", stringResult);
+		
+		try {
+			return Commun.getMapper().readValue(reponse, Client.class);		
+		}
+		catch(IOException e){
+			return null;
+		}	
 	}
     
     public Client get(){
@@ -103,7 +112,7 @@ public class Client extends Commun{
 	
 	public static ObjectId retrouveId(String clientSelectionne){
 
-		return retrouveClient(clientSelectionne).get_id();
+		return new ObjectId(retrouveClient(clientSelectionne).get_id());
 	}
 	
 	public static Client retrouveClient(String clientSelectionne){

@@ -7,21 +7,29 @@ import java.io.IOException;
 import org.bson.types.ObjectId;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Auteur extends Commun{
 	
 	private String nom_complet;
-	
-	public static void update(Auteur c){
 
-		RestAccess.update("auteur", c);
+	public void update(){
+        makeStringResult();
+		RestAccess.update("auteur", stringResult);
 	}
 	
-    public static void save(Auteur c){
+    public Auteur save(){
+    	makeStringResult();
+		String reponse = RestAccess.save("auteur", stringResult);
 		
-		RestAccess.save("auteur", c);
-		
+		try {
+			return Commun.getMapper().readValue(reponse, Auteur.class);		
+		}
+		catch(IOException e){
+			return null;
+		}	
 	}
 
 	public String getNom_complet() {
@@ -34,7 +42,7 @@ public class Auteur extends Commun{
     
 	public static ObjectId retrouveId(String auteurSelectionne){
 
-		return retrouveAuteur(auteurSelectionne).get_id();
+		return new ObjectId(retrouveAuteur(auteurSelectionne).get_id());
 	}
 	
 	public static Auteur retrouveAuteur(String auteurSelectionne){

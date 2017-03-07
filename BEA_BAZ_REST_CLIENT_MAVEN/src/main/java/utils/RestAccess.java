@@ -3,6 +3,7 @@ package utils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
@@ -17,8 +18,13 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.bson.types.ObjectId;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import models.Settings;
 import models.Auteur;
@@ -31,6 +37,7 @@ public class RestAccess {
 	
 	private static HttpClient client ;
 	private static HttpGet request;
+	private static HttpPost requestPost;
 	private static String encryptedText;
 	
 	private static String adresse;
@@ -81,6 +88,33 @@ public class RestAccess {
     	
 		try {
 			response = client.execute(request);
+			BufferedReader rd = new BufferedReader (new InputStreamReader(response.getEntity().getContent()));
+		    reponse = rd.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return reponse;
+		
+	}
+	
+
+	
+	public static String traitementReponsePost(){
+		
+        requestPost.addHeader("monToken", new String(encryptedText));
+        requestPost.setHeader("Accept", "application/json");
+        requestPost.setHeader("Content-type", "application/json");
+        
+        System.out.println("request.getURI() :" + requestPost.getURI());
+    	
+    	HttpResponse response = null;
+    	
+    	String reponse = null;
+    	
+		try {
+			response = client.execute(requestPost);
 			BufferedReader rd = new BufferedReader (new InputStreamReader(response.getEntity().getContent()));
 		    reponse = rd.readLine();
 		} catch (IOException e) {
@@ -147,23 +181,36 @@ public class RestAccess {
     	return traitementReponse();
 	}
 	
-	public static void insert (String table, Object m) {	
-	}
-	
-	public static void save (String table, Object m) {	
-	}
-	
-	public static void save (String table, Auteur a) {	
+	public static String save (String table, String c) {
+		
+		requestPost = new HttpPost(String.format("%s/ajout/%s", adresse, table));
+
+		try {
+			StringEntity se = new StringEntity(c);
+			requestPost.setEntity(se);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+    	return traitementReponsePost();
 	}
 
 	public static void drop() {	
 	}
 
-	public static void update(String table, Commun c) {
-	}
-	
-	public static void update(String table, ObjectId id, String c) {	
-	}
+	public static String update(String table, String c) {
+		
+		requestPost = new HttpPost(String.format("%s/update/%s", adresse, table));
 
-
+		try {
+			StringEntity se = new StringEntity(c);
+			requestPost.setEntity(se);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+    	return traitementReponsePost();
+	}
 }
