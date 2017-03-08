@@ -28,23 +28,6 @@ public class Client extends Commun{
 	public Client(){
 		commandes_id = new HashMap<>();
 	}
-
-	public void update(){
-        makeStringResult();
-		RestAccess.update("client", stringResult);
-	}
-	
-    public Client save(){
-    	makeStringResult();
-		String reponse = RestAccess.save("client", stringResult);
-		
-		try {
-			return Commun.getMapper().readValue(reponse, Client.class);		
-		}
-		catch(IOException e){
-			return null;
-		}	
-	}
     
     public Client get(){
 		return this;	

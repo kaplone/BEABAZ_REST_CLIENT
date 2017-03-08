@@ -1,10 +1,14 @@
 package models;
 
+import java.io.IOException;
+
 import org.jongo.marshall.jackson.oid.MongoId;
 import org.jongo.marshall.jackson.oid.MongoObjectId;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import utils.RestAccess;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,8 +36,22 @@ public abstract class Commun {
 		}
 	}
 	
-	public abstract Commun save();
-	public abstract void update();
+	public void update(String table){
+        makeStringResult();
+		RestAccess.update(table, stringResult);
+	}
+	
+    public <T> T save(String table, Class<T> classe){
+    	makeStringResult();
+		String reponse = RestAccess.save(table, stringResult);
+		
+		try {
+			return Commun.getMapper().readValue(reponse, classe);		
+		}
+		catch(IOException e){
+			return null;
+		}	
+	}
 
 	public String getCreated_at() {
 		return created_at;

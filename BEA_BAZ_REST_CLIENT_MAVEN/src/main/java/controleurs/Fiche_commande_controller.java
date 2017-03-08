@@ -146,16 +146,14 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
 	}
 	
 	@FXML
-	public void onMiseAJourButton(){
-		boolean edit_save = edit;
-		super.onMiseAJourButton();
+	public void onMiseAJourButton(){		
 		nouveau.setVisible(false);
 
 		if (Messages.getCommande() == null){
 			commande = new Commande();
 		}
 		else{
-			commande = Commande.retrouveCommande(Messages.getCommande().get_id()); 
+			commande = Commande.retrouveCommande(new ObjectId(Messages.getCommande().get_id())); 
 		}		
 
 		commande.setLocalDateCommande(dateCommandePicker.getValue());
@@ -163,12 +161,11 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
 		commande.setLocalDateFinProjet(dateFinProjetPicker.getValue());
 		commande.setRemarques(remarques.getText());
 		commande.setNom(nomCommandeTextField.getText());
-		//model_name = modelChoiceBox.getSelectionModel().getSelectedItem();
-		//model = Model.retrouveModel(modeles_id.get(model_name));
+		modele_name = modelChoiceBox.getSelectionModel().getSelectedItem();		
+		auteur_name = auteursChoiceBox.getSelectionModel().getSelectedItem();
 		
-		//auteur_name = auteursChoiceBox.getSelectionModel().getSelectedItem();
-		//auteur = Auteur.retrouveAuteur(auteurs_id.get(auteur_name));
-		//commande.setAuteur_id(auteurs_id.get(auteur_name).toString());
+		commande.setModele_map(modele_name);
+		commande.setAuteur_map(auteur_name);
 		
         traitements_attendus.clear();
 		
@@ -188,19 +185,27 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
 			}
 			
 		}
+		
+		System.out.println(commande);
 	
-		if (edit_save) {
-			Commande.update(commande);
+		if (edit) {
+			commande.update("commande");
 		}
 		else {
-		   Commande.save(commande);
+		   commande.save("commande", Commande.class);
+		   System.out.println(client);
+		   System.out.println(client.getCommandes_id());
+		   System.out.println(commande);
+		   System.out.println(commande.getNom());
+		   System.out.println(commande.get_id());
 		   
-		   client.getCommandes_id().put(commande.getNom(), commande.get_id().toString());
-		   
-		   RestAccess.update("client", client);
+		   client.getCommandes_id().put(commande.getNom(), commande.get_id());
+		   client.update("client");
 		}
 
 		Messages.setCommande(commande);
+		
+		super.onMiseAJourButton();
 	
 		afficherTraitements();
 		afficherCommande();
@@ -268,7 +273,7 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
 		
 		if (c != null){
 		
-			dateCommandePicker.setValue(c.getDateCommande());;
+			dateCommandePicker.setValue(c.getDateCommande_LocalDate());
 //			dateDebutProjetPicker.setValue(c.getDateDebutProjet());;
 //			dateFinProjetPicker.setValue(c.getDateFinProjet());
 			remarques.setText(c.getRemarques());
@@ -303,7 +308,13 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
     public void afficherOeuvres(){
         
     	if(obs_oeuvres == null){
-    		obs_oeuvres = FXCollections.observableArrayList(commande.getOeuvresTraitees());
+    		try {
+    			obs_oeuvres = FXCollections.observableArrayList(commande.getOeuvresTraitees());
+    		}
+    		catch (NullPointerException npe){
+    			
+    		}
+    		
     	}
     	else {
     		obs_oeuvres.clear();
@@ -483,9 +494,9 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
         	modele_name = commande.getModeleObj().getNom();	
     		auteur_name = commande.getAuteurObj().getNom();
     		
-    		dateCommandePicker.setValue(commande.getDateCommande());
-    		dateDebutProjetPicker.setValue(commande.getDateDebutProjet());
-    		dateFinProjetPicker.setValue(commande.getDateFinProjet());
+    		dateCommandePicker.setValue(commande.getDateCommande_LocalDate());
+    		dateDebutProjetPicker.setValue(commande.getDateDebutProjet_LocalDate());
+    		dateFinProjetPicker.setValue(commande.getDateFinProjet_LocalDate());
     		
     		afficherCommande();
     		afficherAuteur();

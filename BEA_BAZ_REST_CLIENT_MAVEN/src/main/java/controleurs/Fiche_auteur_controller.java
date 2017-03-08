@@ -91,10 +91,10 @@ public class Fiche_auteur_controller extends Fiche_controller implements Initial
     	auteurSelectionne.setRemarques(remarques_auteur_textArea.getText());
 		
 		if (edit) {
-			auteurSelectionne.update();
+			auteurSelectionne.update("auteur");
 		}
 		else {
-		   Auteur temp_Auteur = auteurSelectionne.save();
+		   Auteur temp_Auteur = (Auteur) auteurSelectionne.save("auteur", Auteur.class);
 		   
 		   if (temp_Auteur != null){
 			   auteurSelectionne = temp_Auteur;

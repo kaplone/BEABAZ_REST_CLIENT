@@ -15,23 +15,6 @@ public class Auteur extends Commun{
 	
 	private String nom_complet;
 
-	public void update(){
-        makeStringResult();
-		RestAccess.update("auteur", stringResult);
-	}
-	
-    public Auteur save(){
-    	makeStringResult();
-		String reponse = RestAccess.save("auteur", stringResult);
-		
-		try {
-			return Commun.getMapper().readValue(reponse, Auteur.class);		
-		}
-		catch(IOException e){
-			return null;
-		}	
-	}
-
 	public String getNom_complet() {
 		return nom_complet;
 	}

@@ -147,10 +147,10 @@ public class Fiche_client_controller extends Fiche_controller implements Initial
     	client.setAdresse_ville(adresse_ville_textField.getText());
 
 		if (edit) {	
-			client.update();	
+			client.update("client");	
 		}
 		else {			
-		   client.save();
+		   client.save("client", Client.class);
 		   listView_client.getSelectionModel().select(client.getNom());
 		   rafraichirAffichage();	   
 		}

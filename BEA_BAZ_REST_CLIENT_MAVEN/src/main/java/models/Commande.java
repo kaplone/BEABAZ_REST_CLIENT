@@ -15,6 +15,7 @@ import org.bson.types.ObjectId;
 
 import utils.RestAccess;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -29,16 +30,18 @@ public class Commande  extends Commun{
 	private String remarques;
 
 	private LocalDate dateCommande;
-
 	private LocalDate dateDebutProjet;
-
 	private LocalDate dateFinProjet;
 	
-	private Map<String,Model> modele;
 
-	private Map<String, Auteur> auteur;
+	private Map<String, Model> modele_obj;
+	private Map<String, Auteur> auteur_obj;
+	private Map<String, String> modele_map;
+	private Map<String, String> auteur_map;
 	
+	@JsonIgnore
 	private Model modeleObj;
+	@JsonIgnore
 	private Auteur auteurObj;
 	
 	private Map<String, String> oeuvresTraitees_map;
@@ -48,22 +51,14 @@ public class Commande  extends Commun{
 	private List<Map<String, Traitement>> traitements_attendus;
 	
 	final DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern("E MMM d H:m:s z y", Locale.US);
+	final DateTimeFormatter simpleInputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.US);
 	
 	public Commande(){
 		oeuvresTraitees_map = new HashMap<>();
+		modele_map = new HashMap<>();
+		auteur_map = new HashMap<>();
 	}
-	
-	public static void update(Commande c){
 
-		RestAccess.update("commande", c);
-	}
-	
-    public static void save(Commande c){
-		
-		RestAccess.save("commande", c);
-		
-	}
-    
     public Commande get(){
 		
 		return this;
@@ -83,17 +78,28 @@ public class Commande  extends Commun{
 		this.remarques = remarques;
 	}
 
-	public LocalDate getDateCommande() {
+	public String getDateCommande() {
+		return dateCommande.toString();
+	}
+	@JsonIgnore
+	public LocalDate getDateCommande_LocalDate() {
 		return dateCommande;
 	}
 	public void setDateCommande(String dateCommande) {
 		this.dateCommande = LocalDate.parse(dateCommande, inputFormat);
 	}
+	public void setDateCommandePicker(String dateCommande) {
+		this.dateCommande = LocalDate.parse(dateCommande, simpleInputFormat);
+	}
 	public void setLocalDateCommande(LocalDate dateCommande) {   
-		setDateCommande(dateCommande.toString());
+		setDateCommandePicker(dateCommande.toString());
 	}
 
-	public LocalDate getDateDebutProjet() {
+	public String getDateDebutProjet() {
+		return dateDebutProjet.toString();
+	}
+	@JsonIgnore
+	public LocalDate getDateDebutProjet_LocalDate() {
 		return dateDebutProjet;
 	}
 
@@ -101,13 +107,20 @@ public class Commande  extends Commun{
 		this.dateDebutProjet = LocalDate.parse(dateDebutProjet, inputFormat);
 
 	}
-	
+	public void setDateDebutProjetPicker(String dateDebutProjet) {
+		this.dateDebutProjet = LocalDate.parse(dateDebutProjet, simpleInputFormat);
+
+	}
 	public void setLocalDateDebutProjet(LocalDate dateDebutProjet) {
-		setDateDebutProjet(dateDebutProjet.toString());
+		setDateDebutProjetPicker(dateDebutProjet.toString());
 		
 	}
 
-	public LocalDate  getDateFinProjet() {
+	public String  getDateFinProjet() {
+		return dateFinProjet.toString();
+	}
+	@JsonIgnore
+	public LocalDate getDateFinProjet_LocalDate() {
 		return dateFinProjet;
 	}
 
@@ -115,10 +128,12 @@ public class Commande  extends Commun{
 	public void setDateFinProjet(String dateFinProjet) {
 		this.dateFinProjet = LocalDate.parse(dateFinProjet, inputFormat);
 	}
-	
+	public void setDateFinProjetPicker(String dateFinProjet) {
+		this.dateFinProjet = LocalDate.parse(dateFinProjet, simpleInputFormat);
+	}
 	public void setLocalDateFinProjet(LocalDate dateFinProjet) {
         
-		setDateFinProjet(dateFinProjet.toString());
+		setDateFinProjetPicker(dateFinProjet.toString());
 	}
 
 	public Set<String> getOeuvresTraitees_names() {
@@ -172,33 +187,44 @@ public class Commande  extends Commun{
 		this.complement = complement;
 	}
 
-	public Map<String, Model> getModele(){
-		return modele;
+	public Map<String, String> getModele(){
+		return modele_map;
 	}
 	
+	@JsonIgnore
 	public Model getModeleObj(){
 		return modeleObj;
 	}
 	
-	public Map<String, Auteur> getAuteur(){
-		return auteur;
+	public Map<String, String> getAuteur(){
+		return auteur_map;
 	}
 	
+	@JsonIgnore
+	public void setAuteur_map(String nom){
+		auteur_map.put("auteur_string", nom);
+		//auteur_map.put("auteur_id", auteur_obj.get(nom).get_id());
+	}
+	@JsonIgnore
 	public Auteur getAuteurObj(){
 		return auteurObj;
 	}
 	
-	public void setAuteur(Map<String, Auteur> auteur){
+	public void setAuteur_obj(Map<String, Auteur> auteur){
 		this.auteurObj = auteur.values().iterator().next();
-		this.auteur = auteur;
+		this.auteur_obj = auteur;
 	}
 	
-	public void setModele(Map<String, Model> modele){
-		
+	public void setModele_obj(Map<String, Model> modele){
 		this.modeleObj = modele.values().iterator().next();
-		this.modele = modele;
+		this.modele_obj = modele;
 	}
-
+	
+	@JsonIgnore
+	public void setModele_map(String nom){
+		modele_map.put("modele_string", nom);
+		//modele_map.put("modele_id", modele_obj.get(nom).get_id());
+	}
 	public void setOeuvresTraitees(List<Map<String, String>> oeuvresTraitees) {	
 		this.oeuvresTraitees = oeuvresTraitees;
 	}
@@ -227,7 +253,7 @@ public class Commande  extends Commun{
 	
 	public static ObjectId retrouveId(String commandeSelectionne){
 
-		return retrouveCommande(commandeSelectionne).get_id();
+		return new ObjectId(retrouveCommande(commandeSelectionne).get_id());
 	}
 	
 	public static Commande retrouveCommande(String commandeSelectionne){
@@ -248,6 +274,7 @@ public class Commande  extends Commun{
 	public static Commande retrouveCommande(ObjectId id){
 
         String commande_str= RestAccess.request("commande", id);
+        System.out.println(commande_str);
         
         Commande c = null;
 		
