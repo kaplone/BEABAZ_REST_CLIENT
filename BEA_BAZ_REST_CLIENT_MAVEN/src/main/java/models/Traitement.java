@@ -24,27 +24,13 @@ public class Traitement extends Commun{
 	private List<Produit> liste_produits;
 	private Map<String, String> produits;
 	
+	private static ObservableList<String> liste_str;
+	private static Traitement[] c;
+	
 	public Traitement(){
 		this.liste_produits = new ArrayList<Produit>();
 	}
 	
-	public static void update(Traitement t){
-
-		RestAccess.update("traitement", t);
-	}
-	
-    public static void save(Traitement t){
-		
-		RestAccess.save("traitement", t);
-		
-	}
-    
-    public static void insert(Traitement t){
-		
-		RestAccess.insert("traitement", t);
-		
-	}
-    
     public void addProduit(Produit p){
     	
     	if (! liste_produits.contains(p)){
@@ -98,7 +84,7 @@ public class Traitement extends Commun{
 	
 	public static ObjectId retrouveId(String traitementSelectionne){
 
-		return retrouveTraitement(traitementSelectionne).get_id();
+		return new ObjectId(retrouveTraitement(traitementSelectionne).get_id());
 	}
 	
 	public static Traitement retrouveTraitement(String traitementSelectionne){
@@ -137,25 +123,30 @@ public class Traitement extends Commun{
 	
 	public static Traitement[] retrouveTraitements(){
 		
-		String traitement_str= RestAccess.request("traitement");
-        Traitement[] c = null ;
-		
-		try {
-			c = Commun.getMapper().readValue(traitement_str, Traitement[].class);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (c == null){
+			String traitement_str = RestAccess.request("traitement");
+	        c = null ;
+			
+			try {
+				c = Commun.getMapper().readValue(traitement_str, Traitement[].class);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		
 		return c;
 	}
 	
     public static ObservableList<String> retrouveTraitementsStr(){
     	
-    	ObservableList<String> liste_str = FXCollections.observableArrayList();
-		
-		for (Traitement c : retrouveTraitements()){
-			liste_str.add(c.getNom());
-		}
+    	if(liste_str == null){
+    		liste_str = FXCollections.observableArrayList();
+    		
+    		for (Traitement c : retrouveTraitements()){
+    			liste_str.add(c.getNom());
+    		}
+    	}
+    	
 		return liste_str;
 	}
 	

@@ -3,6 +3,7 @@ package models;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +18,8 @@ import utils.RestAccess;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import javafx.collections.ObservableList;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Commande  extends Commun{
@@ -40,6 +43,16 @@ public class Commande  extends Commun{
 	private Map<String, String> auteur_map;
 	
 	@JsonIgnore
+	private Map<String, Model> map_modeles_obj;
+	@JsonIgnore
+	private Map<String, Auteur> map_auteurs_obj;
+	
+	@JsonIgnore
+	private ObservableList<String> liste_traitements;
+	@JsonIgnore
+	private Map<String, Traitement> map_traitements;
+	
+	@JsonIgnore
 	private Model modeleObj;
 	@JsonIgnore
 	private Auteur auteurObj;
@@ -57,6 +70,8 @@ public class Commande  extends Commun{
 		oeuvresTraitees_map = new HashMap<>();
 		modele_map = new HashMap<>();
 		auteur_map = new HashMap<>();
+		map_auteurs_obj = new HashMap<>();
+		map_modeles_obj = new HashMap<>();
 	}
 
     public Commande get(){
@@ -86,7 +101,12 @@ public class Commande  extends Commun{
 		return dateCommande;
 	}
 	public void setDateCommande(String dateCommande) {
-		this.dateCommande = LocalDate.parse(dateCommande, inputFormat);
+		if (dateCommande.split("-").length == 3){
+			this.dateCommande = LocalDate.parse(dateCommande, simpleInputFormat);
+		}
+		else {
+			this.dateCommande = LocalDate.parse(dateCommande, inputFormat);
+		}	
 	}
 	public void setDateCommandePicker(String dateCommande) {
 		this.dateCommande = LocalDate.parse(dateCommande, simpleInputFormat);
@@ -104,8 +124,12 @@ public class Commande  extends Commun{
 	}
 
 	public void setDateDebutProjet(String dateDebutProjet) {
-		this.dateDebutProjet = LocalDate.parse(dateDebutProjet, inputFormat);
-
+		if (dateDebutProjet.split("-").length == 3){
+			this.dateDebutProjet = LocalDate.parse(dateDebutProjet, simpleInputFormat);
+		}
+		else {
+			this.dateDebutProjet = LocalDate.parse(dateDebutProjet, inputFormat);
+		}
 	}
 	public void setDateDebutProjetPicker(String dateDebutProjet) {
 		this.dateDebutProjet = LocalDate.parse(dateDebutProjet, simpleInputFormat);
@@ -126,7 +150,12 @@ public class Commande  extends Commun{
 
 	
 	public void setDateFinProjet(String dateFinProjet) {
-		this.dateFinProjet = LocalDate.parse(dateFinProjet, inputFormat);
+		if (dateFinProjet.split("-").length == 3){
+			this.dateFinProjet = LocalDate.parse(dateFinProjet, simpleInputFormat);
+		}
+		else {
+			this.dateFinProjet = LocalDate.parse(dateFinProjet, inputFormat);
+		}
 	}
 	public void setDateFinProjetPicker(String dateFinProjet) {
 		this.dateFinProjet = LocalDate.parse(dateFinProjet, simpleInputFormat);
@@ -135,7 +164,8 @@ public class Commande  extends Commun{
         
 		setDateFinProjetPicker(dateFinProjet.toString());
 	}
-
+    
+	@JsonIgnore
 	public Set<String> getOeuvresTraitees_names() {
 		return oeuvresTraitees_map.keySet();
 	}
@@ -143,26 +173,33 @@ public class Commande  extends Commun{
 	public void addOeuvreTraitee(OeuvreTraitee oeuvreTraitee) {
 		this.oeuvresTraitees_map.put(oeuvreTraitee.toString(), oeuvreTraitee.get_id().toString());
 	}
-
+    
+	@JsonIgnore
+	public void setListe_traitements(ObservableList<String> liste){
+		liste_traitements = liste;
+	}
+	
+	@JsonIgnore
+	public void setMap_traitements(Map<String, Traitement> map){
+		map_traitements = map;
+	}
+	
+	@JsonIgnore
 	public Set<String> getTraitements_attendus_names() {
 		
 		Set<String> a = new HashSet<>();
 		
 		if (traitements_attendus != null){
-			for (Map<String, Traitement> m : this.getTraitements_attendus()){
+			for (Map<String, Traitement> m : traitements_attendus){
 				for (Entry<String, Traitement> e : m.entrySet()){
-					if (e.getKey().equals("traitement_attendu_string")){
-						a.add(e.getValue().toString());
-					}
+					a.add(e.getKey());
 				}
 			}
-		}
-		
-				
+		}			
         return a;
 	}
-
-
+    
+	@JsonIgnore
 	public String getNom_affichage() {
 		return nom_affichage;
 	}
@@ -203,7 +240,13 @@ public class Commande  extends Commun{
 	@JsonIgnore
 	public void setAuteur_map(String nom){
 		auteur_map.put("auteur_string", nom);
-		//auteur_map.put("auteur_id", auteur_obj.get(nom).get_id());
+		if (nom != null){
+			auteur_map.put("auteur_id", map_auteurs_obj.get(nom).get_id());
+		}
+		else {
+			auteur_map.put("auteur_id", null);
+		}
+		
 	}
 	@JsonIgnore
 	public Auteur getAuteurObj(){
@@ -211,33 +254,59 @@ public class Commande  extends Commun{
 	}
 	
 	public void setAuteur_obj(Map<String, Auteur> auteur){
-		this.auteurObj = auteur.values().iterator().next();
+		if(auteur_obj != null){
+			this.auteurObj = auteur.values().iterator().next();		
+		}
 		this.auteur_obj = auteur;
 	}
 	
 	public void setModele_obj(Map<String, Model> modele){
-		this.modeleObj = modele.values().iterator().next();
+		if (modele_obj != null){
+			this.modeleObj = modele.values().iterator().next();
+		}		
 		this.modele_obj = modele;
 	}
 	
 	@JsonIgnore
 	public void setModele_map(String nom){
+		
 		modele_map.put("modele_string", nom);
-		//modele_map.put("modele_id", modele_obj.get(nom).get_id());
+		if (nom != null){
+			modele_map.put("modele_id", map_modeles_obj.get(nom).get_id());
+		}
+		else {
+			modele_map.put("modele_id", null);
+		}
+		
 	}
 	public void setOeuvresTraitees(List<Map<String, String>> oeuvresTraitees) {	
 		this.oeuvresTraitees = oeuvresTraitees;
 	}
 
-	public List<Map<String, Traitement>> getTraitements_attendus() {
-		return traitements_attendus;
+	public List<Map<String, String>> getTraitements_attendus() {
+		
+		List<Map<String, String>> traitements_attendus_liste = new ArrayList<>();		
+		liste_traitements.forEach(a -> {
+			Map<String, String> entree = new HashMap<>();
+			entree.put("traitement_attendu_string", a);
+			if (a.contains(": ")){
+				entree.put("traitement_attendu_id", map_traitements.get(a.split(": ")[1]).get_id());
+			}
+			else{
+				entree.put("traitement_attendu_id", map_traitements.get(a).get_id());
+			}
+			
+			traitements_attendus_liste.add(entree);
+		});
+		
+		return traitements_attendus_liste;
 	}
 
 	public void setTraitements_attendus(List<Map<String, Traitement>> traitements_attendus) {
 		this.traitements_attendus = traitements_attendus;
 	}
 	
-	
+	@JsonIgnore
 	public Map<String, String> getOeuvresTraitees_map() {
 		return oeuvresTraitees_map;
 	}
@@ -300,6 +369,14 @@ public class Commande  extends Commun{
 			e.printStackTrace();
 		}
 		return c;
+	}
+	
+	public void addModels(List<Model> m){
+		m.forEach(a -> map_modeles_obj.put(a.getNom(), a));
+	}
+	
+	public void addAuteurs(List<Auteur> m){
+		m.forEach(a -> map_auteurs_obj.put(a.getNom(), a));
 	}
     
 }

@@ -61,12 +61,13 @@ public class Fiche_client_controller extends Fiche_controller implements Initial
 		
 		commandeSelectionne = listView_commandes.getSelectionModel().getSelectedItem();
 		
+		Messages.setOeuvreTraitee(null);
 		Commande co = Commande.retrouveCommande(new ObjectId(client.getCommandes_id().get(commandeSelectionne)));
 		
 		Messages.setCommande(co);
 		Messages.setOeuvreTraitee(null);
 		
-		Scene fiche_commande_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_commande.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
+		Scene fiche_commande_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_commande_v2.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_commande_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		currentStage.setScene(fiche_commande_scene);	
 	}
@@ -75,8 +76,8 @@ public class Fiche_client_controller extends Fiche_controller implements Initial
 	public void onAjoutCommande(){
 		
 		Messages.setCommande(null);
-
-		Scene fiche_commande_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_commande.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
+		Messages.setOeuvreTraitee(null);
+		Scene fiche_commande_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_commande_v2.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_commande_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		currentStage.setScene(fiche_commande_scene);
@@ -151,8 +152,8 @@ public class Fiche_client_controller extends Fiche_controller implements Initial
 		}
 		else {			
 		   client.save("client", Client.class);
+		   rafraichirAffichage();
 		   listView_client.getSelectionModel().select(client.getNom());
-		   rafraichirAffichage();	   
 		}
 		
 		super.onMiseAJourButton();

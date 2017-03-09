@@ -243,9 +243,9 @@ public class Fiche_traitement_controller extends Fiche_controller implements Ini
 		traitementSelectionne.setNom_complet(nom_complet_traitement_textField.getText());
 
 		if (edit) {
-			Traitement.update(traitementSelectionne);
+			traitementSelectionne.update("traitementSelectionne");
 		} else {
-			Traitement.save(traitementSelectionne);
+			traitementSelectionne.save("traitementSelectionne", Traitement.class);
 			listView_traitements.getSelectionModel().select(traitementSelectionne);
 			rafraichirAffichage();
 		}

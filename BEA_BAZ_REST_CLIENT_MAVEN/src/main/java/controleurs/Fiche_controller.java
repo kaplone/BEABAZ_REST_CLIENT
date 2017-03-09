@@ -109,7 +109,7 @@ public abstract class Fiche_controller{
 	@FXML
 	public void onVersCommandeButton(){
 		
-		Scene fiche_commande_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_commande.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
+		Scene fiche_commande_scene = new Scene((Parent) JfxUtils.loadFxml("/views/fiche_commande_v2.fxml"), Contexte.largeurFenetre, Contexte.hauteurFenetre);
 		fiche_commande_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 		
 		currentStage.setScene(fiche_commande_scene);	

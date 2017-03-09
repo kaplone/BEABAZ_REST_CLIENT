@@ -49,6 +49,8 @@ public abstract class Commun {
 			return Commun.getMapper().readValue(reponse, classe);		
 		}
 		catch(IOException e){
+			System.out.println("probleme de mappage ...");
+			e.printStackTrace();
 			return null;
 		}	
 	}
