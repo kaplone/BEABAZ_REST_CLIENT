@@ -30,6 +30,7 @@ import models.Contexte;
 import models.Fichier;
 import models.Matiere;
 import models.Messages;
+import models.Model;
 import models.Oeuvre;
 import models.OeuvreTraitee;
 import models.Produit;
@@ -322,8 +323,7 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 
 	@FXML
 	public void onMiseAJourOeuvreButton() {
-		super.onMiseAJourButton();
-		editability(false);
+		
 
 		oeuvreSelectionneObj.setCote_archives_6s(numero_archive_6s_textField.getText());
 		oeuvreSelectionneObj.setTitre_de_l_oeuvre(titre_textField.getText());
@@ -338,12 +338,20 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		oeuvreTraiteeSelectionneObj.setRemarques(remarques_textArea.getText());
 		oeuvreTraiteeSelectionneObj.setEtat(etat_final_choiceBox.getSelectionModel().getSelectedItem());
 		oeuvreTraiteeSelectionneObj.setComplement_etat(complement_etat_textArea.getText());
-
-		OeuvreTraitee.update(oeuvreTraiteeSelectionneObj);
-		Oeuvre.update(oeuvreSelectionneObj);
-
-		onAnnulerEditButton();
-
+		
+		if (edit) {
+			oeuvreTraiteeSelectionneObj.update("oeuvreTraitee");
+			oeuvreSelectionneObj.update("oeuvre");
+		}
+		else {
+			oeuvreTraiteeSelectionneObj.save("oeuvreTraitee", OeuvreTraitee.class);
+			oeuvreSelectionneObj.save("oeuvre", Oeuvre.class);
+		    //tableOeuvre.getSelectionModel().select(oeuvreTraiteeSelectionneObj.toString());
+			//rafraichirAffichage();
+		}
+        
+		super.onMiseAJourButton();
+		editability(false);
 	}
 
 	@FXML

@@ -125,19 +125,20 @@ public class Fiche_matiere_controller extends Fiche_controller implements Initia
 
 	@FXML
 	public void onMiseAJourMatiereButton() {
-		super.onMiseAJourButton();
 
 		matiereSelectionne.setNom(nom_matiere_textField.getText());
 		matiereSelectionne.setRemarques(remarques_matiere_textArea.getText());
 		matiereSelectionne.setNom_complet(nom_complet_matiere_textField.getText());
 
 		if (edit) {
-			Matiere.update(matiereSelectionne);
+			matiereSelectionne.update("matiere");
 		} else {
-			Matiere.save(matiereSelectionne);
+			matiereSelectionne.save("matiere", Matiere.class);
 			listView_matieres.getSelectionModel().select(matiereSelectionne);
 			rafraichirAffichage();
 		}
+		
+		super.onMiseAJourButton();
 	}
 
 	public void afficherMatiere() {

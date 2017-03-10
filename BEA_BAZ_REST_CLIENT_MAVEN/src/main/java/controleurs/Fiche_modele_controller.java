@@ -81,9 +81,6 @@ public class Fiche_modele_controller extends Fiche_controller implements Initial
     			editer.setVisible(false);
     		}	
 		}
-		
-		modelSelectionne = listView_model.getSelectionModel().getSelectedItem();
-		//Messages.setModel(modelSelectionne);		
 		afficherModel();
 		
 	}
@@ -125,9 +122,7 @@ public class Fiche_modele_controller extends Fiche_controller implements Initial
     
     @FXML
     public void onMiseAJourModelButton(){
-    	super.onMiseAJourButton();
     	
-
     	modelSelectionne.setNom(nom_model_textField.getText());
     	modelSelectionne.setRemarques(remarques_model_textArea.getText());
     	modelSelectionne.setCheminVersModelSTR(file_path_model_textField.getText());
@@ -139,13 +134,15 @@ public class Fiche_modele_controller extends Fiche_controller implements Initial
 		remarques_model_textArea.setEditable(false);
 		
 		if (edit) {
-			Model.update(modelSelectionne);
+			modelSelectionne.update("model");
 		}
 		else {
-		    Model.save(modelSelectionne);
+			modelSelectionne.save("model", Model.class);
 		    listView_model.getSelectionModel().select(modelSelectionne);
 			rafraichirAffichage();
 		}
+		
+		super.onMiseAJourButton();
     }
     
     public void rafraichirAffichage(){

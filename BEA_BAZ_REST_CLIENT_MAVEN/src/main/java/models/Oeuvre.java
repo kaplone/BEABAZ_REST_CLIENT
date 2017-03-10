@@ -19,7 +19,6 @@ public class Oeuvre extends Commun{
     private String key2;
 	
 	private String n_d_origine,
-	               cote_archives,
 	               cote_archives_6s,
 	               ville,
 	               quartier,
@@ -66,36 +65,7 @@ public class Oeuvre extends Commun{
 		
 		
 	}
-	
-	public static void update(Oeuvre c){
 
-		RestAccess.update("oeuvre", c);
-	}
-	
-    public static void save(Oeuvre c){
-		
-		RestAccess.save("oeuvre", c);
-		
-	}
-    
-//    public void addMatiere(String m, String oid){
-//    	
-//        if (! matieresUtilisees_id.keySet().contains(m)){
-//    		matieresUtilisees_id.put(m, oid);
-//    	}
-//    	
-//    }
-//    
-//    public void deleteMatiere(String m){
-//    	
-//    	for (String m_ : matieresUtilisees_id.keySet()){
-//    		if (m.equals(m_)){
-//    			matieresUtilisees_id.remove(m_);
-//    			break;
-//    		}
-//    	} 	
-//    }
-    
     public void addTechnique(String t, String oid){
     	
 
@@ -310,11 +280,6 @@ public class Oeuvre extends Commun{
 
 	public void setKey2(String key2) {
 		this.key2 = key2;
-	}
-	
-	public static ObjectId retrouveId(String oeuvreSelectionne){
-
-		return retrouveOeuvre(oeuvreSelectionne).get_id();
 	}
 	
 	public static Oeuvre retrouveOeuvre(String oeuvreSelectionne){

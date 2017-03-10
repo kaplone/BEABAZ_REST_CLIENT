@@ -2,6 +2,7 @@ package models;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,6 +11,8 @@ import java.util.stream.Collectors;
 import org.bson.types.ObjectId;
 
 import utils.RestAccess;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -21,6 +24,7 @@ public class Traitement extends Commun{
 
 	private String nom_complet;
 	
+	@JsonIgnore
 	private List<Produit> liste_produits;
 	private Map<String, String> produits;
 	
@@ -28,7 +32,8 @@ public class Traitement extends Commun{
 	private static Traitement[] c;
 	
 	public Traitement(){
-		this.liste_produits = new ArrayList<Produit>();
+		this.liste_produits = new ArrayList<>();
+		this.produits = new HashMap<>();
 	}
 	
     public void addProduit(Produit p){
@@ -56,20 +61,22 @@ public class Traitement extends Commun{
 	public void setNom_complet(String detail) {
 		this.nom_complet = detail;
 	}
-
+    
+	@JsonIgnore
 	public Set<String> getProduits_names() {
 		return liste_produits.stream()
 				       .map(a -> a.getNom())
 				       .collect(Collectors.toSet());
 	}
-
+	@JsonIgnore
 	public List<Produit> getListe_produits() {
 		return liste_produits;
 	}
+	@JsonIgnore
 	public Set<String> getListe_produits_names() {
 		return produits.keySet();
 	}
-
+	@JsonIgnore
 	public void setListe_produits(List<Produit> produits) {
 		this.liste_produits = produits;
 	}
@@ -98,11 +105,9 @@ public class Traitement extends Commun{
   			  c = mapper.readValue(traitement_str, Traitement.class);
   		  }
   		  catch (IOException e) {
-  	    }
+  	      }
         }
-		
-		
-		
+	
 		return c;
 	}
 	
@@ -149,5 +154,10 @@ public class Traitement extends Commun{
     	
 		return liste_str;
 	}
+    
+    @JsonIgnore
+    public void setProduitsFromObservable(ObservableList<Produit> o){
+    	o.forEach(a -> produits.put(a.getNom(), a.get_id()));
+    }
 	
 }

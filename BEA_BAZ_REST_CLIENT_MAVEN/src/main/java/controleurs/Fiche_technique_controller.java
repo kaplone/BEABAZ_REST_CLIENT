@@ -133,20 +133,20 @@ public class Fiche_technique_controller extends Fiche_controller implements Init
     
     @FXML
     public void onMiseAJourTechniqueButton(){
-    	super.onMiseAJourButton();
 	
     	techniqueSelectionne.setNom(nom_technique_textField.getText());
     	techniqueSelectionne.setRemarques(remarques_technique_textArea.getText());
     	techniqueSelectionne.setNom_complet(nom_complet_technique_textField.getText());
 
 		if (edit) {
-			Technique.update(techniqueSelectionne);
+			techniqueSelectionne.update("technique");
 		}
 		else {
-		   Technique.save(techniqueSelectionne);
+			techniqueSelectionne.save("technique", Technique.class);
 		   listView_techniques.getSelectionModel().select(techniqueSelectionne);
 		   rafraichirAffichage();
-		}   	
+		}   
+		super.onMiseAJourButton();
     }
     
     public void afficherTechnique(){

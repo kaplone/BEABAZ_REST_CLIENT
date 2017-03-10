@@ -19,9 +19,9 @@ public class TacheTraitement extends Commun{
 	
 	private Progression fait_;
 	private Date date;
-	private ObjectId traitement_id;
+	private String traitement_id;
 	private String complement;
-	private Map<String, ObjectId> produitsLies;
+	private Map<String, String> produitsLies;
 	private Set<String> produitsLies_names;
 	private Set<String> produitsLies_id;
 	
@@ -40,18 +40,7 @@ public class TacheTraitement extends Commun{
     	super.setNom(t.getNom());
     	  	
     }
-    
-    public static void update(TacheTraitement c){
 
-		RestAccess.update("tacheTraitement", c);
-	}
-	
-    public static void save(TacheTraitement c){
-		
-		RestAccess.save("tacheTraitement", c);
-		
-	}
-    
     public void addProduit(Produit p){
     	
     	if (! produitsLies.keySet().contains(p.getNom())){
@@ -110,13 +99,6 @@ public class TacheTraitement extends Commun{
 		this.complement = complement;
 	}
 
-	public ObjectId getTraitement_id() {
-		return traitement_id;
-	}
-	public void setTraitement_id(ObjectId traitement) {
-		this.traitement_id = traitement;
-	}
-	
 	public Traitement getTraitement(){
 		
 		if (traitementOriginal == null){
@@ -165,7 +147,7 @@ public class TacheTraitement extends Commun{
 		this.produitsLies_names = produitsLies_names;
 	}
 	
-	public  Collection<ObjectId> getProduitsLies_id() {
+	public  Collection<String> getProduitsLies_id() {
 		return produitsLies.values();
 	}
 	public void setProduitsLies_id(Set<String> produitsLies_id) {
@@ -176,11 +158,11 @@ public class TacheTraitement extends Commun{
 		this.produitsLies.put(produitLie.getNom(), produitLie.get_id());
 	}
 
-	public Map<String, ObjectId> getProduitsLies() {
+	public Map<String, String> getProduitsLies() {
 		return produitsLies;
 	}
 
-	public void setProduitsLies(Map<String, ObjectId> produitsLies) {
+	public void setProduitsLies(Map<String, String> produitsLies) {
 		this.produitsLies = produitsLies;
 	}
 }

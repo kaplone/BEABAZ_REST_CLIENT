@@ -15,23 +15,6 @@ import javafx.collections.ObservableList;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Produit extends Commun {
 	
-	public static void update(Produit t){
-
-		RestAccess.update("produit", t);
-	}
-	
-    public static void save(Produit t){
-		
-		RestAccess.save("produit", t);
-		
-	}
-    
-    public static void insert(Produit t){
-		
-		RestAccess.insert("produit", t);
-		
-	}
-	
 	private String nom_complet;
 
 	public String getNom_complet() {
@@ -40,11 +23,6 @@ public class Produit extends Commun {
 
 	public void setNom_complet(String detail) {
 		this.nom_complet = detail;
-	}
-	
-	public static ObjectId retrouveId(String produitSelectionne){
-
-		return retrouveProduit(produitSelectionne).get_id();
 	}
 	
 	public static Produit retrouveProduit(String produitSelectionne){
@@ -62,11 +40,9 @@ public class Produit extends Commun {
   			  c = mapper.readValue(produit_str, Produit.class);
   		  }
   		  catch (IOException e) {
-  	    }
+  	      }
         }
-		
-		
-		
+			
 		return c;
 	}
 	

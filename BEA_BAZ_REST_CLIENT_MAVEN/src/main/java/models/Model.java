@@ -6,23 +6,15 @@ import java.nio.file.Paths;
 
 import org.bson.types.ObjectId;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import utils.RestAccess;
 
 public class Model extends Commun{
 	
     private String cheminVersModelSTR;
     
-    public static void update(Model c){
-
-		RestAccess.update("model", c);
-	}
-	
-    public static void save(Model c){
-		
-		RestAccess.save("model", c);
-		
-	}
-
+    @JsonIgnore
 	public Path getCheminVersModel() {
 		return Paths.get(cheminVersModelSTR);
 	}
@@ -33,7 +25,8 @@ public class Model extends Commun{
 	public void setCheminVersModelSTR(String cheminVersModelSTR) {
 		this.cheminVersModelSTR = cheminVersModelSTR;
 	}
-
+    
+	@JsonIgnore
 	public Path getModeleVertical() {
 		
 		Path base = Paths.get(cheminVersModelSTR).getParent();
@@ -44,12 +37,7 @@ public class Model extends Commun{
 		
 		return base.resolve(nameVertical);
 	}
-	
-	public static ObjectId retrouveId(String ModelSelectionne){
 
-		return retrouveModel(ModelSelectionne).get_id();
-	}
-	
 	public static Model retrouveModel(String ModelSelectionne){
 
         String model_str= RestAccess.request("model", "nom", ModelSelectionne);

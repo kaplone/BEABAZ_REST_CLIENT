@@ -13,23 +13,6 @@ import utils.RestAccess;
 public class Technique extends Commun{
 	
 	private String nom_complet;
-	
-	public static void update(Technique t){
-
-		RestAccess.update("technique", t);
-	}
-	
-    public static void save(Technique t){
-		
-		RestAccess.save("technique", t);
-		
-	}
-    
-    public static void insert(Technique t){
-		
-		RestAccess.insert("technique", t);
-		
-	}
 
 	public String getNom_complet() {
 		return nom_complet;
@@ -37,11 +20,6 @@ public class Technique extends Commun{
 
 	public void setNom_complet(String nom_complet) {
 		this.nom_complet = nom_complet;
-	}
-	
-	public static ObjectId retrouveId(String techniqueSelectionne){
-
-		return retrouveTechnique(techniqueSelectionne).get_id();
 	}
 	
 	public static Technique retrouveTechnique(String techniqueSelectionne){

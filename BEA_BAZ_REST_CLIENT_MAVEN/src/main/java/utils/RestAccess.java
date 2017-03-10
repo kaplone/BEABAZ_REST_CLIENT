@@ -94,7 +94,7 @@ public class RestAccess {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
 		return reponse;
 		
 	}
@@ -122,7 +122,7 @@ public class RestAccess {
 			e.printStackTrace();
 		}
         
-		System.out.println("reponsePOST = " + reponse);
+		//System.out.println("reponsePOST = " + reponse);
 		
 		return reponse;
 		
@@ -187,13 +187,8 @@ public class RestAccess {
 		
 		requestPost = new HttpPost(String.format("%s/ajout/%s", adresse, table));
 
-		try {
-			StringEntity se = new StringEntity(c);
-			requestPost.setEntity(se);
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		StringEntity se = new StringEntity(c, "UTF-8");
+		requestPost.setEntity(se);
 		
     	return traitementReponsePost();
 	}
@@ -205,13 +200,8 @@ public class RestAccess {
 		
 		requestPost = new HttpPost(String.format("%s/update/%s", adresse, table));
 
-		try {
-			StringEntity se = new StringEntity(c);
-			requestPost.setEntity(se);
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		StringEntity se = new StringEntity(c, "UTF-8");
+		requestPost.setEntity(se);
 		
     	return traitementReponsePost();
 	}

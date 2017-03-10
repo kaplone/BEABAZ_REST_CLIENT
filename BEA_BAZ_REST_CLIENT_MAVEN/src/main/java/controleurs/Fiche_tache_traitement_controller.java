@@ -134,19 +134,20 @@ public class Fiche_tache_traitement_controller extends Fiche_controller implemen
     
     @FXML
     public void onMiseAJourTraitementButton(){
-    	super.onMiseAJourButton();
 
     	tacheTraitementSelectionne.setComplement(complement_textField.getText());
     	tacheTraitementSelectionne.setRemarques(remarques_traitement_textArea.getText());
 		
 		if (edit) {
-			TacheTraitement.update(tacheTraitementSelectionne);
+			tacheTraitementSelectionne.update("tacheTraitement");
 		}
 		else {
 			
-		   TacheTraitement.save(tacheTraitementSelectionne);
+			tacheTraitementSelectionne.save("tacheTraitement", TacheTraitement.class);
 		   afficherTraitementsAssocies();
 		}
+		
+		super.onMiseAJourButton();
     	
     }
     

@@ -236,19 +236,21 @@ public class Fiche_traitement_controller extends Fiche_controller implements Ini
 
 	@FXML
 	public void onMiseAJourTraitementButton() {
-		super.onMiseAJourButton();
 		
 		traitementSelectionne.setNom(nom_traitement_textField.getText());
 		traitementSelectionne.setRemarques(remarques_traitement_textArea.getText());
 		traitementSelectionne.setNom_complet(nom_complet_traitement_textField.getText());
+		traitementSelectionne.setProduitsFromObservable(liste_produits);
 
 		if (edit) {
-			traitementSelectionne.update("traitementSelectionne");
+			traitementSelectionne.update("traitement");
 		} else {
-			traitementSelectionne.save("traitementSelectionne", Traitement.class);
+			traitementSelectionne.save("traitement", Traitement.class);
 			listView_traitements.getSelectionModel().select(traitementSelectionne);
 			rafraichirAffichage();
 		}
+		
+		super.onMiseAJourButton();
 	}
 
 	public void afficherTraitement() {

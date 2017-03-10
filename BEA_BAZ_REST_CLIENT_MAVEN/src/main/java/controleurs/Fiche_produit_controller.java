@@ -143,20 +143,21 @@ public class Fiche_produit_controller extends Fiche_controller implements Initia
 
 	@FXML
 	public void onMiseAJourTraitementButton() {
-		super.onMiseAJourButton();
 		
 		produitSelectionne.setNom(nom_produit_textField.getText());
 		produitSelectionne.setRemarques(remarques_produit_textArea.getText());
 		produitSelectionne.setNom_complet(nom_complet_produit_textField.getText());
 
 		if (edit) {
-			Produit.update(produitSelectionne);
+			produitSelectionne.update("produit");
 		} else {
 
-			Produit.save(produitSelectionne);
+			produitSelectionne.save("produit", Produit.class);
 			listView_produits.getSelectionModel().select(produitSelectionne);
 			rafraichirAffichage();
 		}
+		
+		super.onMiseAJourButton();
 	}
 
 	public void afficherProduit() {

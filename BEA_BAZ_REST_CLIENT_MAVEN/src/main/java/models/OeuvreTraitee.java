@@ -59,15 +59,7 @@ public class OeuvreTraitee extends Commun {
     	fichiers = new ArrayList<>();
     	
     }
-
-	public static void update(OeuvreTraitee c){
-		RestAccess.update("oeuvreTraitee", c);
-	}
-	
-    public static void save(OeuvreTraitee c){		
-		RestAccess.save("oeuvreTraitee", c);	
-	}
-
+    
 	public void setEtat(EtatFinal etat) {
 		this.etat = etat;
 	}

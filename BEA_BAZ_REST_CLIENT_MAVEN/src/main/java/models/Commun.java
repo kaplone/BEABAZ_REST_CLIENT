@@ -31,6 +31,7 @@ public abstract class Commun {
 	public void makeStringResult(){
 		try {
 			stringResult = getMapper().writeValueAsString(this);
+			System.out.println("StringResult = " + stringResult);
 		} catch (JsonProcessingException e1) {
 			e1.printStackTrace();
 		}
