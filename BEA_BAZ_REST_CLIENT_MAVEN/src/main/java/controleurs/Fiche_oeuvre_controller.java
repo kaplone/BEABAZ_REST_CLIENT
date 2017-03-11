@@ -192,8 +192,8 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 			oeuvreSelectionneObj = oeuvreTraiteeSelectionneObj.getOeuvre();
 			matieresUtilisees = oeuvreSelectionneObj.getMatieresUtilisees_names();
 			techniquesUtilisees = oeuvreSelectionneObj.getTechniquesUtilisees_names();
-			traitementsUtilisees = oeuvreTraiteeSelectionneObj.getTraitementsAttendus_names();
-			traitementsUtilisees_obs.setAll(oeuvreTraiteeSelectionneObj.getTraitementsAttendus_obj());
+			traitementsUtilisees = oeuvreTraiteeSelectionneObj.accesseurTraitementsAttendus_names();
+			traitementsUtilisees_obs.setAll(oeuvreTraiteeSelectionneObj.accesseurTraitementsAttendus_obj());
 			traitementsUtilisees_obs.forEach(a -> map_tacheTraitements.put(a.getNom(), a));
 		} else {
 			tableOeuvre.scrollTo(tableOeuvre.getSelectionModel().getSelectedIndex());
@@ -359,6 +359,25 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		oeuvreTraiteeSelectionneObj.setRemarques(remarques_textArea.getText());
 		oeuvreTraiteeSelectionneObj.setEtat(etat_final_choiceBox.getSelectionModel().getSelectedItem());
 		oeuvreTraiteeSelectionneObj.setComplement_etat(complement_etat_textArea.getText());
+		
+		List<Map<String,String>> tachesTraitements_a_sauver = new ArrayList<>();
+		traitementsUtilisees_obs.forEach(a ->{
+			
+			Map<String, String> m = new HashMap<>();
+			
+			if (a.get_id() == null){
+				TacheTraitement b = a.save("tacheTraitement", TacheTraitement.class);
+				m.put("traitementAttendu_id", b.get_id());
+			}
+			else {
+				m.put("traitementAttendu_id", a.get_id());
+			}
+
+			m.put("traitementAttendu_string", a.getNom());
+			tachesTraitements_a_sauver.add(m);
+		});
+		
+		oeuvreTraiteeSelectionneObj.setTraitementsAttendus(tachesTraitements_a_sauver);
 		
 		if (edit) {
 			oeuvreTraiteeSelectionneObj.update("oeuvreTraitee");
@@ -801,10 +820,7 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		map_traitements = new HashMap<>();
 		map_tacheTraitements = new HashMap<>();
 		
-		System.out.println("oeuvreTraiteeSelectionneObj : " + oeuvreTraiteeSelectionneObj);
-		System.out.println("oeuvreTraiteeSelectionneObj.getTraitementsAttendus_obj() : " + oeuvreTraiteeSelectionneObj.getTraitementsAttendus_obj());
-		
-		traitementsUtilisees_obs.setAll(oeuvreTraiteeSelectionneObj.getTraitementsAttendus_obj());
+		traitementsUtilisees_obs.setAll(oeuvreTraiteeSelectionneObj.accesseurTraitementsAttendus_obj());
 		traitementsUtilisees_obs.forEach(a -> map_tacheTraitements.put(a.getNom(), a));
 
 		traitements_all_listView.onDragDetectedProperty().set(dd -> {
@@ -840,7 +856,7 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 			});
 		});
 
-		traitementsUtilisees = oeuvreTraiteeSelectionneObj.getTraitementsAttendus_names();
+		traitementsUtilisees = oeuvreTraiteeSelectionneObj.accesseurTraitementsAttendus_names();
 		add_tr.setOnAction(
 				a -> ajouter_traitement(traitements_all_listView.getSelectionModel().getSelectedItem().getNom()));
 		remove_tr.setOnAction(

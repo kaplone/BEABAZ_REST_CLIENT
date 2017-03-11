@@ -46,7 +46,7 @@ public class OeuvreTraitee extends Commun {
     
     private String cote;
     
-    private List<String> traitementsAttendus_id;
+    //private List<String> traitementsAttendus_id;
     private List<String> traitementsAttendus_names;
     private List<TacheTraitement> traitementsAttendus_obj;
     
@@ -108,18 +108,22 @@ public class OeuvreTraitee extends Commun {
 	public void setProgressionOeuvreTraitee(Progression progressionOeuvreTraitee) {
 		this.progressionOeuvreTraitee = progressionOeuvreTraitee;
 	}
-	public List<String> getTraitementsAttendus_names() {
+	
+	public List<String> accesseurTraitementsAttendus_names() {
 
     	return traitementsAttendus_names;
 	}
-	
-	public List<String> getTraitementsAttendus_id() {
-
-    	return traitementsAttendus_id;
+//	@JsonIgnore
+//	public List<String> getTraitementsAttendus_id() {
+//
+//    	return traitementsAttendus_id;
+//	}
+//	
+	public List<Map<String,String>> getTraitementsAttendus() {
+    	return traitementsAttendus;
 	}
-    
-	//@JsonIgnore
-	public List<TacheTraitement> getTraitementsAttendus_obj() {
+	
+	public List<TacheTraitement> accesseurTraitementsAttendus_obj() {
 	
     	return traitementsAttendus_obj;
 	}
@@ -129,17 +133,12 @@ public class OeuvreTraitee extends Commun {
     	this.traitementsAttendus_names = traitementsAttendus_names;
 	}
 	
-	public void setTraitementsAttendus_id(List<String> traitementsAttendus_id) {
-
-    	this.traitementsAttendus_id = traitementsAttendus_id;
-	}
-	
+//	public void setTraitementsAttendus_id(List<String> traitementsAttendus_id) {
+//
+//    	this.traitementsAttendus_id = traitementsAttendus_id;
+//	}
+//	
 	public void setTraitementsAttendus_obj(List<TacheTraitement> traitementsAttendus_obj) {
-		
-		System.out.println("__" + traitementsAttendus_obj);
-		System.out.println("__" + traitementsAttendus_obj.size());
-		System.out.println("__" + traitementsAttendus_obj.iterator().next());
-	
     	this.traitementsAttendus_obj = traitementsAttendus_obj;
 	}
 
@@ -192,7 +191,6 @@ public class OeuvreTraitee extends Commun {
 	
 	@JsonIgnore
 	public Oeuvre getOeuvre(){
-
 		return Oeuvre.retrouveOeuvre(new ObjectId(oeuvre_id));
 	}
 
@@ -270,7 +268,6 @@ public class OeuvreTraitee extends Commun {
 	public static OeuvreTraitee retrouveOeuvreTraitee(ObjectId id){
 
         String oeuvre_str= RestAccess.request("oeuvreTraitee", id);
-        //System.out.println(oeuvre_str);
         OeuvreTraitee c = null;
 		
 		try {

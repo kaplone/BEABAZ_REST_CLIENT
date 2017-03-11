@@ -120,6 +120,7 @@ public class Fiche_tache_traitement_controller extends Fiche_controller implemen
     public void rafraichirAffichage(){
 		afficherTache();
 		afficherProduits();    	
+		afficherProgression();
     }
     
     @FXML
@@ -196,7 +197,7 @@ public class Fiche_tache_traitement_controller extends Fiche_controller implemen
 
     public void afficherTraitementsAssocies(){
     	
-    	observable_liste_tachestraitements_lies.setAll(Messages.getOeuvreTraiteeObj().getTraitementsAttendus_obj());
+    	observable_liste_tachestraitements_lies.setAll(Messages.getOeuvreTraiteeObj().accesseurTraitementsAttendus_obj());
     	
 		traitements_associes_tableColumn.setCellValueFactory(new PropertyValueFactory<TacheTraitement, String>("nom"));
 		traitements_associes_faits_tableColumn.setCellValueFactory(new PropertyValueFactory<TacheTraitement, ImageView>("icone_progression"));
@@ -206,6 +207,9 @@ public class Fiche_tache_traitement_controller extends Fiche_controller implemen
     
     public void afficherTache(){
     	editability(false);
+    	
+    	System.out.println(remarques_traitement_textArea);
+    	System.out.println(tacheTraitementSelectionne);
     	
     	remarques_traitement_textArea.setText(tacheTraitementSelectionne.getRemarques());
 		complement_textField.setText(tacheTraitementSelectionne.getComplement());

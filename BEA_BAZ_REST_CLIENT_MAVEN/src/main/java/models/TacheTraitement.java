@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.pdfbox.util.operator.SetNonStrokingCMYKColor;
 import org.bson.types.ObjectId;
 import utils.RestAccess;
 import javafx.scene.image.Image;
@@ -26,7 +29,7 @@ public class TacheTraitement extends Commun{
 	private String complement;
 	private Map<String, String> produitsLies;
 	private Set<String> produitsLies_names;
-	private Set<String> produitsLies_id;
+	private String nom_complet;
 	@JsonIgnore
 	private Traitement traitementOriginal;
     
@@ -42,6 +45,11 @@ public class TacheTraitement extends Commun{
     	traitementOriginal = t;
     	fait_ = Progression.TODO_;
     	setNom(t.getNom());
+    	nom_complet = t.getNom_complet();
+    	setRemarques(null);
+    	setComplement(null);
+    	produitsLies_names = new HashSet<>();
+    	//setCreated_at(new Date().toString());
     	  	
     }
 
@@ -103,19 +111,15 @@ public class TacheTraitement extends Commun{
 		this.complement = complement;
 	}
     
-	@JsonIgnore
+	//@JsonIgnore
 	public Traitement getTraitement(){
 		
-		if (traitement_id != null && traitement_id != "null"){
-			System.out.println("traitement_id : " + traitement_id);
-			
+		if (traitement_id != null && traitement_id != "null"){			
 			if (traitementOriginal == null){
 				traitementOriginal = Messages.getTous_les_traitements_map_by_id().get(traitement_id);
 			}
 		}
 		else {
-            System.out.println("traitement_name : " + getNom());
-			
 			if (traitementOriginal == null){
 				traitementOriginal = Messages.getTous_les_traitements_map_by_name().get(getNom());
 			}
@@ -145,15 +149,13 @@ public class TacheTraitement extends Commun{
 		this.supp = supp;
 	}
 	
-	@JsonIgnore
 	public String getNom_complet(){
 		if (this.getTraitement() != null){
-			return this.getTraitement().getNom_complet() + this.getComplement() != null ? " " + this.getComplement() : "";
+			return this.getTraitement().getNom_complet();
 		}
 		else {
 			return getNom();
-		}
-		
+		}		
 	}
 	
 	public Progression getFait_(){
@@ -174,9 +176,6 @@ public class TacheTraitement extends Commun{
 	@JsonIgnore
 	public  Collection<String> getProduitsLies_id() {
 		return produitsLies.values();
-	}
-	public void setProduitsLies_id(Set<String> produitsLies_id) {
-		this.produitsLies_id = produitsLies_id;
 	}
 
 	public void addProduitLie(Produit produitLie) {
