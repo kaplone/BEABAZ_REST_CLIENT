@@ -157,6 +157,7 @@ public class Fiche_produit_controller extends Fiche_controller implements Initia
 			rafraichirAffichage();
 		}
 		
+		Messages.resetTous_les_produits();
 		super.onMiseAJourButton();
 	}
 

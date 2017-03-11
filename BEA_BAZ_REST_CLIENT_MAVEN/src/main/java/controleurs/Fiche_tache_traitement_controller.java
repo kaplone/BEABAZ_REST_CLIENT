@@ -209,8 +209,15 @@ public class Fiche_tache_traitement_controller extends Fiche_controller implemen
     	
     	remarques_traitement_textArea.setText(tacheTraitementSelectionne.getRemarques());
 		complement_textField.setText(tacheTraitementSelectionne.getComplement());
-		nom_label.setText(tacheTraitementSelectionne.getNom());
-		t_label.setText(tacheTraitementSelectionne.getTraitement().getNom_complet());
+		nom_label.setText(tacheTraitementSelectionne.getNom());		
+		
+		if (tacheTraitementSelectionne.getTraitement() != null){
+			t_label.setText(tacheTraitementSelectionne.getTraitement().getNom_complet());
+		}
+		else {
+			t_label.setText(tacheTraitementSelectionne.getNom_complet());
+		}
+		
     }
     
     public void afficherProgression(){
@@ -362,8 +369,16 @@ public class Fiche_tache_traitement_controller extends Fiche_controller implemen
 
 		traitementSource = tacheTraitementSelectionne.getTraitement();
 		
+		System.out.println("traitementSource : " + traitementSource);
+		
 		ot_label.setText(ot.getNom());
-		t_label.setText(traitementSource.getNom());
+		if (traitementSource != null){
+			t_label.setText(traitementSource.getNom());
+		}
+		else {
+			t_label.setText(tacheTraitementSelectionne.getNom());
+		}
+		
 
 		liste_produits  = FXCollections.observableArrayList();
 		liste_pre_produits  = FXCollections.observableArrayList();

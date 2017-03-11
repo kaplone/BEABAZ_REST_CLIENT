@@ -111,21 +111,6 @@ public class Traitement extends Commun{
 		return c;
 	}
 	
-	public static Traitement retrouveTraitement(ObjectId id){
-
-        String traitement_str= RestAccess.request("traitement", id);
-        Traitement c = null;
-		
-		try {
-			  c = Commun.getMapper().readValue(traitement_str, Traitement.class);
-		  }
-		  catch (IOException e) {
-			  
-	    }
-		
-		return c;
-	}
-	
 	public static Traitement[] retrouveTraitements(){
 		
 		if (c == null){

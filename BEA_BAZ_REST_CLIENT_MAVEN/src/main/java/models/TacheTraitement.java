@@ -10,7 +10,10 @@ import org.bson.types.ObjectId;
 import utils.RestAccess;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import enums.Progression;
 
@@ -24,7 +27,7 @@ public class TacheTraitement extends Commun{
 	private Map<String, String> produitsLies;
 	private Set<String> produitsLies_names;
 	private Set<String> produitsLies_id;
-	
+	@JsonIgnore
 	private Traitement traitementOriginal;
     
     private boolean supp; 
@@ -36,8 +39,9 @@ public class TacheTraitement extends Commun{
     public TacheTraitement(Traitement t){
     	produitsLies = new HashMap<>();
     	traitement_id = t.get_id();
+    	traitementOriginal = t;
     	fait_ = Progression.TODO_;
-    	super.setNom(t.getNom());
+    	setNom(t.getNom());
     	  	
     }
 
@@ -98,16 +102,28 @@ public class TacheTraitement extends Commun{
 	public void setComplement(String complement) {
 		this.complement = complement;
 	}
-
+    
+	@JsonIgnore
 	public Traitement getTraitement(){
 		
-		if (traitementOriginal == null){
-			traitementOriginal = Traitement.retrouveTraitement(traitement_id);
+		if (traitement_id != null && traitement_id != "null"){
+			System.out.println("traitement_id : " + traitement_id);
+			
+			if (traitementOriginal == null){
+				traitementOriginal = Messages.getTous_les_traitements_map_by_id().get(traitement_id);
+			}
 		}
-		
+		else {
+            System.out.println("traitement_name : " + getNom());
+			
+			if (traitementOriginal == null){
+				traitementOriginal = Messages.getTous_les_traitements_map_by_name().get(getNom());
+			}
+		}	
 		return traitementOriginal;
 	}
 	
+	@JsonIgnore
 	public ImageView getIcone_progression() {
 		
 		
@@ -129,8 +145,15 @@ public class TacheTraitement extends Commun{
 		this.supp = supp;
 	}
 	
+	@JsonIgnore
 	public String getNom_complet(){
-		return this.getTraitement().getNom_complet() + this.getComplement() != null ? " " + this.getComplement() : "";
+		if (this.getTraitement() != null){
+			return this.getTraitement().getNom_complet() + this.getComplement() != null ? " " + this.getComplement() : "";
+		}
+		else {
+			return getNom();
+		}
+		
 	}
 	
 	public Progression getFait_(){
@@ -139,7 +162,8 @@ public class TacheTraitement extends Commun{
 	public void setFait_(Progression p){
 		fait_ = p;
 	}
-
+    
+	@JsonIgnore
 	public Set<String> getProduitsLies_names() {
 		return produitsLies_names;
 	}
@@ -147,6 +171,7 @@ public class TacheTraitement extends Commun{
 		this.produitsLies_names = produitsLies_names;
 	}
 	
+	@JsonIgnore
 	public  Collection<String> getProduitsLies_id() {
 		return produitsLies.values();
 	}

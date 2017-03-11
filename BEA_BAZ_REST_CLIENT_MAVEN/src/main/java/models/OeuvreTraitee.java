@@ -2,6 +2,7 @@ package models;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -45,9 +46,9 @@ public class OeuvreTraitee extends Commun {
     
     private String cote;
     
-    private Set<String> traitementsAttendus_id;
-    private Set<String> traitementsAttendus_names;
-    private Set<TacheTraitement> traitementsAttendus_obj;
+    private List<String> traitementsAttendus_id;
+    private List<String> traitementsAttendus_names;
+    private List<TacheTraitement> traitementsAttendus_obj;
     
     @JsonIgnore
     private static Commande commande;
@@ -64,6 +65,7 @@ public class OeuvreTraitee extends Commun {
 		this.etat = etat;
 	}
 	
+	@JsonIgnore
 	public Fichier getFichierAffiche () {
 
     	String fichier_id = null;
@@ -106,32 +108,37 @@ public class OeuvreTraitee extends Commun {
 	public void setProgressionOeuvreTraitee(Progression progressionOeuvreTraitee) {
 		this.progressionOeuvreTraitee = progressionOeuvreTraitee;
 	}
-	public Set<String> getTraitementsAttendus_names() {
+	public List<String> getTraitementsAttendus_names() {
 
     	return traitementsAttendus_names;
 	}
 	
-	public Set<String> getTraitementsAttendus_id() {
+	public List<String> getTraitementsAttendus_id() {
 
     	return traitementsAttendus_id;
 	}
-	
-	public Set<TacheTraitement> getTraitementsAttendus_obj() {
+    
+	//@JsonIgnore
+	public List<TacheTraitement> getTraitementsAttendus_obj() {
 	
     	return traitementsAttendus_obj;
 	}
 	
-	public void setTraitementsAttendus_names(Set<String> traitementsAttendus_names) {
+	public void setTraitementsAttendus_names(List<String> traitementsAttendus_names) {
 
     	this.traitementsAttendus_names = traitementsAttendus_names;
 	}
 	
-	public void setTraitementsAttendus_id(Set<String> traitementsAttendus_id) {
+	public void setTraitementsAttendus_id(List<String> traitementsAttendus_id) {
 
     	this.traitementsAttendus_id = traitementsAttendus_id;
 	}
 	
-	public void setTraitementsAttendus_obj(Set<TacheTraitement> traitementsAttendus_obj) {
+	public void setTraitementsAttendus_obj(List<TacheTraitement> traitementsAttendus_obj) {
+		
+		System.out.println("__" + traitementsAttendus_obj);
+		System.out.println("__" + traitementsAttendus_obj.size());
+		System.out.println("__" + traitementsAttendus_obj.iterator().next());
 	
     	this.traitementsAttendus_obj = traitementsAttendus_obj;
 	}
@@ -148,7 +155,7 @@ public class OeuvreTraitee extends Commun {
     	this.traitementsAttendus.add(map);
 	}
 
-
+	@JsonIgnore
 	public ImageView getIcone_progression() {
 		
         Image image = new Image(progressionOeuvreTraitee.getUsedImage());
@@ -183,6 +190,7 @@ public class OeuvreTraitee extends Commun {
 		this.complement_etat = complement_etat;
 	}
 	
+	@JsonIgnore
 	public Oeuvre getOeuvre(){
 
 		return Oeuvre.retrouveOeuvre(new ObjectId(oeuvre_id));
@@ -207,7 +215,8 @@ public class OeuvreTraitee extends Commun {
 	public String getCommande_id() {
 		return commande_id;
 	}
-
+    
+	@JsonIgnore
 	public Commande getCommande() {
 		if(commande == null){
 			commande = Commande.retrouveCommande(new ObjectId(commande_id));

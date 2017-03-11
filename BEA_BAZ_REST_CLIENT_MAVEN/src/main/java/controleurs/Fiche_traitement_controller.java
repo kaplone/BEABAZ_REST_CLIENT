@@ -181,6 +181,10 @@ public class Fiche_traitement_controller extends Fiche_controller implements Ini
 							setDisable(true);
 							setOpacity(0.5);
 						}
+						else {
+							setDisable(false);
+							setOpacity(1);
+						}
 					}
 				}
 			};
@@ -250,6 +254,7 @@ public class Fiche_traitement_controller extends Fiche_controller implements Ini
 			rafraichirAffichage();
 		}
 		
+		Messages.resetTous_les_traitements();
 		super.onMiseAJourButton();
 	}
 

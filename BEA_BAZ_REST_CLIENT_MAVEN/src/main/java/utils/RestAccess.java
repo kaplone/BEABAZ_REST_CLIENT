@@ -95,6 +95,8 @@ public class RestAccess {
 			e.printStackTrace();
 		}
 		
+		System.out.println(reponse);
+		
 		return reponse;
 		
 	}

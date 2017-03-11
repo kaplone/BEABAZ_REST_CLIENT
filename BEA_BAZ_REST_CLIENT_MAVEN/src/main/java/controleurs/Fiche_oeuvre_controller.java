@@ -172,9 +172,11 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 	private ObservableList<TacheTraitement> traitementsUtilisees_obs;
 	private ObservableList<TacheTraitement> traitementsAttendus;
 
-	private Set<String> matieresUtilisees;
-	private Set<String> techniquesUtilisees;
-	private Set<String> traitementsUtilisees;
+	private List<String> matieresUtilisees;
+	private List<String> techniquesUtilisees;
+	private List<String> traitementsUtilisees;
+	
+	private static List<Auteur> auteurs;
 
 	private Map<String, Traitement> map_traitements;
 	private Map<String, TacheTraitement> map_tacheTraitements;
@@ -232,8 +234,9 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 
 	public void afficherTraitements() {
 
-		traitements_all = Messages.getTous_les_traitements();
+		traitements_all.setAll(Messages.getTous_les_traitements());
 		traitements_all.forEach(a -> map_traitements.put(a.getNom(), a));
+		
 		miseAJourAffichageTraitements();
 	}
 
@@ -257,6 +260,10 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 						if (traitementsUtilisees.contains(item.getNom())) {
 							setDisable(true);
 							setOpacity(0.5);
+						}
+						else {
+							setDisable(false);
+							setOpacity(1);
 						}
 					}
 				}
@@ -301,9 +308,21 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 
 	public void afficherAuteurs() {
 
-		Contexte.getFiche_commande_controller().afficherAuteurs();
-		auteursChoiceBox.setItems(observableAuteurs);
-		auteursChoiceBox.getSelectionModel().select(auteur.getNom());
+		if (auteurs == null){
+	    	observableAuteurs = FXCollections.observableArrayList();
+	    	auteurs = Arrays.asList(Auteur.retrouveAuteurs());
+	    	observableAuteurs.add(null);
+	    	for (Auteur auteur : auteurs){
+				observableAuteurs.add(auteur.getNom());
+			}
+	    }
+
+	    
+	    auteursChoiceBox.setItems(observableAuteurs);
+
+		if (oeuvreSelectionneObj.getAuteur() != null){
+			auteursChoiceBox.getSelectionModel().select(oeuvreSelectionneObj.getAuteur());
+		}
 	}
 
 	@FXML
@@ -324,7 +343,6 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 	@FXML
 	public void onMiseAJourOeuvreButton() {
 		
-
 		oeuvreSelectionneObj.setCote_archives_6s(numero_archive_6s_textField.getText());
 		oeuvreSelectionneObj.setTitre_de_l_oeuvre(titre_textField.getText());
 		oeuvreSelectionneObj.setDate(date_oeuvre_textField.getText());
@@ -332,8 +350,11 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		oeuvreSelectionneObj.setInscriptions_au_verso(inscriptions_textArea.getText());
 		oeuvreSelectionneObj.setAuteur(auteursChoiceBox.getSelectionModel().getSelectedItem());
 
-		oeuvreTraiteeSelectionneObj.setAlterations(new ArrayList<>(
-				Arrays.asList(degradations_textArea.getText().split(System.getProperty("line.separator")))));
+		if (degradations_textArea.getText() != null){
+			String[] listeAlterations = degradations_textArea.getText().split(System.getProperty("line.separator"));
+			oeuvreTraiteeSelectionneObj.setAlterations(new ArrayList<>(Arrays.asList(listeAlterations)));
+		}
+				
 		oeuvreTraiteeSelectionneObj.setObservations(observations_textArea.getText());
 		oeuvreTraiteeSelectionneObj.setRemarques(remarques_textArea.getText());
 		oeuvreTraiteeSelectionneObj.setEtat(etat_final_choiceBox.getSelectionModel().getSelectedItem());
@@ -365,7 +386,7 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 
 	public void afficherOeuvres() {
 
-		Contexte.getFiche_commande_controller().afficherOeuvres();
+		obs_oeuvres = Contexte.getFiche_commande_controller().afficherOeuvres();
 		oeuvres_nom_colonne.setCellValueFactory(
 				data -> new SimpleStringProperty(data.getValue().get("oeuvresTraitee_string").toString()));
 		oeuvres_fait_colonne.setCellValueFactory(data -> new SimpleObjectProperty<ImageView>(getImageView(data)));
@@ -425,6 +446,10 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 							setDisable(true);
 							setOpacity(0.5);
 						}
+						else {
+							setDisable(false);
+							setOpacity(1);
+						}
 					}
 				}
 			};
@@ -480,6 +505,10 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 						if (matieresUtilisees_obs.contains(item)) {
 							setDisable(true);
 							setOpacity(0.5);
+						}
+						else {
+							setDisable(false);
+							setOpacity(1);
 						}
 					}
 				}
@@ -771,6 +800,9 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		traitementsUtilisees_obs = FXCollections.observableArrayList();
 		map_traitements = new HashMap<>();
 		map_tacheTraitements = new HashMap<>();
+		
+		System.out.println("oeuvreTraiteeSelectionneObj : " + oeuvreTraiteeSelectionneObj);
+		System.out.println("oeuvreTraiteeSelectionneObj.getTraitementsAttendus_obj() : " + oeuvreTraiteeSelectionneObj.getTraitementsAttendus_obj());
 		
 		traitementsUtilisees_obs.setAll(oeuvreTraiteeSelectionneObj.getTraitementsAttendus_obj());
 		traitementsUtilisees_obs.forEach(a -> map_tacheTraitements.put(a.getNom(), a));

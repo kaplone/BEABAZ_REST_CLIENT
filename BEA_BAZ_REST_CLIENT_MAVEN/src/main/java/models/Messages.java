@@ -1,5 +1,6 @@
 package models;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -7,6 +8,7 @@ import java.util.stream.Collectors;
 import org.bson.types.ObjectId;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.mongodb.util.Hash;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -119,6 +121,10 @@ public class Messages {
 		}		
 		return tous_les_noms_de_produits;
 	}
+    public static void resetTous_les_produits(){
+		tous_les_produits = null;
+		tous_les_noms_de_produits = null;
+	}
 
 	public static TacheTraitement getTraitementSelectionne() {
 		return traitementSelectionne;
@@ -135,6 +141,26 @@ public class Messages {
 		}		
 		return tous_les_traitements;
 	}
-    
+	
+	public static Map<String, Traitement> getTous_les_traitements_map_by_name() {
+		
+		Map<String, Traitement> tltm = new HashMap<>();
+		
+		getTous_les_traitements().forEach(a -> tltm.put(a.getNom(), a));
+	
+		return tltm;
+	}
+	
+    public static Map<String, Traitement> getTous_les_traitements_map_by_id() {
+		
+		Map<String, Traitement> tltm = new HashMap<>();
+		
+		getTous_les_traitements().forEach(a -> tltm.put(a.get_id(), a));
+	
+		return tltm;
+	}
+	public static void resetTous_les_traitements(){
+		tous_les_traitements = null;
+	}
     
 }

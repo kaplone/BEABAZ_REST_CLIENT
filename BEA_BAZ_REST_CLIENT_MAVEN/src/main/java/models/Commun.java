@@ -39,6 +39,7 @@ public abstract class Commun {
 	
 	public void update(String table){
         makeStringResult();
+        System.out.println("StringResult = " + stringResult);
 		RestAccess.update(table, stringResult);
 	}
 	

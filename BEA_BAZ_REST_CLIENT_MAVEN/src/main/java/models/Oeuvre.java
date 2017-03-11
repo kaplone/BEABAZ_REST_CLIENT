@@ -1,7 +1,9 @@
 package models;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -10,6 +12,7 @@ import org.bson.types.ObjectId;
 
 import utils.RestAccess;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -48,6 +51,7 @@ public class Oeuvre extends Commun{
 //	}
 	
 	@Override
+	@JsonIgnore
 	public String getNom(){
 		
 		if(getCote_archives_6s().equals("SN")){
@@ -196,8 +200,9 @@ public class Oeuvre extends Commun{
 		return auteur;
 	}
 	
+	@JsonIgnore
 	public Auteur getAuteur_obj() {
-		return Auteur.retrouveAuteur(new ObjectId(this.getAuteur()));
+		return Auteur.retrouveAuteur_by_name("_id", getAuteur());
 	}
 
 	public void setAuteur(String auteur) {
@@ -215,13 +220,15 @@ public class Oeuvre extends Commun{
 	public void AddMatiereUtilisee(Matiere matiereUtilisee) {
 		this.matieresUtilisees_id.put(matiereUtilisee.getNom(), matiereUtilisee.get_id().toString());
 	}
-
-	public Set<String> getTechniquesUtilisees_names() {
-		return techniquesUtilisees_id.keySet();
+    
+	@JsonIgnore
+	public List<String> getTechniquesUtilisees_names() {
+		return new ArrayList<>(techniquesUtilisees_id.keySet());
 	}
 	
-	public Set<String> getMatieresUtilisees_names() {
-		return matieresUtilisees_id.keySet();
+	@JsonIgnore
+	public List<String> getMatieresUtilisees_names() {
+		return new ArrayList<>(matieresUtilisees_id.keySet());
 	}
 
 	public void addTechniqueUtilisee(Technique techniqueUtilisee) {
@@ -231,7 +238,7 @@ public class Oeuvre extends Commun{
 	public void addMatiereUtilisee(Matiere matiereUtilisee) {
 		this.matieresUtilisees_id.put(matiereUtilisee.getNom(), matiereUtilisee.get_id().toString());
 	}
-
+	@JsonIgnore 
 	public Map<String, String> getMatieresUtilisees_id() {
 		return matieresUtilisees_id;
 	}
@@ -239,7 +246,8 @@ public class Oeuvre extends Commun{
 	public void setMatieresUtilisees_id(Map<String, String> matieresUtilisees_id) {
 		this.matieresUtilisees_id = matieresUtilisees_id;
 	}
-
+	
+	@JsonIgnore
 	public Map<String, String> getTechniquesUtilisees_id() {
 		return techniquesUtilisees_id;
 	}
@@ -248,6 +256,7 @@ public class Oeuvre extends Commun{
 		this.techniquesUtilisees_id = techniquesUtilisees_id;
 	}
 	
+	@JsonIgnore
 	public String getTechniquesUtilisees_noms_complets(){
 
 		return getTechniquesUtilisees_id().entrySet()
@@ -256,7 +265,7 @@ public class Oeuvre extends Commun{
                                           .getNom_complet())
                                           .collect(Collectors.joining(", "));
 	}
-	
+	@JsonIgnore
     public String getMatieresUtilisees_noms_complets(){
 
 		return getMatieresUtilisees_id().entrySet()

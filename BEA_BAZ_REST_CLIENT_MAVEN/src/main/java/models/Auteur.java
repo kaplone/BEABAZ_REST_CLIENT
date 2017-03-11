@@ -22,15 +22,10 @@ public class Auteur extends Commun{
 	public void setNom_complet(String nom_complet) {
 		this.nom_complet = nom_complet;
 	}
-    
-	public static ObjectId retrouveId(String auteurSelectionne){
-
-		return new ObjectId(retrouveAuteur(auteurSelectionne).get_id());
-	}
 	
-	public static Auteur retrouveAuteur(String auteurSelectionne){
+	public static Auteur retrouveAuteur_by_id(ObjectId id){
 
-        String auteur_str= RestAccess.request("auteur", "nom", auteurSelectionne);
+        String auteur_str= RestAccess.request("auteur", id);
         Auteur a = null;
 		
 		try {
@@ -42,9 +37,9 @@ public class Auteur extends Commun{
 		return a;
 	}
 	
-	public static Auteur retrouveAuteur(ObjectId id){
+	public static Auteur retrouveAuteur_by_name(String key, String value){
 
-        String auteur_str= RestAccess.request("auteur", id);
+        String auteur_str= RestAccess.request("auteur", key, value);
         Auteur a = null;
 		
 		try {

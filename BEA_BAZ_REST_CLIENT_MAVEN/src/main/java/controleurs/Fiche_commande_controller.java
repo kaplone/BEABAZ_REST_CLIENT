@@ -292,6 +292,10 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
 							setDisable(true);
 							setOpacity(0.5);
 						}
+						else {
+							setDisable(false);
+							setOpacity(1);
+						}
 					}
 				}
 			};
@@ -342,7 +346,7 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
     public Comparator<? super Map<String, Object>> otTrieeParNom = 
     		(Map<String, Object> o1, Map<String, Object> o2)-> o1.get("oeuvresTraitee_string").toString().compareTo(o2.get("oeuvresTraitee_string").toString());
     
-    public void afficherOeuvres(){
+    public ObservableList<Map<String, String>> afficherOeuvres(){
         
     	if(obs_oeuvres == null){
     		try {
@@ -357,6 +361,8 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
     	oeuvres_nom_colonne.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get("oeuvresTraitee_string").toString()));
 		oeuvres_fait_colonne.setCellValueFactory(data -> new SimpleObjectProperty<ImageView>(getImageView(data)));
 		tableOeuvre.setItems(obs_oeuvres);
+		
+		return obs_oeuvres;
 	}
     
     public ImageView getImageView(CellDataFeatures<Map<String, String>, ImageView> data){
