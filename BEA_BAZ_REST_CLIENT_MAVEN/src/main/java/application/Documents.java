@@ -619,5 +619,7 @@ public class Documents {
         documentJson.put("document", jsonObjectRows);
         jsonObjectFile = new JSONObject(documentJson);
         System.out.println(jsonObjectFile);
+        
+        RestAccess.importFromDocument(jsonObjectFile.toString());
 	}
 }

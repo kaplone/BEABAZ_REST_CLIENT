@@ -207,4 +207,14 @@ public class RestAccess {
 		
     	return traitementReponsePost();
 	}
+	
+    public static String importFromDocument (String c) {
+		
+		requestPost = new HttpPost(String.format("%s/ajout", adresse));
+
+		StringEntity se = new StringEntity(c, "UTF-8");
+		requestPost.setEntity(se);
+		
+    	return traitementReponsePost();
+	}
 }
