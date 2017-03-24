@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,6 +25,7 @@ import javafx.collections.ObservableList;
 import models.Auteur;
 import models.Client;
 import models.Commande;
+import models.Commun;
 import models.Matiere;
 import models.Messages;
 import models.Model;
@@ -45,6 +47,7 @@ import org.jongo.MongoCursor;
 import org.jongo.marshall.MarshallingException;
 import org.jongo.marshall.jackson.JacksonMapper;
 import org.jongo.marshall.jackson.oid.MongoObjectId;
+import org.json.JSONObject;
 
 import utils.RestAccess;
 import utils.Normalize;
@@ -57,17 +60,35 @@ import com.mongodb.util.JSON;
 public class Documents {
 	
 	private static Commande commande;
-	private static ObjectId commande_id;
+	private static String commande_id;
 	private static ArrayList<String> alterations ;
 	
 	private static MongoCursor<TacheTraitement> traitementCursor;
 	private static MongoCursor<Traitement> tousLesTraitementsCursor;
-	private static Map<String, ObjectId> tousLesTraitements_id;
+	private static Map<String, String> tousLesTraitements_id;
 	private static ObservableList<String> liste_traitements;
 	
-	private static Map<String, ObjectId> listeOeuvresTraitees_id;
+	private static Map<String, String> listeOeuvresTraitees_id;
 	
 	private static StringProperty bindedLabel = new SimpleStringProperty(); 
+	
+	private static Iterator<Row> rowIterator;
+	private static Row row;
+	private static Iterator<Cell> cellIterator;
+	private static Cell cell;	
+	
+	private static JSONObject jsonObjectFile;
+	private static JSONObject jsonObjectOeuvre;	
+	private static JSONObject jsonObjectOeuvreTraitee;	
+	private static JSONObject jsonObjectRow;	
+	private static List<JSONObject> jsonObjectRows;
+	private static Map<String, List<JSONObject>> documentJson;
+	
+	private static Map<String, JSONObject> contenuRow;
+	private static Map<String, String> contenuRowOeuvre;
+	private static Map<String, String> contenuRowOeuvreTraitee;
+    
+    
 
 	public static void read(File file_, String table_) throws IOException {
 		
@@ -116,19 +137,19 @@ public class Documents {
 	        	case "produit" :
 	
 		        	try {
-		                if (utils.MongoAccess.request(table_, "nom_complet", row.getCell(0).getStringCellValue()).as(Classes.valueOf(table_).getUsedClass()) != null){
-		                	
-		                	p = (Produit) utils.MongoAccess.request(table_, "nom_complet", row.getCell(0).getStringCellValue()).as(Classes.valueOf(table_).getUsedClass());
-		                	update = true;
-		                }
-		                else {
-		                	
-		                	p = new Produit();
-		                    string_produit = "";
-		                    string_produit_liste.clear();
-		                    
-		                    update = false;
-		                }
+//		                if (utils.MongoAccess.request(table_, "nom_complet", row.getCell(0).getStringCellValue()).as(Classes.valueOf(table_).getUsedClass()) != null){
+//		                	
+//		                	p = (Produit) utils.MongoAccess.request(table_, "nom_complet", row.getCell(0).getStringCellValue()).as(Classes.valueOf(table_).getUsedClass());
+//		                	update = true;
+//		                }
+//		                else {
+//		                	
+//		                	p = new Produit();
+//		                    string_produit = "";
+//		                    string_produit_liste.clear();
+//		                    
+//		                    update = false;
+//		                }
 		        	}
 		
 		        	catch (NullPointerException mpe){
@@ -142,11 +163,11 @@ public class Documents {
 		        	}
 		        	
 		        	if (update) {
-		        		p.setUpdated_at(new Date());
+//		        		p.setUpdated_at(new Date());
 		        	}
 		        	else{
 		        		
-		        		p.setCreated_at(new Date());
+//		        		p.setCreated_at(new Date());
 			            
 			            //For each row, iterate through all the columns
 			            Iterator<Cell> cellIterator = row.cellIterator();
@@ -185,7 +206,7 @@ public class Documents {
 
 				            p = mapper.readValue(string_produit, Produit.class);
 				            
-				            utils.MongoAccess.save("produit", p);
+//				            utils.MongoAccess.save("produit", p);
 			            	
 			            }
 			            
@@ -195,19 +216,19 @@ public class Documents {
 	        case "traitement" :
 	        	
 	        	try {
-	                if (utils.MongoAccess.request(table_, "nom_complet", row.getCell(0).getStringCellValue()).as(Classes.valueOf(table_).getUsedClass()) != null){
-	                	
-	                	t = (Traitement) utils.MongoAccess.request(table_, "nom_complet", row.getCell(0).getStringCellValue()).as(Classes.valueOf(table_).getUsedClass());
-	                	update = true;
-	                }
-	                else {
-	                	
-	                	t = new Traitement();
-	                    string_traitement = "";
-	                    string_traitement_liste.clear();
-	                    
-	                    update = false;
-	                }
+//	                if (utils.MongoAccess.request(table_, "nom_complet", row.getCell(0).getStringCellValue()).as(Classes.valueOf(table_).getUsedClass()) != null){
+//	                	
+//	                	t = (Traitement) utils.MongoAccess.request(table_, "nom_complet", row.getCell(0).getStringCellValue()).as(Classes.valueOf(table_).getUsedClass());
+//	                	update = true;
+//	                }
+//	                else {
+//	                	
+//	                	t = new Traitement();
+//	                    string_traitement = "";
+//	                    string_traitement_liste.clear();
+//	                    
+//	                    update = false;
+//	                }
 	        	}
 	
 	        	catch (NullPointerException mpe){
@@ -220,11 +241,11 @@ public class Documents {
 	        	}
 	        	
 	        	if (update) {
-	        		t.setUpdated_at(new Date());
+//	        		t.setUpdated_at(new Date());
 	        	}
 	        	else{
 	        		
-	        		t.setCreated_at(new Date());
+//	        		t.setCreated_at(new Date());
 		            
 		            //For each row, iterate through all the columns
 		            Iterator<Cell> cellIterator = row.cellIterator();
@@ -263,7 +284,7 @@ public class Documents {
 
 			            t = (Traitement) mapper.readValue(string_traitement, Classes.valueOf(table_).getUsedClass());
 			            
-			            utils.MongoAccess.save(table_, t);
+//			            utils.MongoAccess.save(table_, t);
 		            	
 		            }
 		            
@@ -274,19 +295,19 @@ public class Documents {
             case "technique" :
 	        	
 	        	try {
-	                if (utils.MongoAccess.request(table_, "nom_complet", row.getCell(0).getStringCellValue()).as(Classes.valueOf(table_).getUsedClass()) != null){
-	                	
-	                	te = (Technique) utils.MongoAccess.request(table_, "nom_complet", row.getCell(0).getStringCellValue()).as(Classes.valueOf(table_).getUsedClass());
-	                	update = true;
-	                }
-	                else {
-	                	
-	                	te = new Technique();
-	                    string_technique = "";
-	                    string_technique_liste.clear();
-	                    
-	                    update = false;
-	                }
+//	                if (utils.MongoAccess.request(table_, "nom_complet", row.getCell(0).getStringCellValue()).as(Classes.valueOf(table_).getUsedClass()) != null){
+//	                	
+//	                	te = (Technique) utils.MongoAccess.request(table_, "nom_complet", row.getCell(0).getStringCellValue()).as(Classes.valueOf(table_).getUsedClass());
+//	                	update = true;
+//	                }
+//	                else {
+//	                	
+//	                	te = new Technique();
+//	                    string_technique = "";
+//	                    string_technique_liste.clear();
+//	                    
+//	                    update = false;
+//	                }
 	        	}
 	
 	        	catch (NullPointerException mpe){
@@ -299,11 +320,11 @@ public class Documents {
 	        	}
 	        	
 	        	if (update) {
-	        		te.setUpdated_at(new Date());
+//	        		te.setUpdated_at(new Date());
 	        	}
 	        	else{
 	        		
-	        		te.setCreated_at(new Date());
+//	        		te.setCreated_at(new Date());
 		            
 		            //For each row, iterate through all the columns
 		            Iterator<Cell> cellIterator = row.cellIterator();
@@ -342,7 +363,7 @@ public class Documents {
 
 			            te = (Technique) mapper.readValue(string_technique, Classes.valueOf(table_).getUsedClass());
 			            
-			            utils.MongoAccess.save(table_, te);
+//			            utils.MongoAccess.save(table_, te);
 		            	
 		            }
 		            
@@ -353,19 +374,19 @@ public class Documents {
              case "matiere" :
 	        	
 	        	try {
-	                if (utils.MongoAccess.request(table_, "nom_complet", row.getCell(0).getStringCellValue()).as(Classes.valueOf(table_).getUsedClass()) != null){
-	                	
-	                	m = (Matiere) utils.MongoAccess.request(table_, "nom_complet", row.getCell(0).getStringCellValue()).as(Classes.valueOf(table_).getUsedClass());
-	                	update = true;
-	                }
-	                else {
-	                	
-	                	m = new Matiere();
-	                    string_matiere = "";
-	                    string_matiere_liste.clear();
-	                    
-	                    update = false;
-	                }
+//	                if (utils.MongoAccess.request(table_, "nom_complet", row.getCell(0).getStringCellValue()).as(Classes.valueOf(table_).getUsedClass()) != null){
+//	                	
+//	                	m = (Matiere) utils.MongoAccess.request(table_, "nom_complet", row.getCell(0).getStringCellValue()).as(Classes.valueOf(table_).getUsedClass());
+//	                	update = true;
+//	                }
+//	                else {
+//	                	
+//	                	m = new Matiere();
+//	                    string_matiere = "";
+//	                    string_matiere_liste.clear();
+//	                    
+//	                    update = false;
+//	                }
 	        	}
 	
 	        	catch (NullPointerException mpe){
@@ -378,11 +399,11 @@ public class Documents {
 	        	}
 	        	
 	        	if (update) {
-	        		m.setUpdated_at(new Date());
+//	        		m.setUpdated_at(new Date());
 	        	}
 	        	else{
 	        		
-	        		m.setCreated_at(new Date());
+//	        		m.setCreated_at(new Date());
 		            
 		            //For each row, iterate through all the columns
 		            Iterator<Cell> cellIterator = row.cellIterator();
@@ -421,7 +442,7 @@ public class Documents {
 
 			            m = (Matiere) mapper.readValue(string_matiere, Classes.valueOf(table_).getUsedClass());
 			            
-			            utils.MongoAccess.save(table_, m);
+//			            utils.MongoAccess.save(table_, m);
 		            	
 		            }
 		            
@@ -455,438 +476,148 @@ public class Documents {
 
 	public static void read(File file_) throws IOException {
 		
-		liste_traitements = FXCollections.observableArrayList();
-		listeOeuvresTraitees_id = new TreeMap<>();
-
-		traitementCursor = MongoAccess.request("tacheTraitement").as(TacheTraitement.class);
-		tousLesTraitementsCursor = MongoAccess.request("traitement").as(Traitement.class);
-		
-		tousLesTraitements_id = new TreeMap<>();
-		
-		while (tousLesTraitementsCursor.hasNext()){
-			
-			Traitement t = tousLesTraitementsCursor.next();
-			
-			liste_traitements.add(t.getNom());
-			tousLesTraitements_id.put(t.getNom(), t.get_id());
-		}
-
-
-		
 		commande_id = Messages.getCommande().get_id();
-		
-		System.out.println(commande_id);
-		commande = MongoAccess.request("commande", commande_id).as(Commande.class).next();
-		
-		boolean titres = true;
-		boolean update = false;
-		
-		ArrayList<String> noms_titres = new ArrayList<>();
-		ArrayList<String> noms_titres_bruts = new ArrayList<>();
+
+		jsonObjectRows = new ArrayList<>();
 		
 		FileInputStream file = new FileInputStream(file_);
-		
-		int nb_colonnes = 0;
-		
-		int index = 0;
-		
-		String string_oeuvre = "";
-		ArrayList<String> string_oeuvre_liste = new ArrayList<>();
-		Oeuvre o = new Oeuvre();
-		OeuvreTraitee ot = new OeuvreTraitee();
-
 		ObjectMapper mapper = new ObjectMapper();
-		 
+ 
         //Create Workbook instance holding reference to .xlsx file
         XSSFWorkbook workbook = new XSSFWorkbook(file);
 
         //Get first/desired sheet from the workbook
         XSSFSheet sheet0 = workbook.getSheetAt(0);
-        XSSFSheet sheet1 = workbook.getSheetAt(1);
 
         //Iterate through each rows one by one
-        Iterator<Row> rowIterator0 = sheet0.iterator();
-        while (rowIterator0.hasNext()){
-        	
-        	ArrayList<String> alterations = new ArrayList<>();
+        rowIterator = sheet0.iterator();
+        while (rowIterator.hasNext()){
 
-        	Row row = rowIterator0.next();
+        	row = rowIterator.next();
         	
-        	if (isRowEmpty(row)){
+        	if (isRowEmpty(row) || row.getRowNum() < 2){
         		continue;
         	}
-        	
-        	boolean st;
-        	
-        	if (! titres){
 
-	        	try {
-	        		// l'oeuvre existe dans la base
-	                if (utils.MongoAccess.request("oeuvre", "cote_archives_6s", row.getCell(1).getStringCellValue()).as(Oeuvre.class) != null){
-	                	
-	                	System.out.print("cas 1");
-	                	System.out.println(row.getCell(1).getStringCellValue());
-	                	
-	                	o = utils.MongoAccess.request("oeuvre", "cote_archives_6s", row.getCell(1).getStringCellValue()).as(Oeuvre.class);
-	                	update = true;
-	                }
-	             // l'oeuvre n'existe pas encore dans la base
-	                else {
-	                	
-	                	System.out.println("cas 2");
-	                	
-	                	o = new Oeuvre();
-	                    string_oeuvre = "";
-	                    string_oeuvre_liste.clear();
-	                    string_oeuvre_liste.add(String.format("\"%s\" : \"%s\"", "auteur", commande.getAuteur().get_id()));
-	                    string_oeuvre_liste.add(String.format("\"%s\" : \"%s\"", "created_at", LocalDate.now()));
-	                    string_oeuvre_liste.add(String.format("\"%s\" : \"%s\"", "updated_at", null));
-	                    string_oeuvre_liste.add(String.format("\"%s\" : \"%s\"", "deleted_at", null));
-	                    string_oeuvre_liste.add(String.format("\"%s\" : \"%s\"", "key1", Normalize.normalizeStringField(row.getCell(4).getStringCellValue())));
-	                    string_oeuvre_liste.add(String.format("\"%s\" : \"%s\"", "key2", Normalize.normalizeStringField(row.getCell(6).getStringCellValue())));
-	                    
-	                    update = false;
-	                }
-	    
-	                
-	        	}
-	        	catch (IllegalStateException ise){
-	        		// l'oeuvre existe dans la base
-	        		if (utils.MongoAccess.request("oeuvre", "cote_archives_6s", (int)Math.round(row.getCell(1).getNumericCellValue()) + "").as(Oeuvre.class) != null){
-	        			
-	        			System.out.println("cas 3");
-	        			
-	        			o = utils.MongoAccess.request("oeuvre", "cote_archives_6s", (int)Math.round(row.getCell(1).getNumericCellValue()) + "").as(Oeuvre.class); 
-	        			update = true;
-	        		}
-	        		// l'oeuvre n'existe pas encore dans la base
-	        		else {
-	        			
-	        			System.out.print("cas 4");
-	        			System.out.println(row.getCell(1).getNumericCellValue() + "");
-	        			
-	        			 o = new Oeuvre();
-	                     string_oeuvre = "";
-	                     string_oeuvre_liste.clear();
-	                     string_oeuvre_liste.add(String.format("\"%s\" : \"%s\"", "commande", commande_id));
-	                     string_oeuvre_liste.add(String.format("\"%s\" : \"%s\"", "auteur", commande.getAuteur().get_id()));
-	                     string_oeuvre_liste.add(String.format("\"%s\" : \"%s\"", "created_at", LocalDate.now()));
-	                     string_oeuvre_liste.add(String.format("\"%s\" : \"%s\"", "updated_at", null));
-	                     string_oeuvre_liste.add(String.format("\"%s\" : \"%s\"", "deleted_at", null));
-	                     string_oeuvre_liste.add(String.format("\"%s\" : \"%s\"", "key1", Normalize.normalizeStringField(row.getCell(4).getStringCellValue())));
-	                     string_oeuvre_liste.add(String.format("\"%s\" : \"%s\"", "key2", Normalize.normalizeStringField(row.getCell(6).getStringCellValue())));
-	                     
-	                     update = false;
-	        		}
-	            }
-	        	catch (NullPointerException mpe){
-	        		
-	        		System.out.println("cas 5");
-	        		
-	        		// l'oeuvre n'existe pas encore dans la base
-	                o = new Oeuvre();
-	                string_oeuvre = "";
-	                string_oeuvre_liste.clear();
-	                string_oeuvre_liste.add(String.format("\"%s\" : \"%s\"", "commande", commande_id));
-	                string_oeuvre_liste.add(String.format("\"%s\" : \"%s\"", "created_at", LocalDate.now()));
-	                string_oeuvre_liste.add(String.format("\"%s\" : \"%s\"", "updated_at", null));
-	                string_oeuvre_liste.add(String.format("\"%s\" : \"%s\"", "deleted_at", null));
-	                string_oeuvre_liste.add(String.format("\"%s\" : \"%s\"", "etat_current", "TODO_"));
-	                
-	                update = false;
-	        		
-	        	}
-        	}
-        	
-        	if (update) {
-        		
-        	}
-        	else{
+        	else {
+        		//For each row, iterate through all the columns
+	            cellIterator = row.cellIterator();
+                
+	            contenuRow = new HashMap<>();
+	            contenuRowOeuvre = new HashMap<>();
+	            contenuRowOeuvreTraitee = new HashMap<>();
+	            contenuRowOeuvreTraitee.put("commande_id", commande_id);
 	            
-	            //For each row, iterate through all the columns
-	            Iterator<Cell> cellIterator = row.cellIterator();
-	
 	            while (cellIterator.hasNext()){
+	            	cell = cellIterator.next();	
+	            	switch (cell.getColumnIndex()) {
 	            	
-	                Cell cell = cellIterator.next();
-	                
-	                // le premier passage est 'à vide'
-	                // c'est la liste des champs
-	                if (titres){
-	            		noms_titres.add(cell.getStringCellValue().equals("") ? String.format("field_%02d", nb_colonnes + 1) : Normalize.normalize(cell.getStringCellValue()));
-	            		noms_titres_bruts.add(cell.getStringCellValue().equals("") ? String.format("field_%02d", nb_colonnes + 1) : Normalize.normalizeLight(cell.getStringCellValue()));
-	            		nb_colonnes = noms_titres.size();
-	            	}
-	                // les valeurs suivantes servent à construire 
-	                // une json string
-	            	else {
-	            		
-		                //Check the cell type and format accordingly
-		                switch (cell.getCellType())
-		                {
-		                    case Cell.CELL_TYPE_NUMERIC:
-	
-	                            string_oeuvre_liste.add(String.format("\"%s\" : \"%s\"", noms_titres.get(index),
-	                            		index == 1 ? (int)Math.round(cell.getNumericCellValue()) + "" : cell.getNumericCellValue() + ""));
-	                         
-		                        break;
-		                        
-		                    case Cell.CELL_TYPE_STRING:
-		                        
-		                        string_oeuvre_liste.add(String.format("\"%s\" : \"%s\"", noms_titres.get(index), Normalize.normalizeStringField(cell.getStringCellValue())));
-		      
-		                        break;
-		                }
-		                index ++; // on  avance dans la liste des champs
-	            	}
-	            }
-	            
-	            index = 0; // on initialise pour la prochaine ligne
-
-	            if (! titres){
-	            	
-	            	string_oeuvre = string_oeuvre_liste.stream().collect(Collectors.joining(", ", "{", "}"));
-	            	
-		            o = mapper.readValue(string_oeuvre, Oeuvre.class);
-
-		            utils.MongoAccess.save("oeuvre", o);
-	            }
-
-        	}
-        	
-        	if (! titres){
-        	
-	        	ot = new OeuvreTraitee();
-	            ot.setOeuvre_id(o.get_id());
-	            ot.setProgressionOeuvreTraitee(Progression.TODO_);
-	            ot.setAlterations(alterations);
-	            ot.setKey1(o.getKey1());
-	            ot.setKey2(o.getKey2());
-	            ot.setCote(o.getCote_archives_6s());
-	            ot.setNom(o.getNom());
-	            ot.setCommande_id(commande_id);
-
-	            utils.MongoAccess.save("oeuvreTraitee", ot);
-	            
-	            listeOeuvresTraitees_id.put(ot.getNom(), ot.get_id());
-   
-	            ArrayList<ObjectId> traitementsEnCours = new ArrayList<>();
-	            
-	            for (String t : commande.getTraitements_attendus_id().keySet()) {
-	            	
-	            	TacheTraitement tt = new TacheTraitement();
-	            	tt.setFait_(Progression.TODO_);
-	            	tt.setTraitement_id(tousLesTraitements_id.get(t));
-	            	tt.setNom(t);
-	            	
-
-	            	utils.MongoAccess.save("tacheTraitement", tt);
-	            	ot.addTraitementAttendu(tt.getNom(), tt.get_id());
-  	
-	    		}
-    
-	            utils.MongoAccess.update("oeuvreTraitee", ot);
-	            
-        	}
-            
-            titres = false; // après le premier passage ce ne sera plus un titre
-	     }
-        
-        System.out.println(listeOeuvresTraitees_id);
-
-        commande.setOeuvresTraitees_id(listeOeuvresTraitees_id);
-        utils.MongoAccess.update("commande", commande);
-        
-        //////////////////////////////////////////////////////////////////////////////////////////////////:
-        	
-    	//Iterate through each rows one by one
-        Iterator<Row> rowIterator1 = sheet1.iterator();
-        
-        titres = true;
-        index = 0;
-        noms_titres.clear();
-        noms_titres_bruts.clear();
-    	
-    	string_oeuvre_liste.clear();
-    	
-    	OeuvreTraitee oeuvreACompleter = new OeuvreTraitee();
-        
-        while (rowIterator1.hasNext()){
-	
-            Row row = rowIterator1.next();
-        	
-        	if (isRowEmpty(row)){
-        		continue;
-        	}
-        	
-        	if (! titres){
-        		
-        		//System.out.println("**" + row.getCell(6).getStringCellValue() +  "**");
-        		
-        		if ("".equals(row.getCell(6).getStringCellValue())){
-        			oeuvreACompleter = MongoAccess.request("oeuvreTraitee", "key1", Normalize.normalizeStringField(row.getCell(4).getStringCellValue())).as(OeuvreTraitee.class);
-        		}
-        		else {
-        			oeuvreACompleter = MongoAccess.request("oeuvreTraitee", "key1", Normalize.normalizeStringField(row.getCell(4).getStringCellValue()), "key2", row.getCell(6).getStringCellValue()).as(OeuvreTraitee.class);
-        		}
-        		
-        		
-            	if (oeuvreACompleter == null){
-            		System.out.println(Normalize.normalizeStringField(row.getCell(4).getStringCellValue()) + " : non trouvée");
-            		continue;
-            	} 
-            	
-            	
-        	}
-        	
-        	alterations = new ArrayList<>();
-	            
-            //For each row, iterate through all the columns
-            Iterator<Cell> cellIterator = row.cellIterator();
-            
-            
-
-            while (cellIterator.hasNext()){
-            	
-                Cell cell = cellIterator.next();
-                
-                // le premier passage est 'à vide'
-                // c'est la liste des champs
- 
-                if (titres){
-            		noms_titres.add(cell.getStringCellValue().equals("") ? String.format("field_%02d", nb_colonnes + 1) : Normalize.normalize(cell.getStringCellValue()));
-            		noms_titres_bruts.add(cell.getStringCellValue().equals("") ? String.format("field_%02d", nb_colonnes + 1) : Normalize.normalizeLight(cell.getStringCellValue()));
-            		nb_colonnes = noms_titres.size();
-            	}
-                // les valeurs suivantes servent à construire 
-                // une json string
-            	else {
-            		
-	                //Check the cell type and format accordingly
-	                switch (cell.getCellType())
-	                {
+	                case 0: //cote
+	                	switch (cell.getCellType()) {
 	                    case Cell.CELL_TYPE_NUMERIC:
-
-                           // string_oeuvre_liste.add(String.format("\"%s\" : \"%s\"", noms_titres.get(index), cell.getNumericCellValue() + ""));
+	                    	contenuRowOeuvre.put("cote_archives_6s", "" + Math.round(cell.getNumericCellValue()));
 	                        break;
-	                        
 	                    case Cell.CELL_TYPE_STRING:
-	                        
-	                        if (index >=7 && index <= 22){
-	                        	
-	                        	if ("x".equals(cell.getStringCellValue())){
-	                        		alterations.add(String.format("\"%s\"", noms_titres_bruts.get(index)));
-	                        	}
-	                        	
-	                        }
-	                        else if (index == 23) {
-	                        	string_oeuvre_liste.add(String.format("\"%s\" : \"%s\"", noms_titres.get(index), Normalize.normalizeField(cell.getStringCellValue())));
-	                        }
-	                        
+	                    	contenuRowOeuvre.put("cote_archives_6s", cell.getStringCellValue());
 	                        break;
-	                }
-	                index ++; // on  avance dans la liste des champs
-
+	                    }
+	                    break;
+	                case 1: // titre
+	                	contenuRowOeuvre.put("titre_de_l_oeuvre", cell.getStringCellValue());
+	                    break;
+	                case 2: // auteur
+	                	contenuRowOeuvre.put("auteur", cell.getStringCellValue());
+	                    break;
+	                case 3: // date
+	                	switch (cell.getCellType()) {
+	                    case Cell.CELL_TYPE_NUMERIC:
+	                    	contenuRowOeuvre.put("date", "" + Math.round(cell.getNumericCellValue()));
+	                        break;
+	                    case Cell.CELL_TYPE_STRING:
+	                    	contenuRowOeuvre.put("date", cell.getStringCellValue());
+	                        break;
+	                    }
+	                    break;
+		            case 4: // dimensions
+	                	switch (cell.getCellType()) {
+	                    case Cell.CELL_TYPE_NUMERIC:
+	                    	contenuRowOeuvre.put("dimensions", "" + Math.round(cell.getNumericCellValue()));
+	                        break;
+	                    case Cell.CELL_TYPE_STRING:
+	                    	contenuRowOeuvre.put("dimensions", cell.getStringCellValue());
+	                        break;
+	                    }
+	                    break;
+		            case 5: // matieres
+	                	contenuRowOeuvre.put("matieres", cell.getStringCellValue());
+	                    break;
+		            case 6: // techniques
+	                	contenuRowOeuvre.put("techniques", cell.getStringCellValue());
+	                    break;
+		            case 7: // inscriptions
+	                	contenuRowOeuvre.put("inscriptions", cell.getStringCellValue());
+	                    break;
+	                    
+	                //// oeuvre traitee     
+	                    
+		            case 8: // observations
+	                	contenuRowOeuvreTraitee.put("observations", cell.getStringCellValue());
+	                    break;
+		            case 9: // alterations depot
+	                	contenuRowOeuvreTraitee.put("alterations depot", cell.getStringCellValue());
+	                    break;
+		            case 10: // alterations physiques
+	                	contenuRowOeuvreTraitee.put("alterations physiques", cell.getStringCellValue());
+	                    break;
+		            case 11: // alterations chimiques
+	                	contenuRowOeuvreTraitee.put("alterations chimiques", cell.getStringCellValue());
+	                    break;
+		            case 12: // alterations techniques
+	                	contenuRowOeuvreTraitee.put("alterations techniques", cell.getStringCellValue());
+	                    break;
+		            case 13: // traitement depoussierage
+	                	contenuRowOeuvreTraitee.put("traitement depoussierage", cell.getStringCellValue());
+	                    break;
+		            case 14: // traitement suppression elements
+	                	contenuRowOeuvreTraitee.put("traitement suppression elements", cell.getStringCellValue());
+	                    break;
+		            case 15: // traitements aqueux
+	                	contenuRowOeuvreTraitee.put("traitements aqueux", cell.getStringCellValue());
+	                    break;
+		            case 16: // traitement consolidation
+	                	contenuRowOeuvreTraitee.put("traitement consolidation", cell.getStringCellValue());
+	                    break;
+		            case 17: // traitement mise a plat
+	                	contenuRowOeuvreTraitee.put("traitement mise a plat", cell.getStringCellValue());
+	                    break;
+		            case 18: // traitement retouche
+	                	contenuRowOeuvreTraitee.put("traitement retouche", cell.getStringCellValue());
+	                    break;
+		            case 19: // produits utilisés
+	                	contenuRowOeuvreTraitee.put("produits utilisés", cell.getStringCellValue());
+	                    break;
+	            	}
 	            }
 	            
-            } 
-       
-            if (! titres){
-            	
-            	if (alterations.size() > 0){
-                	string_oeuvre_liste.add(String.format("\"%s\" : %s", "alterations", alterations));
-                    alterations.clear();
-                }
-                
-            	string_oeuvre = string_oeuvre_liste.stream().collect(Collectors.joining(", ", "{", "}"));
-                utils.MongoAccess.update("oeuvreTraitee",oeuvreACompleter.get_id(), string_oeuvre);	
-                string_oeuvre_liste.clear();
-            }
-
-            index = 0; // on initialise pour la prochaine ligne
-
-            titres = false; // après le premier passage ce ne sera plus un titre
- 
-	    }
-            
+	            
+	            
+	            jsonObjectOeuvre = new JSONObject(contenuRowOeuvre);
+	            jsonObjectOeuvreTraitee = new JSONObject(contenuRowOeuvreTraitee);
+	            
+	            contenuRow.put("oeuvre", jsonObjectOeuvre);
+	            contenuRow.put("oeuvreTraitee", jsonObjectOeuvreTraitee);
+	            
+	            jsonObjectRow = new JSONObject(contenuRow);
+	            
+	            jsonObjectRows.add(jsonObjectRow);
+	         
+        	}
+        }
         
-        workbook.close();
-        file.close();
-
+        System.out.println("fin de read()");
+        documentJson = new HashMap<>();
+        documentJson.put("document", jsonObjectRows);
+        jsonObjectFile = new JSONObject(documentJson);
+        System.out.println(jsonObjectFile);
 	}
-	
-	public static void listeDesTachesTraitement(Oeuvre oeuvre){
-		
-		//commande = MongoAccess.request("commande", Messages.getCommande_id()).as(Commande.class).next();
-		
-		
-		System.out.println("nom : " +oeuvre.getNom());
-		//Fiche_commande_import_controller.getBindLabel().set("Import en cours : " + oeuvre.getNom());
-		
-		//ArrayList<TacheTraitement> listeDesTaches = new ArrayList<>();
-		
-		for (String t : commande.getTraitements_attendus_names()){
-			
-			TacheTraitement tt = new TacheTraitement();
-			tt.setCreated_at(Date.from(Instant.now()));
-			tt.setFait_(Progression.TODO_);
-			
-			MongoAccess.save("tacheTraitement", tt);
-			
-			//listeDesTaches.add(tt);
-		}
-		
-		//return listeDesTaches.stream().map(t -> t.get_id().toString()).collect(Collectors.joining(",", "[", "]"));
-		
-		
-		
-	}
-	
-	public static void write(){
-		//Blank workbook
-        XSSFWorkbook workbook = new XSSFWorkbook();
-         
-        //Create a blank sheet
-        XSSFSheet sheet = workbook.createSheet("Employee Data");
-          
-        //This data needs to be written (Object[])
-        Map<String, Object[]> data = new TreeMap<String, Object[]>();
-        data.put("1", new Object[] {"ID", "NAME", "LASTNAME"});
-        data.put("2", new Object[] {1, "Amit", "Shukla"});
-        data.put("3", new Object[] {2, "Lokesh", "Gupta"});
-        data.put("4", new Object[] {3, "John", "Adwards"});
-        data.put("5", new Object[] {4, "Brian", "Schultz"});
-          
-        //Iterate over data and write to sheet
-        Set<String> keyset = data.keySet();
-        int rownum = 0;
-        for (String key : keyset)
-        {
-            Row row = sheet.createRow(rownum++);
-            Object [] objArr = data.get(key);
-            int cellnum = 0;
-            for (Object obj : objArr)
-            {
-               Cell cell = row.createCell(cellnum++);
-               if(obj instanceof String)
-                    cell.setCellValue((String)obj);
-                else if(obj instanceof Integer)
-                    cell.setCellValue((Integer)obj);
-            }
-        }
-        try
-        {
-            //Write the workbook in file system
-            FileOutputStream out = new FileOutputStream(new File("/home/kaplone/Desktop/howtodoinjava_demo.xlsx"));
-            workbook.write(out);
-            out.close();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-	}
-	
-	
-
 }
