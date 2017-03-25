@@ -1,4 +1,4 @@
-package application;
+package controleurs;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +9,7 @@ import java.util.ResourceBundle;
 
 import org.jongo.MongoCursor;
 
-import controleurs.Fiche_controller;
+import application.Documents;
 import utils.Walk;
 import models.Client;
 import models.Commande;
@@ -181,7 +181,7 @@ public class Fiche_commande_import_controller extends Fiche_controller implement
 	public void on_import_file_button(){
 		try {
 			Documents.read(file);
-			//onVersCommandeButton();
+			onVersCommandeButton();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

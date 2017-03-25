@@ -613,12 +613,21 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 
 		fichiers.addAll(contenu_fichiers);
 
-		String fichierSelectionne_str = RestAccess.request("fichier", "nom", oeuvreSelectionneObj.getCote_archives_6s(),
-				true);
-		Fichier fichierSelectionne = Fichier.fromJson(fichierSelectionne_str);
-		File file = new File(String.format("file:%s", fichierSelectionne.getFichierLie().toString()));
+		String fichierSelectionne_str = RestAccess.request("fichier", "nom", oeuvreSelectionneObj.getCote_archives_6s(), true);
+		
+		System.out.println("*" + fichierSelectionne_str + "*");
+		
+		File file = null;
+		Fichier fichierSelectionne = null;
+		
+        if (fichierSelectionne_str != null && ! fichierSelectionne_str.equals("null")){
+        	fichierSelectionne = Fichier.fromJson(fichierSelectionne_str);
+    		file = new File(String.format("file:%s", fichierSelectionne.getFichierLie().toString()));
+        }
+		
+		
 
-		if (file.exists()) {
+		if (file != null && file.exists()) {
 			preview_imageView
 					.setImage(new Image(String.format("file:%s", fichierSelectionne.getFichierLie().toString())));
 		} else {
