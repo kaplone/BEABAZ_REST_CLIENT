@@ -149,11 +149,7 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
 
 		if (edit_save) {
 
-			afficherCommande();
-			afficherModeles();
-			afficherAuteurs();
-			afficherOeuvres();
-			
+			afficherCommande();			
 		}
 		else {
 			onVersClientButton();
@@ -194,14 +190,8 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
 		Messages.setCommande(commande);
 		
 		super.onMiseAJourButton();
-	
-		afficherTraitements();
-		afficherCommande();
-	    afficherModeles();
-	    afficherAuteurs();
-	    afficherOeuvres();
-	    
 
+		afficherCommande();	    
 	}
 	
 	public void afficherCommande(){
@@ -218,6 +208,11 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
 //		nomClientLabel.setText(client.getNom());
 		
 		loadCommande(commande);
+		
+		afficherTraitements();
+		afficherAuteurs();
+		afficherModeles();
+		afficherOeuvres();
 	}
 	
     
@@ -490,44 +485,54 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
 		
 		listView_all_traitements.onDragDetectedProperty().set(dd -> {
 			
-			Dragboard dragBoard = listView_all_traitements.startDragAndDrop(TransferMode.MOVE);			
-			ClipboardContent content = new ClipboardContent();	
-			if (listView_all_traitements.getSelectionModel().getSelectedItem() != null){
-				content.putString(listView_all_traitements.getSelectionModel().getSelectedItem());			 
-				dragBoard.setContent(content);
-				 
-				listView_traitements.setOnDragOver(dd_ -> dd_.acceptTransferModes(TransferMode.MOVE));
-				 
-				listView_traitements.setOnDragDropped(dd_ -> {
-					ajouter_traitement(dd_.getDragboard().getString());
-				    dd_.setDropCompleted(true);
-				 });
-			}
+			if (Messages.getCommande() != null){
+				Dragboard dragBoard = listView_all_traitements.startDragAndDrop(TransferMode.MOVE);			
+				ClipboardContent content = new ClipboardContent();	
+				if (listView_all_traitements.getSelectionModel().getSelectedItem() != null){
+					content.putString(listView_all_traitements.getSelectionModel().getSelectedItem());			 
+					dragBoard.setContent(content);
+					 
+					listView_traitements.setOnDragOver(dd_ -> dd_.acceptTransferModes(TransferMode.MOVE));
+					 
+					listView_traitements.setOnDragDropped(dd_ -> {
+						ajouter_traitement(dd_.getDragboard().getString());
+					    dd_.setDropCompleted(true);
+					 });
+				}
+			}	
 		});
 		
 		listView_all_traitements.setOnDragDropped(dd_ -> dd_.setDropCompleted(true));
 		
 		listView_traitements.onDragDetectedProperty().set(dd -> {
 			
-			Dragboard dragBoard = listView_traitements.startDragAndDrop(TransferMode.MOVE);			
-			ClipboardContent content = new ClipboardContent();	
-			if (listView_traitements.getSelectionModel().getSelectedItem() != null){
-				content.putString(listView_traitements.getSelectionModel().getSelectedItem());			 
-				dragBoard.setContent(content);
-				 
-				listView_all_traitements.setOnDragOver(dd_ -> dd_.acceptTransferModes(TransferMode.MOVE));
-				 
-				listView_all_traitements.setOnDragDropped(dd_ -> {
-					retirer_traitement(dd_.getDragboard().getString());
-				    dd_.setDropCompleted(true);
-				 });
+			if (Messages.getCommande() != null){
+				Dragboard dragBoard = listView_traitements.startDragAndDrop(TransferMode.MOVE);			
+				ClipboardContent content = new ClipboardContent();	
+				if (listView_traitements.getSelectionModel().getSelectedItem() != null){
+					content.putString(listView_traitements.getSelectionModel().getSelectedItem());			 
+					dragBoard.setContent(content);
+					 
+					listView_all_traitements.setOnDragOver(dd_ -> dd_.acceptTransferModes(TransferMode.MOVE));
+					 
+					listView_all_traitements.setOnDragDropped(dd_ -> {
+						retirer_traitement(dd_.getDragboard().getString());
+					    dd_.setDropCompleted(true);
+					 });
+				}
 			}	
 		});
 		
 		listView_traitements.setOnDragDropped(dd_ -> dd_.setDropCompleted(true));
 
-		add_t.setOnAction(a -> ajouter_traitement(listView_all_traitements.getSelectionModel().getSelectedItem()));
+		add_t.setOnAction(a -> {
+			if (Messages.getCommande() != null){
+				ajouter_traitement(listView_all_traitements.getSelectionModel().getSelectedItem());
+			}
+		});
 		remove_t.setOnAction(a -> retirer_traitement(listView_traitements.getSelectionModel().getSelectedItem()));
+		
+		System.out.println("Messages.getCommande() : " + Messages.getCommande());
 	
         if (Messages.getCommande() != null) {
         	
@@ -559,10 +564,7 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
     		dateDebutProjetPicker.setValue(commande.getDateDebutProjet_LocalDate());
     		dateFinProjetPicker.setValue(commande.getDateFinProjet_LocalDate());
     		
-    		afficherCommande();
-    		afficherAuteurs();
-    		afficherModeles();
-    		afficherOeuvres();
+    		afficherCommande();   		
 		}
 
 		else { 

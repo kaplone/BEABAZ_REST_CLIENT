@@ -59,44 +59,6 @@ public class Fiche_commande_import_controller extends Fiche_controller implement
 	@FXML
 	private TableColumn<OeuvreTraitee, ImageView> oeuvres_fait_colonne;
 	
-	@FXML
-	private TextArea remarques_client;
-	@FXML
-	private Button nouvelle_oeuvre;
-	@FXML
-	private Button mise_a_jour_commande;
-	@FXML
-	private Button annuler;
-	@FXML
-	private Button editer;
-	@FXML
-	private Button importCommandeButton;
-	@FXML
-	private Button versClientButton;
-	@FXML
-	private Button versCommandeButton;
-	@FXML
-	private Button versOeuvreButton;
-	@FXML
-	private Button versRapportButton;
-	@FXML
-	private Button versFichiersButton;
-	@FXML
-	private Button versModelesButton;
-	@FXML
-	private Button versTraitementsButton;
-	@FXML
-	private Button versAuteursButton;
-	@FXML
-	private Button versProduitsButton;
-	@FXML
-	private Button rapportsButton;
-	@FXML
-	private DatePicker dateCommandePicker;
-	@FXML
-	private DatePicker dateDebutProjetPicker;
-	@FXML
-	private DatePicker dateFinProjetPicker;
 	
 	@FXML
 	private TextField file_path_textField;
@@ -131,22 +93,12 @@ public class Fiche_commande_import_controller extends Fiche_controller implement
 	private TextField rep_path_textField;
 	
 	@FXML
+	private Button importCommandeButton;
+	@FXML
+	private Button importimagesButton;
+	
+	@FXML
 	private Label message_label;
-	
-	private ArrayList<ChoiceBox<Traitement>> traitements_selectionnes;
-	private ArrayList<Traitement> traitements_attendus;
-	private ObservableList<Traitement> observableTraitements;
-
-	
-	private MongoCursor<OeuvreTraitee> oeuvresTraiteesCursor;
-	private OeuvreTraitee oeuvreTraiteeSelectionne;
-	
-	private List<OeuvreTraitee> oeuvresTraitees;
-	
-	private Commande commande;
-	private Commande commandeSelectionne;
-	
-	private Client client;
 	
 	private File file;
 	private File dir;
@@ -226,17 +178,18 @@ public class Fiche_commande_import_controller extends Fiche_controller implement
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		
+		super.init();
+		
 		bindLabel = new SimpleStringProperty("En attente d'import ...");
 		message_label.textProperty().bind(bindLabel);
-		
-		commande = Messages.getCommande();
-		commandeSelectionne = Messages.getCommande();
-		client = Messages.getClient();
 
 		versClientButton.setVisible(true);
-		versCommandeButton.setVisible(false);
+		versCommandeButton.setVisible(true);
 		versOeuvreButton.setVisible(false);
 		versRapportButton.setVisible(false);
+		traitementGrid.setVisible(false);
+		tableOeuvre.setVisible(false);
+		nouveau.setVisible(false);
 		
 		versModelesButton.setVisible(true);
 		versTraitementsButton.setVisible(true);
@@ -244,17 +197,13 @@ public class Fiche_commande_import_controller extends Fiche_controller implement
 		versProduitsButton.setVisible(true);
 		versAuteursButton.setVisible(true);
 		
+		importCommandeButton.setDisable(true);
+		importimagesButton.setDisable(true);
+		
 		grid.setVisible(false);
 		hbox_1.setVisible(false);
 		hbox_2.setVisible(false);
 		hbox_3.setVisible(false);
-		
-		currentStage = Messages.getStage();
-		
-		liste_oeuvres = FXCollections.observableArrayList();
-
-		traitements_selectionnes = new ArrayList<>();
-		oeuvresTraitees = new ArrayList<>();
 
 	}
 	@Override

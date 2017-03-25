@@ -38,16 +38,19 @@ public class Auteur extends Commun{
 	}
 	
 	public static Auteur retrouveAuteur_by_name(String key, String value){
+		
+		Auteur a = null;
+		
+		if (value != null) {
+			String auteur_str = RestAccess.request("auteur", key, value);
 
-        String auteur_str= RestAccess.request("auteur", key, value);
-        Auteur a = null;
-		
-		try {
-			  a = Commun.getMapper().readValue(auteur_str, Auteur.class);
-		  }
-		  catch (IOException e) {
-	    }
-		
+			try {
+				a = Commun.getMapper().readValue(auteur_str, Auteur.class);
+			} catch (IOException e) {
+			}
+
+		}
+
 		return a;
 	}
 	
