@@ -378,5 +378,9 @@ public class Commande  extends Commun{
 	public void addAuteurs(List<Auteur> m){
 		m.forEach(a -> map_auteurs_obj.put(a.getNom(), a));
 	}
+	
+	public Map<String, Auteur> accesseurMap_auteurs_obj(){
+		return  map_auteurs_obj;
+	}
     
 }

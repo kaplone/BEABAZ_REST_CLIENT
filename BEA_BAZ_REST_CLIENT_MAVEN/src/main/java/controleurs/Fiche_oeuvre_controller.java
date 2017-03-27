@@ -187,17 +187,18 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 
 		if (directSelect) {
 			tableOeuvre.scrollTo(tableOeuvre.getSelectionModel().getSelectedIndex() - 9);
-			oeuvreTraiteeSelectionneObj = OeuvreTraitee.retrouveOeuvreTraitee(new ObjectId(tableOeuvre.getSelectionModel().getSelectedItem().get("oeuvresTraitee_id")));
-			Messages.setOeuvreTraiteeObj(oeuvreTraiteeSelectionneObj);
-			oeuvreSelectionneObj = oeuvreTraiteeSelectionneObj.getOeuvre();
-			matieresUtilisees = oeuvreSelectionneObj.getMatieresUtilisees_names();
-			techniquesUtilisees = oeuvreSelectionneObj.getTechniquesUtilisees_names();
-			traitementsUtilisees = oeuvreTraiteeSelectionneObj.accesseurTraitementsAttendus_names();
-			traitementsUtilisees_obs.setAll(oeuvreTraiteeSelectionneObj.accesseurTraitementsAttendus_obj());
-			traitementsUtilisees_obs.forEach(a -> map_tacheTraitements.put(a.getNom(), a));
+			oeuvreTraiteeSelectionneObj = OeuvreTraitee.retrouveOeuvreTraitee(new ObjectId(tableOeuvre.getSelectionModel().getSelectedItem().get("oeuvresTraitee_id")));			
 		} else {
 			tableOeuvre.scrollTo(tableOeuvre.getSelectionModel().getSelectedIndex());
 		}
+		
+		Messages.setOeuvreTraiteeObj(oeuvreTraiteeSelectionneObj);
+		oeuvreSelectionneObj = oeuvreTraiteeSelectionneObj.getOeuvre();
+		matieresUtilisees = oeuvreSelectionneObj.getMatieresUtilisees_names();
+		techniquesUtilisees = oeuvreSelectionneObj.getTechniquesUtilisees_names();
+		traitementsUtilisees = oeuvreTraiteeSelectionneObj.accesseurTraitementsAttendus_names();
+		traitementsUtilisees_obs.setAll(oeuvreTraiteeSelectionneObj.accesseurTraitementsAttendus_obj());
+		traitementsUtilisees_obs.forEach(a -> map_tacheTraitements.put(a.getNom(), a));
 
 		numero_archive_6s_textField.setText(oeuvreSelectionneObj.getCote_archives_6s());
 		titre_textField.setText(oeuvreSelectionneObj.getTitre_de_l_oeuvre());
@@ -309,19 +310,29 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 	public void afficherAuteurs() {
 
 		if (auteurs == null){
-	    	observableAuteurs = FXCollections.observableArrayList();
-	    	auteurs = Arrays.asList(Auteur.retrouveAuteurs());
-	    	observableAuteurs.add(null);
-	    	for (Auteur auteur : auteurs){
-				observableAuteurs.add(auteur.getNom());
+			if (Messages.getTous_les_auteurs() == null){
+		    	observableAuteurs = FXCollections.observableArrayList();
+		    	auteurs = Arrays.asList(Auteur.retrouveAuteurs());
+		    	observableAuteurs.add(null);
+		    	for (Auteur auteur : auteurs){
+					observableAuteurs.add(auteur.getNom());
+				}
+		    	Messages.setTous_les_auteurs(auteurs);
 			}
+			else {
+				auteurs = Messages.getTous_les_auteurs();
+			}
+			
+			Messages.getCommande().addAuteurs(auteurs);
 	    }
-
-	    
+  
 	    auteursChoiceBox.setItems(observableAuteurs);
 
-		if (oeuvreSelectionneObj.getAuteur() != null){
-			auteursChoiceBox.getSelectionModel().select(oeuvreSelectionneObj.getAuteur());
+		if (oeuvreSelectionneObj.accesseurAuteur_obj() != null){
+			auteursChoiceBox.getSelectionModel().select(oeuvreSelectionneObj.accesseurAuteur_obj().getNom());
+		}
+		else {
+			auteursChoiceBox.getSelectionModel().select(0);
 		}
 	}
 
@@ -348,7 +359,7 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		oeuvreSelectionneObj.setDate(date_oeuvre_textField.getText());
 		oeuvreSelectionneObj.setDimensions(dimensions_textField.getText());
 		oeuvreSelectionneObj.setInscriptions_au_verso(inscriptions_textArea.getText());
-		oeuvreSelectionneObj.setAuteur(auteursChoiceBox.getSelectionModel().getSelectedItem());
+		oeuvreSelectionneObj.setAuteur_id(auteursChoiceBox.getSelectionModel().getSelectedItem());
 
 		if (degradations_textArea.getText() != null){
 			String[] listeAlterations = degradations_textArea.getText().split(System.getProperty("line.separator"));
@@ -635,22 +646,6 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		}
 	}
 
-	// @FXML
-	// public void onTraitementAttenduSelect(){
-	//
-	// TacheTraitement ttAtt =
-	// traitements_attendus_all_tableView.getSelectionModel().getSelectedItem();
-	// Messages.setTacheTraitement(ttAtt);
-	//
-	// Scene fiche_tache_traitement_scene = new Scene((Parent)
-	// JfxUtils.loadFxml("/views/fiche_tache_traitement.fxml"),
-	// Contexte.largeurFenetre, Contexte.hauteurFenetre);
-	// fiche_tache_traitement_scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-	//
-	// currentStage.setScene(fiche_tache_traitement_scene);
-	//
-	// }
-
 	@FXML
 	public void onFichierSelect() {
 
@@ -729,7 +724,7 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 
 		oeuvreSelectionneObj = oeuvreTraiteeSelectionneObj.getOeuvre();
 
-		auteur = oeuvreSelectionneObj.getAuteur_obj();
+		auteur = oeuvreSelectionneObj.accesseurAuteur_obj();
 
 		nom_label.setText(oeuvreSelectionneObj.getNom());
 
@@ -875,25 +870,6 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		etat_final_choiceBox.setItems(etatsFinaux);
 
 		fichiers = FXCollections.observableArrayList();
-
-		// complement_etat_textArea.textProperty().addListener((observable,
-		// oldValue, newValue) -> {
-		// onEditerOeuvreButton();
-		// });
-
-		// auteursChoiceBox.valueProperty().addListener((observable, oldValue,
-		// newValue) -> {
-		//
-		// if(newValue != null && ! newValue.equals(auteur.getNom())){
-		// auteur = Auteur.retrouveAuteur(newValue);
-		// onEditerOeuvreButton();
-		// }
-		// });
-
-		// etat_final_choiceBox.valueProperty().addListener((observable,
-		// oldValue, newValue) -> {
-		// onEditerOeuvreButton();
-		// });
 
 		afficherOeuvres();
 		afficherMatieres();

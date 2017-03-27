@@ -371,17 +371,24 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
     }
 
     public void afficherAuteurs(){
-	    if (auteurs == null){
-	    	observableAuteurs = FXCollections.observableArrayList();
-	    	auteurs = Arrays.asList(Auteur.retrouveAuteurs());
-	    	observableAuteurs.add(null);
-	    	for (Auteur auteur : auteurs){
-				observableAuteurs.add(auteur.getNom());
+    	
+    	if (auteurs == null){
+			if (Messages.getTous_les_auteurs() == null){
+		    	observableAuteurs = FXCollections.observableArrayList();
+		    	auteurs = Arrays.asList(Auteur.retrouveAuteurs());
+		    	observableAuteurs.add(null);
+		    	for (Auteur auteur : auteurs){
+					observableAuteurs.add(auteur.getNom());
+				}
+		    	Messages.setTous_les_auteurs(auteurs);
 			}
+			else {
+				auteurs = Messages.getTous_les_auteurs();
+			}
+			
+			commande.addAuteurs(auteurs);
 	    }
-	    
-		commande.addAuteurs(auteurs);
-	    
+
 	    auteursChoiceBox.setItems(observableAuteurs);
 
 		if (commande != null && commande.getAuteur() != null){

@@ -2,6 +2,7 @@ package models;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,10 +34,19 @@ public class Oeuvre extends Commun{
 	               inscriptions_au_verso,
 	               format_de_conditionnement;
 	
-	private String auteur;
+	private Auteur auteur;
+	private String auteur_id;
 
 	private Map<String, String> techniquesUtilisees_id;
 	private Map<String, String> matieresUtilisees_id;
+	
+	private List<String> matieresUtilisees_names;
+	private List<String> techniquesUtilisees_names;
+
+	private String matieresUtilisees_noms_complets;
+	private String techniquesUtilisees_noms_complets;
+	
+	
 	
 	private String etat_current;
 	
@@ -196,17 +206,16 @@ public class Oeuvre extends Commun{
 		this.format_de_conditionnement = format_de_conditionnement;
 	}
 
-	public String getAuteur() {
+	public Auteur accesseurAuteur_obj() {
 		return auteur;
 	}
-	
-	@JsonIgnore
-	public Auteur getAuteur_obj() {
-		return Auteur.retrouveAuteur_by_name("_id", getAuteur());
-	}
 
-	public void setAuteur(String auteur) {
+	public void setAuteur(Auteur auteur) {
 		this.auteur = auteur;
+	}
+	
+	public void setAuteur_id(String auteur) {
+		this.auteur_id = Messages.getCommande().accesseurMap_auteurs_obj().get(auteur).get_id();
 	}
 
 	public String getEtat_current() {
@@ -221,15 +230,15 @@ public class Oeuvre extends Commun{
 		this.matieresUtilisees_id.put(matiereUtilisee.getNom(), matiereUtilisee.get_id().toString());
 	}
     
-	@JsonIgnore
 	public List<String> getTechniquesUtilisees_names() {
-		return new ArrayList<>(techniquesUtilisees_id.keySet());
+		return techniquesUtilisees_names;
 	}
 	
-	@JsonIgnore
 	public List<String> getMatieresUtilisees_names() {
-		return new ArrayList<>(matieresUtilisees_id.keySet());
+		return matieresUtilisees_names;
 	}
+	
+	
 
 	public void addTechniqueUtilisee(Technique techniqueUtilisee) {
 		this.techniquesUtilisees_id.put(techniqueUtilisee.getNom(), techniqueUtilisee.get_id().toString());
@@ -256,23 +265,35 @@ public class Oeuvre extends Commun{
 		this.techniquesUtilisees_id = techniquesUtilisees_id;
 	}
 	
+	public void setTechniquesUtilisees_noms_complets(String techniquesUtilisees_noms_complets) {
+		this.techniquesUtilisees_noms_complets = techniquesUtilisees_noms_complets;
+	}
+	
+	public void setMatieresUtilisees_noms_complets(String matieresUtilisees_noms_complets) {
+		this.matieresUtilisees_noms_complets = matieresUtilisees_noms_complets;
+	}
+	
 	@JsonIgnore
-	public String getTechniquesUtilisees_noms_complets(){
+	public List<String> getTechniquesUtilisees_noms_complets(){
+		
+		return Arrays.asList(techniquesUtilisees_noms_complets.split(", "));
 
-		return getTechniquesUtilisees_id().entrySet()
-                                          .stream()
-                                          .map(a -> Technique.retrouveTechnique(a.getKey())
-                                          .getNom_complet())
-                                          .collect(Collectors.joining(", "));
+//		return getTechniquesUtilisees_id().entrySet()
+//                                          .stream()
+//                                          .map(a -> Technique.retrouveTechnique(a.getKey())
+//                                          .getNom_complet())
+//                                          .collect(Collectors.joining(", "));
 	}
 	@JsonIgnore
-    public String getMatieresUtilisees_noms_complets(){
+    public List<String> getMatieresUtilisees_noms_complets(){
+		
+		return Arrays.asList(matieresUtilisees_noms_complets.split(", "));
 
-		return getMatieresUtilisees_id().entrySet()
-				                        .stream()
-				                        .map(a -> Matiere.retrouveMatiere(a.getKey())
-                                        .getNom_complet())
-	                                    .collect(Collectors.joining(", "));
+//		return getMatieresUtilisees_id().entrySet()
+//				                        .stream()
+//				                        .map(a -> Matiere.retrouveMatiere(a.getKey())
+//                                        .getNom_complet())
+//	                                    .collect(Collectors.joining(", "));
 	}
 
 	public String getKey1() {
@@ -336,12 +357,13 @@ public class Oeuvre extends Commun{
 		return c;
 	}
 	
-	public void setMatieresUtilisees_names(String[] s){
+	public void setMatieresUtilisees_names(List<String> matieresUtilisees_names){
+		this.matieresUtilisees_names = matieresUtilisees_names;
 		
 	}
 	
-    public void setTechniquesUtilisees_names(String[] s){
-		
+    public void setTechniquesUtilisees_names(List<String> techniquesUtilisees_names){
+    	this.techniquesUtilisees_names = techniquesUtilisees_names;
 	}
 	
 }

@@ -25,6 +25,8 @@ public class Messages {
 	private static Map<String, String> oeuvreTraitee;
 	private static OeuvreTraitee oeuvreTraiteeObj;
 	
+	private static List<Auteur> tous_les_auteurs;
+	
 	private static Auteur auteur;
 	private static Produit produit;
 	private static Fichier fichier;
@@ -162,5 +164,14 @@ public class Messages {
 	public static void resetTous_les_traitements(){
 		tous_les_traitements = null;
 	}
+
+	public static List<Auteur> getTous_les_auteurs() {
+		return tous_les_auteurs;
+	}
+
+	public static void setTous_les_auteurs(List<Auteur> tous_les_auteurs) {
+		Messages.tous_les_auteurs = tous_les_auteurs;
+	}
     
+	
 }
