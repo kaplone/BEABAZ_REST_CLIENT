@@ -169,7 +169,10 @@ public class OeuvreTraitee extends Commun {
 	public List<String> getAlterations() {
 		return alterations;
 	}
-	public void setAlterations(ArrayList<String> alterations) {
+	public void setAlterations(List<String> alterations) {
+		this.alterations = alterations;
+	}
+	public void setAlterations_string(List<String> alterations) {
 		this.alterations = alterations;
 	}
 	public EtatFinal getEtat() {

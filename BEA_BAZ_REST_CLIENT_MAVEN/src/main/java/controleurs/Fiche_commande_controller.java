@@ -343,15 +343,11 @@ public class Fiche_commande_controller extends Fiche_controller implements Initi
     
     public ObservableList<Map<String, String>> afficherOeuvres(){
         
-    	if(obs_oeuvres == null){
-    		try {
-    			obs_oeuvres = FXCollections.observableArrayList(commande.getOeuvresTraitees());
-    		}
-    		catch (NullPointerException npe){
-    			
-    		}
-    		
-    	}
+    	try {
+			obs_oeuvres = FXCollections.observableArrayList(commande.getOeuvresTraitees());
+		}
+		catch (NullPointerException npe){	
+		}
     	 
     	oeuvres_nom_colonne.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get("oeuvresTraitee_string").toString()));
 		oeuvres_fait_colonne.setCellValueFactory(data -> new SimpleObjectProperty<ImageView>(getImageView(data)));

@@ -150,10 +150,6 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 
 	@FXML
 	private CheckBox defaut_checkBox;
-	@FXML
-	private VBox import_texte_vbox;
-	@FXML
-	private TextArea traitements_importes_textArea;
 
 	private Oeuvre oeuvreSelectionneObj;
 	private OeuvreTraitee oeuvreTraiteeSelectionneObj;
@@ -205,33 +201,38 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 
 		date_oeuvre_textField.setText(oeuvreSelectionneObj.getDate());
 		dimensions_textField.setText(oeuvreSelectionneObj.getDimensions());
-		inscriptions_textArea.setText(oeuvreSelectionneObj.getInscriptions_au_verso());
-		degradations_textArea.setText(oeuvreTraiteeSelectionneObj.getAlterations().stream()
-				.map(o -> o.replace("oui/non", "")).collect(Collectors.joining("\n")));
-		observations_textArea.setText(oeuvreTraiteeSelectionneObj.getObservations());
-		remarques_textArea.setText(oeuvreTraiteeSelectionneObj.getRemarques());
-
+		
 		etat_final_choiceBox.getSelectionModel().select(oeuvreTraiteeSelectionneObj.getEtat());
 		complement_etat_textArea.setText(oeuvreTraiteeSelectionneObj.getComplement_etat());
 		nom_label.setText(oeuvreSelectionneObj.getNom());
 
-		// bouchon
-		if (Integer.parseInt(oeuvreSelectionneObj.getCote_archives_6s()) % 2 == 0) {
-			import_texte_vbox.setVisible(false);
-			import_texte_vbox.setPrefHeight(0);
-		} else {
-			import_texte_vbox.setVisible(true);
-			import_texte_vbox.setPrefHeight(44);
-			traitements_importes_textArea
-					.setText("Le numéro d'inventaire de la fiche est impair :\nTout ça vient de l'import ....");
-		}
+//		// bouchon
+//		if (Integer.parseInt(oeuvreSelectionneObj.getCote_archives_6s()) % 2 == 0) {
+//			import_texte_vbox.setVisible(false);
+//			import_texte_vbox.setPrefHeight(0);
+//		} else {
+//			import_texte_vbox.setVisible(true);
+//			import_texte_vbox.setPrefHeight(44);
+//			traitements_importes_textArea
+//					.setText("Le numéro d'inventaire de la fiche est impair :\nTout ça vient de l'import ....");
+//		}
 
 		afficherMatieres();
 		afficherTechniques();
 		afficherTraitements();
 		afficherFichiers();
 		afficherAuteurs();
+		afficherObservations();
 	}
+	
+	public void afficherTraitementsExcel() {
+
+		traitements_all.setAll(Messages.getTous_les_traitements());
+		traitements_all.forEach(a -> map_traitements.put(a.getNom(), a));
+		
+		miseAJourAffichageTraitements();
+	}
+
 
 	public void afficherTraitements() {
 
@@ -563,6 +564,14 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 			onEditerButton();
 		}
 	}
+	
+	public void afficherObservations(){
+		inscriptions_textArea.setText(oeuvreSelectionneObj.getInscriptions_au_verso());
+		degradations_textArea.setText(oeuvreTraiteeSelectionneObj.getAlterations().stream()
+				.map(o -> o.replace("oui/non", "")).collect(Collectors.joining("\n - ", " - ", "")));
+		observations_textArea.setText(oeuvreTraiteeSelectionneObj.getObservations());
+		remarques_textArea.setText(oeuvreTraiteeSelectionneObj.getRemarques());
+	}
 
 	public void afficherFichiers() {
 
@@ -877,5 +886,6 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		afficherTraitements();
 		afficherAuteurs();
 		afficherFichiers();
+		afficherObservations();
 	}
 }

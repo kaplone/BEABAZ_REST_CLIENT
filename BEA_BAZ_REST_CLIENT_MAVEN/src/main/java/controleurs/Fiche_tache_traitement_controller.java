@@ -241,12 +241,16 @@ public class Fiche_tache_traitement_controller extends Fiche_controller implemen
     }
     
     public void afficherProduits(){
-
-    	liste_produits.setAll(tacheTraitementSelectionne.getTraitement().getProduits().keySet());
-    	produits_listView.setItems(liste_produits);
     	
-    	liste_pre_produits.setAll(tacheTraitementSelectionne.getTraitement().getListe_produits_names());
-    	produits_pre_listView.setItems(liste_pre_produits);
+    	if (tacheTraitementSelectionne.getTraitement() != null && tacheTraitementSelectionne.getTraitement().getProduits() != null){
+    		
+    		liste_produits.setAll(tacheTraitementSelectionne.getTraitement().getProduits().keySet());
+        	produits_listView.setItems(liste_produits);
+        	
+        	liste_pre_produits.setAll(tacheTraitementSelectionne.getTraitement().getListe_produits_names());
+        	produits_pre_listView.setItems(liste_pre_produits);
+
+    	}
 
     	liste_reste_produits = Messages.getTous_les_nom_de_produits();
     	produits_reste_listView.setItems(liste_reste_produits);

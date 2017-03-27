@@ -58,8 +58,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.util.JSON;
 
 public class Documents {
-	
-	private static Commande commande;
+
 	private static String commande_id;
 	private static ArrayList<String> alterations ;
 	
@@ -621,5 +620,7 @@ public class Documents {
         System.out.println(jsonObjectFile);
         
         RestAccess.importFromDocument(jsonObjectFile.toString());
+        
+        Messages.setCommande(Commande.retrouveCommande(new ObjectId(commande_id)));
 	}
 }
