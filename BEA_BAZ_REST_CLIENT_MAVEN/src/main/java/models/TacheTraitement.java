@@ -11,6 +11,7 @@ import java.util.Set;
 import org.apache.pdfbox.util.operator.SetNonStrokingCMYKColor;
 import org.bson.types.ObjectId;
 import utils.RestAccess;
+import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -188,5 +189,19 @@ public class TacheTraitement extends Commun{
 
 	public void setProduitsLies(Map<String, String> produitsLies) {
 		this.produitsLies = produitsLies;
+	}
+    
+	public void convertProduitsLies_names(ObservableList<String> liste_produits) {
+		
+		this.produitsLies = new HashMap<>();
+		
+		Map<String, Produit> mapProduit = new HashMap<>();
+		Messages.getTous_les_produits().forEach(a -> mapProduit.put(a.getNom(), a));
+		
+		if (! liste_produits.isEmpty()){
+			liste_produits.forEach(a -> this.produitsLies.put(a, mapProduit.get(a).get_id()));
+		}
+		
+		this.produitsLies_names = new HashSet<>(liste_produits);
 	}
 }

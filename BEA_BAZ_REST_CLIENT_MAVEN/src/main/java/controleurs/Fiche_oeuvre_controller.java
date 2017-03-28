@@ -206,17 +206,6 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		complement_etat_textArea.setText(oeuvreTraiteeSelectionneObj.getComplement_etat());
 		nom_label.setText(oeuvreSelectionneObj.getNom());
 
-//		// bouchon
-//		if (Integer.parseInt(oeuvreSelectionneObj.getCote_archives_6s()) % 2 == 0) {
-//			import_texte_vbox.setVisible(false);
-//			import_texte_vbox.setPrefHeight(0);
-//		} else {
-//			import_texte_vbox.setVisible(true);
-//			import_texte_vbox.setPrefHeight(44);
-//			traitements_importes_textArea
-//					.setText("Le numéro d'inventaire de la fiche est impair :\nTout ça vient de l'import ....");
-//		}
-
 		afficherMatieres();
 		afficherTechniques();
 		afficherTraitements();
@@ -361,6 +350,12 @@ public class Fiche_oeuvre_controller extends Fiche_controller implements Initial
 		oeuvreSelectionneObj.setDimensions(dimensions_textField.getText());
 		oeuvreSelectionneObj.setInscriptions_au_verso(inscriptions_textArea.getText());
 		oeuvreSelectionneObj.setAuteur_id(auteursChoiceBox.getSelectionModel().getSelectedItem());
+		oeuvreSelectionneObj.setMatieresUtilisees_names(matieresUtilisees_obs);
+		oeuvreSelectionneObj.setTechniquesUtilisees_names(techniquesUtilisees_obs);
+		
+		oeuvreSelectionneObj.setMatieresUtilisees_names(matieresUtilisees_obs);
+		oeuvreSelectionneObj.setTechniquesUtilisees_names(techniquesUtilisees_obs);
+		
 
 		if (degradations_textArea.getText() != null){
 			String[] listeAlterations = degradations_textArea.getText().split(System.getProperty("line.separator"));

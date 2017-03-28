@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.bson.types.ObjectId;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import enums.EtatFinal;
@@ -22,6 +23,7 @@ import utils.Normalize;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class OeuvreTraitee extends Commun {
 	
 	private String commande_id;
@@ -178,6 +180,11 @@ public class OeuvreTraitee extends Commun {
 	public EtatFinal getEtat() {
 		return etat;
 	}
+	
+	public String getEtat_current() {
+		return etat.toString();
+	}
+	
 	public String getObservations() {
 		return observations;
 	}
@@ -278,6 +285,9 @@ public class OeuvreTraitee extends Commun {
 		  }
 		  catch (IOException e) {
 			  System.out.println("erreur dans retrouveOeuvre(ObjectId id)");
+			  System.out.println();
+			  System.out.println(oeuvre_str);
+			  System.out.println();
 			  e.printStackTrace();
 	    }
 		

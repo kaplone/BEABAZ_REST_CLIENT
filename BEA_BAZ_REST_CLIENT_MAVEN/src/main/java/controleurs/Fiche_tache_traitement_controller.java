@@ -138,6 +138,8 @@ public class Fiche_tache_traitement_controller extends Fiche_controller implemen
 
     	tacheTraitementSelectionne.setComplement(complement_textField.getText());
     	tacheTraitementSelectionne.setRemarques(remarques_traitement_textArea.getText());
+    	tacheTraitementSelectionne.convertProduitsLies_names(liste_produits);
+    	tacheTraitementSelectionne.setFait_(progres);
 		
 		if (edit) {
 			tacheTraitementSelectionne.update("tacheTraitement");
@@ -164,19 +166,19 @@ public class Fiche_tache_traitement_controller extends Fiche_controller implemen
     public void onFait_radio(){
     	
     	tacheTraitementSelectionne.setFait_(Progression.FAIT_);
-    	afficherTraitementsAssocies();
+    	//afficherTraitementsAssocies();
     	checkIfCompleted();
     }
     public void onTodo_radio(){
     	
     	tacheTraitementSelectionne.setFait_(Progression.TODO_);
-    	afficherTraitementsAssocies();
+    	//afficherTraitementsAssocies();
     	checkIfCompleted();
     }
     public void onSo_radio(){
     	
     	tacheTraitementSelectionne.setFait_(Progression.NULL_);
-    	afficherTraitementsAssocies();
+    	//afficherTraitementsAssocies();
     	checkIfCompleted();
     }
     
@@ -243,13 +245,16 @@ public class Fiche_tache_traitement_controller extends Fiche_controller implemen
     public void afficherProduits(){
     	
     	if (tacheTraitementSelectionne.getTraitement() != null && tacheTraitementSelectionne.getTraitement().getProduits() != null){
-    		
-    		liste_produits.setAll(tacheTraitementSelectionne.getTraitement().getProduits().keySet());
-        	produits_listView.setItems(liste_produits);
-        	
-        	liste_pre_produits.setAll(tacheTraitementSelectionne.getTraitement().getListe_produits_names());
+
+        	liste_pre_produits.setAll(tacheTraitementSelectionne.getTraitement().getProduits().keySet());
         	produits_pre_listView.setItems(liste_pre_produits);
 
+    	}
+    	
+        if (tacheTraitementSelectionne.getProduitsLies() != null){
+    		
+    		liste_produits.setAll(tacheTraitementSelectionne.getProduitsLies().keySet());
+        	produits_listView.setItems(liste_produits);
     	}
 
     	liste_reste_produits = Messages.getTous_les_nom_de_produits();
