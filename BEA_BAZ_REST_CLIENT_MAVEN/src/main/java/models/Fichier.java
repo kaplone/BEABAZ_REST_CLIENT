@@ -15,17 +15,6 @@ public class Fichier extends Commun{
 	
 	private ObjectId oeuvre_id;
 	
-	public static void update(Fichier c){
-
-		RestAccess.update("fichier", c);
-	}
-	
-    public static void save(Fichier c){
-		
-		RestAccess.save("fichier", c);
-		
-	}
-    
     @Override
     public String toString(){    	
     	return Paths.get(this.fichierLie).getFileName().toString();
@@ -50,7 +39,13 @@ public class Fichier extends Commun{
 	
 	@Override
 	public String getNom(){
-		return Paths.get(this.fichierLie).getFileName().toString();
+		if (this.fichierLie.contains("\\")){
+			System.out.println(this.fichierLie.split("\\\\")[this.fichierLie.split("\\\\").length -1]);
+			return this.fichierLie.split("\\\\")[this.fichierLie.split("\\\\").length -1];
+		} else {
+			System.out.println(this.fichierLie.split("/")[this.fichierLie.split("/").length -1]);
+			return this.fichierLie.split("/")[this.fichierLie.split("/").length -1];
+		}
 	}
 
 	public ObjectId getOeuvre_id() {
@@ -59,11 +54,6 @@ public class Fichier extends Commun{
 
 	public void setOeuvre_id(ObjectId oeuvre_id) {
 		this.oeuvre_id = oeuvre_id;
-	}
-	
-	public static ObjectId retrouveId(String FichierSelectionne){
-
-		return retrouveFichier(FichierSelectionne).get_id();
 	}
 	
 	public static Fichier retrouveFichier(String FichierSelectionne){

@@ -11,6 +11,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javafx.scene.image.Image;
@@ -47,50 +49,47 @@ import fr.opensagres.xdocreport.template.annotations.ImageMetadata;
 public class FreeMarkerMaker {
 	
 	@FieldMetadata( images = { @ImageMetadata( name = "image_oeuvre" ) } )
-    //public static File  getLogo(OeuvreTraitee ot)
-//    public static File  getLogo(ArrayList<Fichier> af)
-//    {
-//		//return MongoAccess.request("fichier", ot.getFichiers().get(ot.getFichiers().size() -2)).as(Fichier.class).next().getFichierLie();
-//        return new File(af.get(af.size() -2).getFichierLie());
-//    }
 
 	public static void odt2pdf(Oeuvre o, OeuvreTraitee ot) {
 
-		try {
-		      // 1) Load Docx file by filling Velocity template engine and cache it to the registry
-		      //InputStream in = new FileInputStream(new File("/home/kaplone/Desktop/BEABASE/Béa base/modele_rapport_v2_freemarker.odt"));
-		      //InputStream in = new FileInputStream(new File("C:\\Users\\USER\\Desktop\\BEABAZ\\modele_rapport_v2_freemarker.odt"));
-			  
-              ArrayList<Fichier> listeFichiers = ot.getFichiers();
+		try {		  
+              List<Fichier> listeFichiers = ot.getFichiers_obj();
               listeFichiers.sort(new Comparator<Fichier>() {
 
 					@Override
 					public int compare(Fichier o1, Fichier o2) {
-						
-						String s1 = Paths.get(o1.getFichierLie()).getFileName().toString();
-						String s2 = Paths.get(o2.getFichierLie()).getFileName().toString();
-					
-//						return String.format("%s_%02d", s1.split("\\.")[1], Integer.parseInt(s1.split("\\.")[2]))
-//					.compareTo(String.format("%s_%02d", s2.split("\\.")[1], Integer.parseInt(s2.split("\\.")[2])));
-						
-						return s1.compareTo(s2);
+						return o1.getNom().compareTo(o2.getNom());
 					}
 				});
-            		  
-		      
-			  Image img = new Image("file:" + ot.getFichierAffiche().getFichierLie().toString());
-			  File file = new File(ot.getFichierAffiche().getFichierLie());
+            		
+              Image img = null;
+              File file = new File(ot.getFichierAffiche().getFichierLie());
+              if (file.exists()){
+            	  img = new Image("file:" + ot.getFichierAffiche().getFichierLie().toString());
+              }
+              else {
+            	  file = new File("/home/kaplone/Desktop/20230811.jpg");
+            	  System.out.println(file.exists());
+            	  img = new Image("/images/20230811.jpg");
+              }
+			  
+			  
  
 			  InputStream in;
 			  
 			  Commande commande = Messages.getCommande();
-			  Model modele = commande.getModel();
+			  Model modele = commande.getModeleObj();
+			  
+			  System.out.println("modele : " + modele.getCheminVersModelSTR());
+			  System.out.println("img : " + img);
+			  System.out.println("img.getHeight() : " + img.getHeight());
+			  System.out.println("file : " + file);
 			  
 			  if (img.getHeight() > img.getWidth()){
-				  in = new FileInputStream(modele.getModeleVertical().toFile());
+				  in = new FileInputStream(new File(modele.getModeleVertical()));
 			  }
 			  else{
-				  in = new FileInputStream(modele.getCheminVersModel().toFile());
+				  in = new FileInputStream(new File(modele.getCheminVersModelSTR()));
 			  }
 
 		      IXDocReport report = XDocReportRegistry.getRegistry().loadReport(in,TemplateEngineKind.Freemarker);
@@ -105,7 +104,7 @@ public class FreeMarkerMaker {
               metadata.addFieldAsList("fichiers.legende");
 		      
 		   // NEW API
-	        //  metadata.load( "fichiers", Fichier.class, true );
+	         // metadata.load( "fichiers", Fichier.class, true );
 		      
 		      report.setFieldsMetadata(metadata);
 		      
@@ -115,8 +114,11 @@ public class FreeMarkerMaker {
 		      context.put("inventaire", o.getCote_archives_6s());
 		      context.put("titre", o.getTitre_de_l_oeuvre() != null ? o.getTitre_de_l_oeuvre() : "");
 		      context.put("dimensions", o.getDimensions() != null ? o.getDimensions() : "");
-		      context.put("technique", o.getTechniquesUtilisees_noms_complets());
-		      context.put("matiere", o.getMatieresUtilisees_noms_complets());
+		      //context.put("technique", o.getTechniquesUtilisees_noms_complets());
+		      //context.put("matiere", o.getMatieresUtilisees_noms_complets());
+		      
+		      context.put("technique", "");
+		      context.put("matiere", "");
 
 		      context.put("inscriptions", o.getInscriptions_au_verso() != null ? o.getInscriptions_au_verso() : "");
 		      
@@ -127,20 +129,19 @@ public class FreeMarkerMaker {
 		      ArrayList<String> traitementsEffectues = new ArrayList<>();
 		      ArrayList<String> produitsAppliques = new ArrayList<>();
 		      
-		      for (ObjectId tt_id : ot.getTraitementsAttendus_id()){
-		    	  
-		    	  TacheTraitement tt = MongoAccess.request("tacheTraitement", tt_id).as(TacheTraitement.class).next();
+		      for (TacheTraitement tt : ot.accesseurTraitementsAttendus_obj()){
 		    	  
 		    	  if(tt.getFait_() == Progression.FAIT_){
 		    		  
 		    		  traitementsEffectues.add(tt.getTraitement().getNom_complet() + (tt.getComplement() == null ? "" : " " + tt.getComplement()));  
 		    		  
 		    		  if (tt.getProduitsLies() != null){
-		    			  for (ObjectId p : tt.getProduitsLies_id()){
+		    			  //produitsAppliques.addAll(tt.getProduitsLies_names());
+		    			  
+		    			  for (String p_ : tt.getProduitsLies().keySet()){
 		    				  
-		    				  Produit p_ = MongoAccess.request("produit", p).as(Produit.class).next();
-		    				  
-		    				  produitsAppliques.add(p_.getNom_complet());
+		    				  produitsAppliques.add(p_);
+		    				  //produitsAppliques.add(p_.getNom_complet());
 		    			  }
 		    		  }
 
@@ -149,25 +150,13 @@ public class FreeMarkerMaker {
 		    	  }
 		      }
 		      
-		      context.put("produits", produitsAppliques.stream().collect(Collectors.joining(", ")));
+		      System.out.println(produitsAppliques);
+		      
+		      context.put("produits", produitsAppliques);
 		      
 		      context.put("traitements", traitementsEffectues);
 		      
 		      context.put("alterations", ot.getAlterations());
-		      
-		      
-		      
-//		      ArrayList<String> listeFiles = new ArrayList<>();
-//		      ArrayList<String> listeLegendes = new ArrayList<>();
-//		      
-//		      for (Fichier f : listeFichiers){
-//		    	  
-//		    	  listeFiles.add(f.getNom());
-//		    	  listeLegendes.add(f.getLegende());
-//		    	  
-//		      }		      
-//		      context.put("fichiers", listeFiles);
-//		      context.put("legendes", listeLegendes);
 		      
 		      context.put("fichiers", listeFichiers);
 		      
@@ -187,11 +176,13 @@ public class FreeMarkerMaker {
 		      System.out.println("__03");
 
 		      //context.put("image_oeuvre", getLogo(ot));	
-		      context.put("image_oeuvre", file);
-
+		      if (file.exists()){
+		    	  context.put("image_oeuvre", file);
+		      }
+		      
 		      // 3) Generate report by merging Java model with the Docx
 
-		      OutputStream out = new FileOutputStream(modele.getCheminVersModel().getParent().resolve(String.format("%s.odt", o.getCote_archives_6s())).toFile());
+		      OutputStream out = new FileOutputStream(Paths.get(modele.getCheminVersModelSTR()).getParent().resolve(String.format("%s.odt", o.getCote_archives_6s())).toFile());
 		      
 		      System.out.println("__04");
 		      report.process(context, out);
@@ -199,7 +190,7 @@ public class FreeMarkerMaker {
 		      System.out.println("__05");
 
 		      //OutputStream out2 = new FileOutputStream(new File(String.format("/home/kaplone/Desktop/BEABASE/tests/%s_freemarker.pdf", o.getCote_archives_6s())));
-		      OutputStream out2 = new FileOutputStream(modele.getCheminVersModel().getParent().resolve(String.format("%s.pdf", o.getCote_archives_6s())).toFile());
+		      OutputStream out2 = new FileOutputStream(Paths.get(modele.getCheminVersModelSTR()).getParent().resolve(String.format("%s.pdf", o.getCote_archives_6s())).toFile());
               // 1) Create options ODT 2 PDF to select well converter form the registry
               Options options = Options.getFrom(DocumentKind.ODT).to(ConverterTypeTo.PDF);
 
@@ -212,7 +203,7 @@ public class FreeMarkerMaker {
 		      e.printStackTrace();
 		    } catch (XDocReportException e) {
 		      e.printStackTrace();
-		    }
+		    } 
 
 	}
 

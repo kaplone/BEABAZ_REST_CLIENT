@@ -13,11 +13,8 @@ import utils.RestAccess;
 public class Model extends Commun{
 	
     private String cheminVersModelSTR;
+    private String signature;
     
-    @JsonIgnore
-	public Path getCheminVersModel() {
-		return Paths.get(cheminVersModelSTR);
-	}
 	public String getCheminVersModelSTR() {
 		return cheminVersModelSTR;
 	}
@@ -27,15 +24,8 @@ public class Model extends Commun{
 	}
     
 	@JsonIgnore
-	public Path getModeleVertical() {
-		
-		Path base = Paths.get(cheminVersModelSTR).getParent();
-		String name = Paths.get(cheminVersModelSTR).getFileName().toString();
-		
-		String nameVertical = name.split("\\.")[0] + "_vertical." + name.split("\\.")[1];
-		
-		
-		return base.resolve(nameVertical);
+	public String getModeleVertical() {	
+		return cheminVersModelSTR.split("\\.odt")[0] + "_vertical.odt";	
 	}
 
 	public static Model retrouveModel(String ModelSelectionne){
@@ -82,6 +72,13 @@ public class Model extends Commun{
 		}
 		return c;
 	}
-
+	public String getSignature() {
+		return signature;
+	}
+	public void setSignature(String signature) {
+		this.signature = signature;
+	}
+    
+    
 
 }

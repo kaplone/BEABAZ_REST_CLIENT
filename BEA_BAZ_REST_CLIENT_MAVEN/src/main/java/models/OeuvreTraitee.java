@@ -15,6 +15,7 @@ import org.bson.types.ObjectId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.util.JSON;
 
 import enums.EtatFinal;
 import enums.Progression;
@@ -48,6 +49,8 @@ public class OeuvreTraitee extends Commun {
     
     private String cote;
     
+    private Oeuvre oeuvre_obj;
+    
     //private List<String> traitementsAttendus_id;
     private List<String> traitementsAttendus_names;
     private List<TacheTraitement> traitementsAttendus_obj;
@@ -59,8 +62,7 @@ public class OeuvreTraitee extends Commun {
     	
     	traitementsAttendus = new ArrayList<>();
     	alterations = new ArrayList<>();
-    	fichiers = new ArrayList<>();
-    	
+    	fichiers = new ArrayList<>();	
     }
     
 	public void setEtat(EtatFinal etat) {
@@ -90,6 +92,22 @@ public class OeuvreTraitee extends Commun {
 		
 		return fichier;
 		
+	}
+	
+	public List<Fichier> getFichiers_obj() {
+		
+		ObjectMapper mapper = new ObjectMapper();
+
+		return fichiers.stream()
+				       .map(a ->{
+				    	   Fichier fichier = null;
+				    	   try {
+				   			   fichier = mapper.readValue(RestAccess.request("fichier", new ObjectId(a.get("fichier_id"))), Fichier.class);
+				   		   } catch (IOException e) {
+				   			   e.printStackTrace();
+				   		   }
+				    	   return fichier;})
+				       .collect(Collectors.toList());
 	}
 	
 	public List<Map<String, String>> getFichiers() {
@@ -201,8 +219,14 @@ public class OeuvreTraitee extends Commun {
 	
 	@JsonIgnore
 	public Oeuvre getOeuvre(){
+		//return this.oeuvre_obj;
 		return Oeuvre.retrouveOeuvre(new ObjectId(oeuvre_id));
 	}
+	
+//	public void setOeuvre(Map<String, Object> oeuvre){
+//		this.oeuvre_obj = (Oeuvre) JSON.parse(oeuvre.toString());
+//		System.out.println("oeuvre_obj.get_id() = " + oeuvre_obj.get_id());
+//	}
 
 	public String getOeuvre_id() {
 		return oeuvre_id;

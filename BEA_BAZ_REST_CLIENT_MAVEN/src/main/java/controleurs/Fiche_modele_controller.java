@@ -54,6 +54,9 @@ public class Fiche_modele_controller extends Fiche_controller implements Initial
 	private TextArea remarques_model_textArea;	
 	
 	@FXML
+	private TextArea signature_textArea;
+	
+	@FXML
 	private Button cheminVersModelButton;
 	
 	MongoCursor<Model> modelCursor;
@@ -94,6 +97,7 @@ public class Fiche_modele_controller extends Fiche_controller implements Initial
     		nom_model_textField.setText(modelSelectionne.getNom());
         	remarques_model_textArea.setText(modelSelectionne.getRemarques());
         	file_path_model_textField.setText(modelSelectionne.getCheminVersModelSTR());
+        	signature_textArea.setText(modelSelectionne.getSignature());
     	}	
     	else {
     		raz();
@@ -106,17 +110,20 @@ public class Fiche_modele_controller extends Fiche_controller implements Initial
     	super.onNouveauButton();
     	
     	modelSelectionne = new Model();
+    	cheminVersModelButton.setVisible(true);
     }
     
     @FXML
     public void onEditerModelButton(){
     	super.onEditerButton();
+    	cheminVersModelButton.setVisible(true);
     }
     
     @FXML
     public void onAnnulerEditButton(){
     	super.onAnnulerEditButton();
     	onModelSelect();
+    	cheminVersModelButton.setVisible(false);
     	
     }
     
@@ -126,12 +133,15 @@ public class Fiche_modele_controller extends Fiche_controller implements Initial
     	modelSelectionne.setNom(nom_model_textField.getText());
     	modelSelectionne.setRemarques(remarques_model_textArea.getText());
     	modelSelectionne.setCheminVersModelSTR(file_path_model_textField.getText());
+    	modelSelectionne.setSignature(signature_textArea.getText());
     	
     	annuler.setVisible(false);
     	editer.setVisible(true);
     	mise_a_jour.setVisible(false);
     	nom_model_textField.setEditable(false);
 		remarques_model_textArea.setEditable(false);
+		signature_textArea.setEditable(false);
+		cheminVersModelButton.setVisible(false);
 		
 		if (edit) {
 			modelSelectionne.update("model");
@@ -167,6 +177,7 @@ public class Fiche_modele_controller extends Fiche_controller implements Initial
     	nom_model_textField.setEditable(bool);
     	file_path_model_textField.setEditable(bool);
 		remarques_model_textArea.setEditable(bool);
+		signature_textArea.setEditable(bool);
 		prompt(bool);
     }
     
@@ -175,6 +186,7 @@ public class Fiche_modele_controller extends Fiche_controller implements Initial
     	nom_model_textField.setText("");
     	file_path_model_textField.setText("");
     	remarques_model_textArea.setText("");
+    	signature_textArea.setText("");
     }
     
     @Override
@@ -184,11 +196,13 @@ public class Fiche_modele_controller extends Fiche_controller implements Initial
     		nom_model_textField.setPromptText("saisir le nom affiché du nouveau modèle");
     		file_path_model_textField.setPromptText("saisir le nom complet du nouveau modèle");
         	remarques_model_textArea.setPromptText("éventuelles remarques");
+        	signature_textArea.setPromptText("saisir la signature souhaitée pour le bas de page");
     	}
     	else {
     		nom_model_textField.setPromptText(null);
     		file_path_model_textField.setPromptText(null);
         	remarques_model_textArea.setPromptText(null);
+        	signature_textArea.setPromptText(null);
     	}	
     }
    

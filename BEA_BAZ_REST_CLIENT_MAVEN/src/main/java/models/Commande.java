@@ -261,7 +261,7 @@ public class Commande  extends Commun{
 	}
 	
 	public void setModele_obj(Map<String, Model> modele){
-		if (modele_obj != null){
+		if (modele != null){
 			this.modeleObj = modele.values().iterator().next();
 		}		
 		this.modele_obj = modele;
